@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Musiction.API.Models;
+using Musiction.API.Services;
+using System;
 using System.Linq;
 
 namespace Musiction.API.Controllers
@@ -8,6 +11,17 @@ namespace Musiction.API.Controllers
     [Route("api/songs")]
     public class SongsController : Controller
     {
+
+        private ILogger<SongsController> _logger;
+        private IMailService _mailService;
+
+        public SongsController(ILogger<SongsController> logger,
+            IMailService mailService)
+        {
+            _logger = logger;
+            _mailService = mailService;
+        }
+
         [HttpGet()]
         public IActionResult GetSongs()
         {
@@ -17,11 +31,22 @@ namespace Musiction.API.Controllers
         [HttpGet("{id}", Name = "GetSong")]
         public IActionResult GetSong(int id)
         {
-            var songToReturn = SongsDataStore.Current.Songs.FirstOrDefault(s => s.Id == id);
-            if (songToReturn == null)
-                return NotFound();
+            try
+            {
+                var songToReturn = SongsDataStore.Current.Songs.FirstOrDefault(s => s.Id == id);
+                if (songToReturn == null)
+                {
+                    _logger.LogInformation($"Song {id} is not found");
+                    return NotFound();
+                }
 
-            return Ok(songToReturn);
+                return Ok(songToReturn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Excepction occoured while looking for song with {id}");
+                return StatusCode(500, "A problem happend on GetSong");
+            }
         }
 
         [HttpPost()]
@@ -111,6 +136,8 @@ namespace Musiction.API.Controllers
                 return NotFound();
 
             SongsDataStore.Current.Songs.Remove(songToDelete);
+
+            _mailService.Send("Song is removed", $"Song with id {id} has been removed");
 
             return NoContent();
         }
