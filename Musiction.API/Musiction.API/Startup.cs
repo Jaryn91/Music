@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Musiction.API.Entities;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
 
@@ -24,21 +26,23 @@ namespace Musiction.API
         {
             services.AddMvc();
 
-#if DEBUG
             services.AddTransient<IMailService, LocalMailService>();
-#else
-            services.AddTransient<IMailService, CloneMailService>();
-#endif
+
+            var connectionString = Startup.Configuration["connectionStrings:songDBConnectionString"];
+            services.AddDbContext<SongContext>(o => o.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            SongContext songContext)
         {
             loggerFactory.AddConsole();
 
             loggerFactory.AddDebug();
 
             loggerFactory.AddNLog();
+
+            songContext.EnsureSeedDataForContext();
 
             if (env.IsDevelopment())
             {

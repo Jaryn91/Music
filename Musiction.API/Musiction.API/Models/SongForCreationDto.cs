@@ -2,7 +2,7 @@
 
 namespace Musiction.API.Models
 {
-    public class SongCreationDto
+    public class SongForCreationDto
     {
         [Required(ErrorMessage = "Podaj nazwę piosenki")]
         [MaxLength(100)]
