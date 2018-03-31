@@ -23,7 +23,12 @@ namespace Musiction.API.BusinessLogic
             var jobId = Upload(apiKey, uploadUri, sourceFile, targetFormat).Result;
 
             var getJobUri = baseUri.Combine("jobs", jobId);
-            var job = Query(apiKey, getJobUri).Result;
+
+            Job job;
+            do
+            {
+                job = Query(apiKey, getJobUri).Result;
+            } while (job.status != "successful");
 
             var zipFile = job.target_files.Last();
 

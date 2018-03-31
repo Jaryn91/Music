@@ -17,21 +17,17 @@ namespace Musiction.API.Test
         {
             string mergedPresentation = "test3.pptx";
             string presentationTemplate = "test4.pptx";
-            string[] sourcePresentations = new string[]
-            { "test.pptx",     "test1.pptx",
-      "test2.pptx" };
+            string[] sourcePresentations = new string[] { "test.pptx", "test1.pptx", "test2.pptx" };
             string presentationFolder = @"C:\Users\tomas\source\repos\Music\Musiction.API\Musiction.API.Test\";
 
             // Make a copy of the template presentation. This will throw an
             // exception if the template presentation does not exist.
-            File.Copy(presentationFolder + presentationTemplate,
-              presentationFolder + mergedPresentation, true);
+            File.Copy(presentationFolder + presentationTemplate, presentationFolder + mergedPresentation, true);
 
             // Loop through each source presentation and merge the slides 
             // into the merged presentation.
             foreach (string sourcePresentation in sourcePresentations)
-                MergeSlides(presentationFolder, sourcePresentation,
-                  mergedPresentation);
+                MergeSlides(presentationFolder, sourcePresentation, mergedPresentation);
         }
 
         public void MergeSlides(string presentationFolder,
@@ -40,9 +36,7 @@ namespace Musiction.API.Test
             int id = 0;
 
             // Open the destination presentation.
-            using (PresentationDocument myDestDeck =
-              PresentationDocument.Open(presentationFolder + destPresentation,
-              true))
+            using (PresentationDocument myDestDeck = PresentationDocument.Open(presentationFolder + destPresentation, true))
             {
                 PresentationPart destPresPart = myDestDeck.PresentationPart;
 
@@ -53,26 +47,19 @@ namespace Musiction.API.Test
 
                 // Open the source presentation. This will throw an exception if
                 // the source presentation does not exist.
-                using (PresentationDocument mySourceDeck =
-                  PresentationDocument.Open(
-                    presentationFolder + sourcePresentation, false))
+                using (PresentationDocument mySourceDeck = PresentationDocument.Open(presentationFolder + sourcePresentation, false))
                 {
-                    PresentationPart sourcePresPart =
-                      mySourceDeck.PresentationPart;
+                    PresentationPart sourcePresPart = mySourceDeck.PresentationPart;
 
                     // Get unique ids for the slide master and slide lists
                     // for use later.
-                    uniqueId =
-                      GetMaxSlideMasterId(
-                        destPresPart.Presentation.SlideMasterIdList);
+                    uniqueId = GetMaxSlideMasterId(destPresPart.Presentation.SlideMasterIdList);
 
-                    uint maxSlideId =
-                      GetMaxSlideId(destPresPart.Presentation.SlideIdList);
+                    uint maxSlideId = GetMaxSlideId(destPresPart.Presentation.SlideIdList);
 
                     // Copy each slide in the source presentation, in order, to 
                     // the destination presentation.
-                    foreach (SlideId slideId in
-                      sourcePresPart.Presentation.SlideIdList)
+                    foreach (SlideId slideId in sourcePresPart.Presentation.SlideIdList)
                     {
                         SlidePart sp;
                         SlidePart destSp;
@@ -83,13 +70,9 @@ namespace Musiction.API.Test
 
                         // Create a unique relationship id.
                         id++;
-                        sp =
-                          (SlidePart)sourcePresPart.GetPartById(
-                            slideId.RelationshipId);
+                        sp = (SlidePart)sourcePresPart.GetPartById(slideId.RelationshipId);
 
-                        relId =
-                          sourcePresentation.Remove(
-                            sourcePresentation.IndexOf('.')) + id;
+                        relId = sourcePresentation.Remove(sourcePresentation.IndexOf('.')) + id;
 
                         // Add the slide part to the destination presentation.
                         destSp = destPresPart.AddPart<SlidePart>(sp, relId);
@@ -103,12 +86,10 @@ namespace Musiction.API.Test
                         // Add the slide master id to the slide master id list.
                         uniqueId++;
                         newSlideMasterId = new SlideMasterId();
-                        newSlideMasterId.RelationshipId =
-                          destPresPart.GetIdOfPart(destMasterPart);
+                        newSlideMasterId.RelationshipId = destPresPart.GetIdOfPart(destMasterPart);
                         newSlideMasterId.Id = uniqueId;
 
-                        destPresPart.Presentation.SlideMasterIdList.Append(
-                          newSlideMasterId);
+                        destPresPart.Presentation.SlideMasterIdList.Append(newSlideMasterId);
 
                         // Add the slide id to the slide id list.
                         maxSlideId++;
@@ -131,11 +112,9 @@ namespace Musiction.API.Test
         public void FixSlideLayoutIds(PresentationPart presPart)
         {
             // Make sure that all slide layouts have unique ids.
-            foreach (SlideMasterPart slideMasterPart in
-              presPart.SlideMasterParts)
+            foreach (SlideMasterPart slideMasterPart in presPart.SlideMasterParts)
             {
-                foreach (SlideLayoutId slideLayoutId in
-                  slideMasterPart.SlideMaster.SlideLayoutIdList)
+                foreach (SlideLayoutId slideLayoutId in slideMasterPart.SlideMaster.SlideLayoutIdList)
                 {
                     uniqueId++;
                     slideLayoutId.Id = (uint)uniqueId;
@@ -172,15 +151,13 @@ namespace Musiction.API.Test
 
             if (slideMasterIdList != null)
                 // Get the maximum id value from the current set of children.
-                foreach (SlideMasterId child in
-                  slideMasterIdList.Elements<SlideMasterId>())
+                foreach (SlideMasterId child in slideMasterIdList.Elements<SlideMasterId>())
                 {
                     uint id = child.Id;
 
                     if (id > max)
                         max = id;
                 }
-
             return max;
         }
 

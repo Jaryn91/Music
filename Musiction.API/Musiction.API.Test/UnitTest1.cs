@@ -12,8 +12,6 @@ namespace Musiction.API.Test
             PptxToJpgConverter aa = new PptxToJpgConverter();
             var file = @"1.pptx";
             aa.Convert(file);
-
-
         }
     }
 }

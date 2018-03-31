@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Musiction.API.Entities;
+using Musiction.API.Models;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
 
@@ -30,6 +32,8 @@ namespace Musiction.API
 
             var connectionString = Startup.Configuration["connectionStrings:songDBConnectionString"];
             services.AddDbContext<SongContext>(o => o.UseSqlServer(connectionString));
+
+            services.AddScoped<ISongRepository, SongRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +53,15 @@ namespace Musiction.API
                 app.UseDeveloperExceptionPage();
             }
             app.UseStatusCodePages();
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Song, SongDto>();
+                cfg.CreateMap<SongForCreationDto, Song>();
+                cfg.CreateMap<Song, SongForUpdateDto>();
+                cfg.CreateMap<SongForUpdateDto, Song>();
+
+            });
             app.UseMvc();
 
             app.Run(async (context) =>

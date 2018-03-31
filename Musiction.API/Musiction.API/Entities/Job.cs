@@ -24,7 +24,7 @@ namespace Musiction.API.Entities
         public string status { get; set; }
         public bool sandbox { get; set; }
         public DateTime created_at { get; set; }
-        public DateTime finished_at { get; set; }
+        public DateTime? finished_at { get; set; }
         public SourceFile source_file { get; set; }
         public List<TargetFile> target_files { get; set; }
         public string target_format { get; set; }

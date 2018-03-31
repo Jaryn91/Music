@@ -19,8 +19,7 @@ namespace Musiction.API.BusinessLogic
 
             // Make a copy of the template presentation. This will throw an
             // exception if the template presentation does not exist.
-            File.Copy(presentationFolder + firstFile,
-              presentationFolder + mergedPresentation, true);
+            File.Copy(presentationFolder + firstFile, presentationFolder + mergedPresentation, true);
 
             // Loop through each source presentation and merge the slides 
             // into the merged presentation.
