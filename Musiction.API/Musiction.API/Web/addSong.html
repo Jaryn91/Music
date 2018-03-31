@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Dodaj piosenkę</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#saveSong').click(function () {
+                var formData = new FormData();
+                formData.append("Name", "accountName");
+
+                formData.append('PptxFile', $('#myfile')[0].files[0]); // myFile is the input type="file" control
+
+                var _url = 'http://localhost:60870/api/songs/';
+
+                $.ajax({
+                    url: _url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,  // tell jQuery not to process the data
+                    contentType: false,  // tell jQuery not to set contentType
+                    success: function (result) {
+                    },
+                    error: function (jqXHR) {
+                    },
+                    complete: function (jqXHR, status) {
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div>
+        Name:
+        <input id="name" />
+        <br /> Prezentacja:
+        <input type="file" name="files" id="myfile" />
+        <br/> YouTube:
+        <input id="youtube" />
+
+    </div>
+    <div>
+        <input type="submit" id="saveSong" value='Zapisz piosenkę' />
+    </div>
+
+</body>
+
+</html>

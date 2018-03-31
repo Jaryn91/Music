@@ -21,14 +21,20 @@ namespace Musiction.API.BusinessLogic
             string folder = Directory.GetCurrentDirectory();
             string outcomeFilePath = Path.Combine(folder, outcomeFileName);
 
+            try
+            {
+                File.Copy(files.First(), outcomeFilePath, true);
+                files.RemoveAt(0);
 
-            File.Copy(files.First(), outcomeFilePath, true);
-            files.RemoveAt(0);
+                foreach (string sourcePresentation in files)
+                    MergeSlides(folder, sourcePresentation, outcomeFileName);
 
-            foreach (string sourcePresentation in files)
-                MergeSlides(folder, sourcePresentation, outcomeFileName);
-
-            return outcomeFilePath;
+                return outcomeFilePath;
+            }
+            catch (Exception ex)
+            {
+                return $"Error durning merging. {ex.Message}";
+            }
         }
 
 
@@ -175,25 +181,6 @@ namespace Musiction.API.BusinessLogic
                 }
 
             return max;
-        }
-
-
-
-        public void Merge(string firstFile, string secondFile)
-        {
-            string mergedPresentation = "FinaleFile.pptx";
-            string[] sourcePresentations = new string[]
-            { "test.pptx", "test1.pptx", "test2.pptx" };
-            string presentationFolder = @"C:\Users\tomas\source\repos\Music\Musiction.API\Musiction.API.Test\";
-
-            // Make a copy of the template presentation. This will throw an
-            // exception if the template presentation does not exist.
-            File.Copy(presentationFolder + firstFile, presentationFolder + mergedPresentation, true);
-
-            // Loop through each source presentation and merge the slides 
-            // into the merged presentation.
-            foreach (string sourcePresentation in sourcePresentations)
-                MergeSlides(presentationFolder, sourcePresentation, mergedPresentation);
         }
     }
 }

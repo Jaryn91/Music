@@ -15,7 +15,7 @@ namespace Musiction.API.BusinessLogic
     {
         private Uri baseUri = new Uri("https://sandbox.zamzar.com/v1/");
         private string apiKey = "";
-        public void Convert(string sourceFile)
+        public string Convert(string sourceFile)
         {
             string targetFormat = "jpg";
 
@@ -33,8 +33,10 @@ namespace Musiction.API.BusinessLogic
             var zipFile = job.target_files.Last();
 
             var getFilebUri = baseUri.Combine("files", zipFile.id.ToString(), "content");
-            string localFilename = zipFile.name;
+            var folder = Directory.GetCurrentDirectory();
+            var localFilename = Path.Combine(folder, zipFile.name);
             Download(apiKey, getFilebUri, localFilename).Wait();
+            return localFilename;
         }
 
         static async Task<string> Upload(string key, Uri url, string sourceFile, string targetFormat)

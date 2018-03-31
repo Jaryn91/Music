@@ -7,6 +7,8 @@ using Musiction.API.Models;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Musiction.API.Controllers
 {
@@ -59,15 +61,23 @@ namespace Musiction.API.Controllers
 
 
         [HttpPost()]
-        public IActionResult CreateSong([FromBody] SongForCreationDto song)
+        public async Task<IActionResult> CreateSong(SongForCreationDto song)
         {
+
             if (song == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), song.PptxFile.FileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await song.PptxFile.CopyToAsync(fileStream);
+            }
+
             var finalSong = Mapper.Map<Song>(song);
+            finalSong.Path = filePath;
 
             if (!_songRepository.AddSong(finalSong))
             {

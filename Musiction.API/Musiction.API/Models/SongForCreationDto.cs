@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Musiction.API.Models
 {
@@ -10,5 +11,7 @@ namespace Musiction.API.Models
 
         [MaxLength(200)]
         public string Path { get; set; }
+
+        public IFormFile PptxFile { get; set; }
     }
 }

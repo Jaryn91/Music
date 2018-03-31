@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Musiction.API.BusinessLogic;
 using Musiction.API.Services;
 using System.Collections.Generic;
 
@@ -19,9 +20,9 @@ namespace Musiction.API.Controllers
             _songRepository = songRepository;
         }
 
-        [HttpGet()]
+        [HttpGet("{returnLinkTo}")]
 
-        public IActionResult Presentation([FromQuery]List<int> ids)
+        public IActionResult Presentation(string returnLinkTo, [FromQuery]List<int> ids)
         {
             var songs = _songRepository.GetSongsInOrder(ids);
 
@@ -31,7 +32,21 @@ namespace Musiction.API.Controllers
                 paths.Add(song.Path);
             }
 
-            return Ok();
+            var merger = new PowerPointMerger();
+            var pathToCombinedPptx = merger.Merge(paths);
+
+            if (returnLinkTo == "pptx")
+                return Ok(pathToCombinedPptx);
+            else if (returnLinkTo == "zip")
+            {
+                var pptxConverter = new PptxToJpgConverter();
+                var pathToZip = pptxConverter.Convert(pathToCombinedPptx);
+                return Ok(pathToZip);
+            }
+
+            return BadRequest();
+
+
         }
     }
 }
