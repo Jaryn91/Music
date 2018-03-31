@@ -11,5 +11,6 @@ namespace Musiction.API.Services
 
         bool Save();
         void RemoveSong(Song song);
+        IEnumerable<Song> GetSongsInOrder(List<int> ids);
     }
 }

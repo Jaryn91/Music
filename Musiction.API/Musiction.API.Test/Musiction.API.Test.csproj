@@ -24,16 +24,16 @@
     <None Update="test.pptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="test1.pptx">
+    <None Update="testFiles\test1.pptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="test3.pptx">
+    <None Update="testFiles\test3.pptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="test4.pptx">
+    <None Update="testFiles\test4.pptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="test2.pptx">
+    <None Update="testFiles\test2.pptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

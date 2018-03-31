@@ -24,6 +24,13 @@ namespace Musiction.API.Services
             return _context.Songs.FirstOrDefault(s => s.Id == songId);
         }
 
+        public IEnumerable<Song> GetSongsInOrder(List<int> songIds)
+        {
+            var songs = _context.Songs.Where(s => songIds.Contains(s.Id));
+            songs = songs.OrderBy(d => songIds.IndexOf(d.Id));
+            return songs.ToList();
+        }
+
         public IEnumerable<Song> GetSongs()
         {
             return _context.Songs.OrderBy(s => s.Name).ToList();

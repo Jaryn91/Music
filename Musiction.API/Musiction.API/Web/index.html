@@ -38,18 +38,25 @@
                 e.preventDefault();
             });
 
-            $('#submit').click(function(){ 
-                 $.ajax({ 
-                     type: "GET",
-                     dataType: "json",
-                     url: "http://localhost:60870/api/songs/",
-                     success: function(data){        
-                        alert(data);
-                     }
-                 });
+            $('#submit').click(function () {
+                var request = "?"
+                $('#lstBox2 option').each(function () {
+                    request += "ids=" + $(this).val() + "&"
+                });
+
+                request = request.slice(0,-1)
+                var urlRequest =  "http://localhost:60870/api/songs/" + request;
+
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: urlRequest,
+                    success: function (data) {
+                    }
+                });
             });
         });
-   </script>
+    </script>
 </head>
 
 <body>
@@ -66,7 +73,7 @@
             <br/>
             <input type='button' id='btnLeft' value='  <  ' />
             <div class="submitContainer">
-                <input type="submit" id="submit"/>
+                <input type="submit" id="submit" />
             </div>
         </div>
         <div class="approvedItems">
