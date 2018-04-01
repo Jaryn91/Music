@@ -47,15 +47,7 @@
                 request = request.slice(0, -1)
                 var urlRequest = "http://localhost:60870/api/presentation/" + request;
 
-                $.ajax({
-                    type: "GET",
-                    dataType: "json",
-                    url: urlRequest,
-                    success: function (data) {
-                        data.preventDefault();
-                        window.location.href = data;
-                    }
-                });
+                callService(urlRequest);
             });
 
             $('#saveInZIP').click(function () {
@@ -66,14 +58,21 @@
 
                 request = request.slice(0, -1)
                 var urlRequest = "http://localhost:60870/api/presentation/" + request;
-
-                $.getJSON(urlRequest,
-                    function (data) {
-                        data.preventDefault();
-                        window.location.href = data;
-                    });
+                callService(urlRequest);
             });
         });
+
+        function callService(urlRequest) {
+            $.ajax({
+                url: urlRequest,
+                type: 'GET',
+                success: sendAlert
+            })
+        };
+
+        function sendAlert(data) {
+            window.location.href = data;
+        };
     </script>
 </head>
 
@@ -81,7 +80,7 @@
 
     <div class="approveTermsContainer">
         <div class="newItems">
-            <b>New Items:</b>
+            <b>Wybierz piosenkę:</b>
             <br/>
             <select multiple="multiple" id='lstBox1'>
             </select>
@@ -99,7 +98,7 @@
             </center>
         </div>
         <div class="approvedItems">
-            <b>Items to Approve: </b>
+            <b>Wybrane piosenki: </b>
             <br/>
             <select multiple="multiple" id='lstBox2'>
             </select>
