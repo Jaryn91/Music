@@ -12,14 +12,19 @@ namespace Musiction.API.BusinessLogic
     {
         private uint uniqueId;
 
+        private IFileAndFolderPath _fileAndFolderPath;
+
+        public PowerPointMerger(IFileAndFolderPath fileAndFolderPath)
+        {
+            _fileAndFolderPath = fileAndFolderPath;
+        }
+
         public string Merge(List<string> files)
         {
             if (files.Count < 1)
                 return "";
 
-            string outcomeFileName = "FinaleFile_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pptx";
-            string folder = Directory.GetCurrentDirectory();
-            string outcomeFilePath = Path.Combine(folder, outcomeFileName);
+            string outcomeFilePath = _fileAndFolderPath.GetMergedFilePath();
 
             try
             {
@@ -27,7 +32,7 @@ namespace Musiction.API.BusinessLogic
                 files.RemoveAt(0);
 
                 foreach (string sourcePresentation in files)
-                    MergeSlides(folder, sourcePresentation, outcomeFileName);
+                    MergeSlides(sourcePresentation, outcomeFilePath);
 
                 return outcomeFilePath;
             }
@@ -47,12 +52,12 @@ namespace Musiction.API.BusinessLogic
             }
         }
 
-        private void MergeSlides(string folder, string sourcePresentation, string outcomeFileName)
+        private void MergeSlides(string sourcePresentation, string outcomeFilePath)
         {
             int id = 0;
 
             // Open the destination presentation.
-            using (PresentationDocument myDestDeck = PresentationDocument.Open(Path.Combine(folder, outcomeFileName), true))
+            using (PresentationDocument myDestDeck = PresentationDocument.Open(outcomeFilePath, true))
             {
                 PresentationPart destPresPart = myDestDeck.PresentationPart;
 
@@ -69,7 +74,7 @@ namespace Musiction.API.BusinessLogic
 
                     // Get unique ids for the slide master and slide lists
                     // for use later.
-                    uniqueId = GetMaxSlideMasterId(destPresPart.Presentation.SlideMasterIdList);
+                    uint uniqueId = GetMaxSlideMasterId(destPresPart.Presentation.SlideMasterIdList);
 
                     uint maxSlideId = GetMaxSlideId(destPresPart.Presentation.SlideIdList);
 
@@ -119,7 +124,7 @@ namespace Musiction.API.BusinessLogic
                     }
 
                     // Make sure that all slide layout ids are unique.
-                    FixSlideLayoutIds(destPresPart);
+                    FixSlideLayoutIds(destPresPart, uniqueId);
                 }
 
                 // Save the changes to the destination deck.
@@ -127,7 +132,7 @@ namespace Musiction.API.BusinessLogic
             }
         }
 
-        private void FixSlideLayoutIds(PresentationPart presPart)
+        private void FixSlideLayoutIds(PresentationPart presPart, uint uniqueId)
         {
             // Make sure that all slide layouts have unique ids.
             foreach (SlideMasterPart slideMasterPart in

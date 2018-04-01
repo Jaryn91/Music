@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
 using Musiction.API.Models;
 using Musiction.API.Services;
@@ -19,14 +20,15 @@ namespace Musiction.API.Controllers
         private ILogger<SongsController> _logger;
         private IMailService _mailService;
         private ISongRepository _songRepository;
-
+        private IFileAndFolderPath _fileAndFolderPath;
 
         public SongsController(ILogger<SongsController> logger,
-            IMailService mailService, ISongRepository songRepository)
+            IMailService mailService, ISongRepository songRepository, IFileAndFolderPath fileAndFolderPath)
         {
             _logger = logger;
             _mailService = mailService;
             _songRepository = songRepository;
+            _fileAndFolderPath = fileAndFolderPath;
         }
 
         [HttpGet()]
@@ -70,7 +72,7 @@ namespace Musiction.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), song.PptxFile.FileName);
+            var filePath = _fileAndFolderPath.GetPresentationFilePath(song.PptxFile.FileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 await song.PptxFile.CopyToAsync(fileStream);

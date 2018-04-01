@@ -14,34 +14,45 @@ namespace Musiction.API.BusinessLogic
     public class PptxToJpgConverter
     {
         private Uri baseUri = new Uri("https://sandbox.zamzar.com/v1/");
-        private string apiKey = "";
+        private string _apiKey = "";
+        private IFileAndFolderPath _fileAndFolderPath;
+
+        public PptxToJpgConverter(IFileAndFolderPath fileAndFolderPath)
+        {
+            _fileAndFolderPath = fileAndFolderPath;
+        }
         public string Convert(string sourceFile)
         {
             string targetFormat = "jpg";
 
             var uploadUri = baseUri.Combine("jobs");
-            var jobId = Upload(apiKey, uploadUri, sourceFile, targetFormat).Result;
+            var jobId = Upload(uploadUri, sourceFile, targetFormat).Result;
 
+            var zipFile = WaitUntilSuccess(jobId);
+            var getFilebUri = baseUri.Combine("files", zipFile.id.ToString(), "content");
+            var localFilename = _fileAndFolderPath.GetZipFilePath(zipFile.name);
+
+            Download(getFilebUri, localFilename).Wait();
+            return localFilename;
+        }
+
+        private TargetFile WaitUntilSuccess(string jobId)
+        {
             var getJobUri = baseUri.Combine("jobs", jobId);
 
             Job job;
             do
             {
-                job = Query(apiKey, getJobUri).Result;
+                job = Query(getJobUri).Result;
             } while (job.status != "successful");
 
             var zipFile = job.target_files.Last();
-
-            var getFilebUri = baseUri.Combine("files", zipFile.id.ToString(), "content");
-            var folder = Directory.GetCurrentDirectory();
-            var localFilename = Path.Combine(folder, zipFile.name);
-            Download(apiKey, getFilebUri, localFilename).Wait();
-            return localFilename;
+            return zipFile;
         }
 
-        static async Task<string> Upload(string key, Uri url, string sourceFile, string targetFormat)
+        private async Task<string> Upload(Uri url, string sourceFile, string targetFormat)
         {
-            using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(key, "") })
+            using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(_apiKey, "") })
             using (HttpClient client = new HttpClient(handler))
             {
                 var request = new MultipartFormDataContent();
@@ -57,9 +68,9 @@ namespace Musiction.API.BusinessLogic
             }
         }
 
-        static async Task<Job> Query(string key, Uri url)
+        private async Task<Job> Query(Uri url)
         {
-            using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(key, "") })
+            using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(_apiKey, "") })
             using (HttpClient client = new HttpClient(handler))
             using (HttpResponseMessage response = await client.GetAsync(url))
             using (HttpContent content = response.Content)
@@ -70,9 +81,9 @@ namespace Musiction.API.BusinessLogic
             }
         }
 
-        static async Task<JObject> Download(string key, Uri url, string file)
+        private async Task<JObject> Download(Uri url, string file)
         {
-            using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(key, "") })
+            using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(_apiKey, "") })
             using (HttpClient client = new HttpClient(handler))
             using (HttpResponseMessage response = await client.GetAsync(url))
             using (HttpContent content = response.Content)

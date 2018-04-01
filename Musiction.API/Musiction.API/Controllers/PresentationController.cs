@@ -12,13 +12,16 @@ namespace Musiction.API.Controllers
         private ILogger<SongsController> _logger;
         private IMailService _mailService;
         private ISongRepository _songRepository;
+        private IFileAndFolderPath _fileAndFolderPath;
 
-        public PresentationController(ILogger<SongsController> logger, IMailService mailService, ISongRepository songRepository)
+        public PresentationController(ILogger<SongsController> logger, IMailService mailService, ISongRepository songRepository, IFileAndFolderPath fileAndFolderPath)
         {
             _logger = logger;
             _mailService = mailService;
             _songRepository = songRepository;
+            _fileAndFolderPath = fileAndFolderPath;
         }
+
 
         [HttpGet("{returnLinkTo}")]
 
@@ -32,14 +35,14 @@ namespace Musiction.API.Controllers
                 paths.Add(song.Path);
             }
 
-            var merger = new PowerPointMerger();
+            var merger = new PowerPointMerger(_fileAndFolderPath);
             var pathToCombinedPptx = merger.Merge(paths);
 
             if (returnLinkTo == "pptx")
                 return Ok(pathToCombinedPptx);
             else if (returnLinkTo == "zip")
             {
-                var pptxConverter = new PptxToJpgConverter();
+                var pptxConverter = new PptxToJpgConverter(_fileAndFolderPath);
                 var pathToZip = pptxConverter.Convert(pathToCombinedPptx);
                 return Ok(pathToZip);
             }
