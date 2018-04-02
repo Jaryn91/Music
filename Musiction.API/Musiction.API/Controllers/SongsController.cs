@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Musiction.API.BusinessLogic;
@@ -92,13 +91,15 @@ namespace Musiction.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateSong(int id, [FromBody] SongForUpdateDto song)
+        public IActionResult UpdateSong(int id, SongForUpdateDto song)
         {
             if (song == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            //ifSongisUpdatedThenRemoveOldOneAndAddNewOne
 
             var songToUpdate = _songRepository.GetSong(id);
 
@@ -112,41 +113,6 @@ namespace Musiction.API.Controllers
                 return StatusCode(500, "A problem happend durning updating a song");
             }
 
-
-            return NoContent();
-        }
-
-        [HttpPatch("{id}")]
-        public IActionResult PartiallyUpdateSong(int id,
-            [FromBody] JsonPatchDocument<SongForUpdateDto> patchSong)
-        {
-            if (patchSong == null)
-                return BadRequest();
-
-
-            var songToUpdate = _songRepository.GetSong(id);
-            if (songToUpdate == null)
-                return NotFound();
-
-
-            var songToPatch = Mapper.Map<SongForUpdateDto>(songToUpdate);
-
-            patchSong.ApplyTo(songToPatch, ModelState);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            TryValidateModel(songToPatch);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            Mapper.Map(songToPatch, songToUpdate);
-
-            if (!_songRepository.Save())
-            {
-                return StatusCode(500, "A problem happend durning updating a song");
-            }
 
             return NoContent();
         }

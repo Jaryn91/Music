@@ -1,0 +1,112 @@
+﻿<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="mystyle.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.getJSON("http://localhost:60870/api/songs/",
+                function (data) {
+                    var option = '';
+                    for (var i = 0; i < data.length; i++) {
+                        option += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                    }
+                    $('#lstBox1').append(option);
+                });
+
+            $('#btnRight').click(function (e) {
+                var selectedOpts = $('#lstBox1 option:selected');
+                if (selectedOpts.length == 0) {
+                    alert("Nothing to move.");
+                    e.preventDefault();
+                }
+                getSong(selectedOpts.val());
+
+                e.preventDefault();
+            });
+
+
+
+            $('#updateSong').click(function (e) {
+                var request = "http://localhost:60870/api/songs/" + $('#songId').val();
+                callService(request);
+
+            });
+
+
+        });
+
+        function getSong(id) {
+            $.getJSON("http://localhost:60870/api/songs/" + id,
+                function (data) {
+                    $('#songId').val(data.id);
+                    $('#songName').val(data.name);
+                    $('#songYouTube').val(data.youTube);
+                    $("#songPPTX").attr("href", data.path)
+                });
+        };
+
+        function callService(urlRequest) {
+            var formData = new FormData();
+            formData.append("Name", $('#songName').val());
+            formData.append("YouTube", $('#songYouTube').val());
+            if ($('#myfile')[0] != null)
+                formData.append('PptxFile', $('#myfile')[0].files[0]); 
+
+            $.ajax({
+                url: urlRequest,
+                type: "PUT",
+                data: formData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (result) {
+                },
+                error: function (jqXHR) {
+                },
+                complete: function (jqXHR, status) {
+                }
+            });
+        };
+    </script>
+</head>
+
+<body>
+
+    <div class="approveTermsContainer">
+        <div class="newItems">
+            <b>Wybierz piosenkę:</b>
+            <br />
+            <select multiple="multiple" id='lstBox1'></select>
+        </div>
+        <div class="transferBtns">
+            <center>
+                <input type='button' id='btnRight' value='  >  ' />
+                <br />
+                <input type='button' id='btnLeft' value='  <  ' />
+                <div class="submitContainer">
+                    <input type="submit" id="updateSong" value='AKTUALIZUJ PIOSENKĘ' />
+                </div>
+            </center>
+        </div>
+        <div class="approvedItems">
+            <b>Nowe dane piosenki:</b>
+            <br />
+            Id: <input id="songId" readonly />
+            <br />
+            <br />
+            Nazwa: <input id="songName" />
+            <br />
+            <br />
+            You Tube: <input id="songYouTube" />
+            <br />
+            <br />
+            Prezentacja: <input type="file" name="files" id="songFile" />
+            <br>
+            <a href="" id="songPPTX">Pobierz piosenkę</a>
+
+
+        </div>
+    </div>
+</body>
+
+</html>

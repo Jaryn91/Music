@@ -1,0 +1,92 @@
+﻿<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="mystyle.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.getJSON("http://localhost:60870/api/songs/",
+                function (data) {
+                    var option = '';
+                    for (var i = 0; i < data.length; i++) {
+                        option += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                    }
+                    $('#lstBox1').append(option);
+                });
+
+            $('#btnRight').click(function (e) {
+                var selectedOpts = $('#lstBox1 option:selected');
+                if (selectedOpts.length == 0) {
+                    alert("Nothing to move.");
+                    e.preventDefault();
+                }
+
+                $('#lstBox2').append($(selectedOpts).clone());
+                $(selectedOpts).remove();
+                e.preventDefault();
+            });
+
+            $('#btnLeft').click(function (e) {
+                var selectedOpts = $('#lstBox2 option:selected');
+                if (selectedOpts.length == 0) {
+                    alert("Nothing to move.");
+                    e.preventDefault();
+                }
+
+                $('#lstBox1').append($(selectedOpts).clone());
+                $(selectedOpts).remove();
+                e.preventDefault();
+            });
+
+            $('#deleteSong').click(function (e) {
+                var request = "http://localhost:60870/api/songs/";
+                $('#lstBox2 option').each(function () {
+                    callService(request + $(this).val());
+                    $(this).remove();
+                    e.preventDefault();
+                });
+                //location.reload();
+            });
+
+
+        });
+
+        function callService(urlRequest) {
+            $.ajax({
+                url: urlRequest,
+                type: 'DELETE',
+                success: function (result) {
+                    alert("usunięto");  
+                }
+            });
+        };
+    </script>
+</head>
+
+<body>
+
+    <div class="approveTermsContainer">
+        <div class="newItems">
+            <b>Wybierz piosenkę:</b>
+            <br />
+            <select multiple="multiple" id='lstBox1'></select>
+        </div>
+        <div class="transferBtns">
+            <center>
+                <input type='button' id='btnRight' value='  >  ' />
+                <br />
+                <input type='button' id='btnLeft' value='  <  ' />
+                <div class="submitContainer">
+                    <input type="submit" id="deleteSong" value='USUŃ PIOSENKI' />
+                </div>
+            </center>
+        </div>
+        <div class="approvedItems">
+            <b>Usuń piosenki:</b>
+            <br />
+            <select multiple="multiple" id='lstBox2'></select>
+        </div>
+    </div>
+</body>
+
+</html>
