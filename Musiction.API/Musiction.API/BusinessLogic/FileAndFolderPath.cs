@@ -1,14 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Musiction.API.BusinessLogic
 {
-    public class FileAndFolderPath : IFileAndFolderPath
+    public class FileAndFolderPathsCreator : IFileAndFolderPathsCreator
     {
         private string _folder = Directory.GetCurrentDirectory();
+        private const string PptxExtension = ".pptx";
         public string GetMergedFilePath()
         {
-            string outcomeFileName = "FinaleFile_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pptx";
+            string outcomeFileName = "FinaleFile_" + DateTime.Now.ToString("yyyyMMddHHmmss") + PptxExtension;
             string folderPath = Path.Combine(_folder, Startup.Configuration["folderSettings:mergedPath"]);
             EnsurePathExists(folderPath);
             string outcomeFilePath = Path.Combine(folderPath, outcomeFileName);
@@ -23,10 +26,13 @@ namespace Musiction.API.BusinessLogic
             return outcomeFilePath;
         }
 
-        public string GetPresentationFilePath(string pptxName)
+        public string GetPresentationFilePath(string songName)
         {
             string folderPath = Path.Combine(_folder, Startup.Configuration["folderSettings:presentationPath"]);
             EnsurePathExists(folderPath);
+
+            var pptxName = CreatePresentationName(songName);
+
             string outcomeFilePath = Path.Combine(folderPath, pptxName);
             return outcomeFilePath;
         }
@@ -37,6 +43,26 @@ namespace Musiction.API.BusinessLogic
             {
                 Directory.CreateDirectory(path);
             }
+        }
+
+        private string CreatePresentationName(string songName)
+        {
+            var withoutPolishLetters = RemoveDiacritics(songName);
+            var pptxSongName = RemoveSpecialCharacters(withoutPolishLetters);
+            return "pptx_" + pptxSongName + PptxExtension;
+        }
+
+
+        private string RemoveDiacritics(string songName)
+        {
+            string asciiEquivalents = Encoding.ASCII.GetString(Encoding.GetEncoding("Cyrillic").GetBytes(songName));
+
+            return asciiEquivalents;
+        }
+
+        private string RemoveSpecialCharacters(string str)
+        {
+            return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
         }
     }
 }

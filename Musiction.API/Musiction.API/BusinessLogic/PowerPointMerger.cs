@@ -12,9 +12,9 @@ namespace Musiction.API.BusinessLogic
     {
         private uint uniqueId;
 
-        private IFileAndFolderPath _fileAndFolderPath;
+        private IFileAndFolderPathsCreator _fileAndFolderPath;
 
-        public PowerPointMerger(IFileAndFolderPath fileAndFolderPath)
+        public PowerPointMerger(IFileAndFolderPathsCreator fileAndFolderPath)
         {
             _fileAndFolderPath = fileAndFolderPath;
         }

@@ -7,7 +7,6 @@ using Musiction.API.Models;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Musiction.API.Controllers
@@ -19,15 +18,17 @@ namespace Musiction.API.Controllers
         private ILogger<SongsController> _logger;
         private IMailService _mailService;
         private ISongRepository _songRepository;
-        private IFileAndFolderPath _fileAndFolderPath;
+        private IFileAndFolderPathsCreator _fileAndFolderPath;
+        private IFileSaver _fileSaver;
 
         public SongsController(ILogger<SongsController> logger,
-            IMailService mailService, ISongRepository songRepository, IFileAndFolderPath fileAndFolderPath)
+            IMailService mailService, ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath, IFileSaver fileSaver)
         {
             _logger = logger;
             _mailService = mailService;
             _songRepository = songRepository;
             _fileAndFolderPath = fileAndFolderPath;
+            _fileSaver = fileSaver;
         }
 
         [HttpGet()]
@@ -71,14 +72,10 @@ namespace Musiction.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var filePath = _fileAndFolderPath.GetPresentationFilePath(song.PptxFile.FileName);
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await song.PptxFile.CopyToAsync(fileStream);
-            }
+            var filePath = _fileSaver.SaveSong(song.PptxFile, song.Name);
 
             var finalSong = Mapper.Map<Song>(song);
-            finalSong.Path = filePath;
+            finalSong.Path = filePath.Result;
 
             if (!_songRepository.AddSong(finalSong))
             {
@@ -99,14 +96,23 @@ namespace Musiction.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            //ifSongisUpdatedThenRemoveOldOneAndAddNewOne
-
             var songToUpdate = _songRepository.GetSong(id);
+
+            string newSongPath = "";
+            if (songToUpdate.Name != song.Name)
+                newSongPath = _fileSaver.UpdateSongPath(songToUpdate.Path, song.Name);
+
+
+            if (song.PptxFile != null)
+                newSongPath = _fileSaver.SaveSong(song.PptxFile, song.Name).Result;
 
             if (songToUpdate == null)
                 return NotFound();
 
             Mapper.Map(song, songToUpdate);
+
+            if (song.PptxFile != null || songToUpdate.Name != song.Name)
+                songToUpdate.Path = newSongPath;
 
             if (!_songRepository.Save())
             {
@@ -121,6 +127,8 @@ namespace Musiction.API.Controllers
         public IActionResult DeleteSong(int id)
         {
             var songToDelete = _songRepository.GetSong(id);
+
+            _fileSaver.DeleteSong(songToDelete.Path);
 
             if (songToDelete == null)
                 return NotFound();

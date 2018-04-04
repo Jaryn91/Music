@@ -50,8 +50,8 @@
             var formData = new FormData();
             formData.append("Name", $('#songName').val());
             formData.append("YouTube", $('#songYouTube').val());
-            if ($('#myfile')[0] != null)
-                formData.append('PptxFile', $('#myfile')[0].files[0]); 
+            if ($('#songFile')[0] != null)
+                formData.append('PptxFile', $('#songFile')[0].files[0]); 
 
             $.ajax({
                 url: urlRequest,

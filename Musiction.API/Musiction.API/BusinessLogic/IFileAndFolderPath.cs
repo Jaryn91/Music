@@ -1,6 +1,6 @@
 ﻿namespace Musiction.API.BusinessLogic
 {
-    public interface IFileAndFolderPath
+    public interface IFileAndFolderPathsCreator
     {
         string GetMergedFilePath();
         string GetZipFilePath(string zipName);

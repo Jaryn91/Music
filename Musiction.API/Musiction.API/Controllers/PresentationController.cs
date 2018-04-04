@@ -12,9 +12,9 @@ namespace Musiction.API.Controllers
         private ILogger<SongsController> _logger;
         private IMailService _mailService;
         private ISongRepository _songRepository;
-        private IFileAndFolderPath _fileAndFolderPath;
+        private IFileAndFolderPathsCreator _fileAndFolderPath;
 
-        public PresentationController(ILogger<SongsController> logger, IMailService mailService, ISongRepository songRepository, IFileAndFolderPath fileAndFolderPath)
+        public PresentationController(ILogger<SongsController> logger, IMailService mailService, ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath)
         {
             _logger = logger;
             _mailService = mailService;

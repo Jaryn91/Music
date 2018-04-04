@@ -35,7 +35,8 @@ namespace Musiction.API
             services.AddDbContext<SongContext>(o => o.UseSqlServer(connectionString));
 
             services.AddScoped<ISongRepository, SongRepository>();
-            services.AddSingleton<IFileAndFolderPath, FileAndFolderPath>();
+            services.AddSingleton<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
+            services.AddSingleton<IFileSaver, FileSaver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,7 +9,7 @@
         $(document).ready(function () {
             $('#saveSong').click(function () {
                 var formData = new FormData();
-                formData.append("Name", "accountName");
+                formData.append("Name", $('#name').val());
 
                 formData.append('PptxFile', $('#myfile')[0].files[0]); // myFile is the input type="file" control
 
@@ -26,6 +26,7 @@
                     error: function (jqXHR) {
                     },
                     complete: function (jqXHR, status) {
+                        alert("dodano piosnkę")
                     }
                 });
             });

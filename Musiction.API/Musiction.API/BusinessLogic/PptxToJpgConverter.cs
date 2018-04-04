@@ -15,9 +15,9 @@ namespace Musiction.API.BusinessLogic
     {
         private Uri baseUri = new Uri("https://sandbox.zamzar.com/v1/");
         private string _apiKey = "";
-        private IFileAndFolderPath _fileAndFolderPath;
+        private IFileAndFolderPathsCreator _fileAndFolderPath;
 
-        public PptxToJpgConverter(IFileAndFolderPath fileAndFolderPath)
+        public PptxToJpgConverter(IFileAndFolderPathsCreator fileAndFolderPath)
         {
             _fileAndFolderPath = fileAndFolderPath;
         }

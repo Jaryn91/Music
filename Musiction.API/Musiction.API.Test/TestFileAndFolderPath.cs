@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Musiction.API.Test
 {
-    public class TestFileAndFolderPath : IFileAndFolderPath
+    public class TestFileAndFolderPath : IFileAndFolderPathsCreator
     {
         public string GetMergedFilePath()
         {
