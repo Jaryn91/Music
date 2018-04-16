@@ -54,7 +54,7 @@ namespace Musiction.API.Controllers
                 var song = Mapper.Map<SongDto>(songToReturn);
                 return Ok(song);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _logger.LogInformation($"Excepction occoured while looking for song with {id}");
                 return StatusCode(500, "A problem happend on GetSong");

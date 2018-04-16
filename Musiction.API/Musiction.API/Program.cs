@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Musiction.API
 {
@@ -19,6 +13,15 @@ namespace Musiction.API
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>
+            {
+                var environment = webHostBuilderContext.HostingEnvironment;
+                configurationbuilder
+                        .AddJsonFile("appSettings.json", optional: false);
+
+
+                configurationbuilder.AddEnvironmentVariables();
+            })
                 .UseStartup<Startup>()
                 .Build();
     }

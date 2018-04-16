@@ -11,6 +11,7 @@ using Musiction.API.Entities;
 using Musiction.API.Models;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
+using System.Text;
 
 namespace Musiction.API
 {
@@ -18,7 +19,7 @@ namespace Musiction.API
     {
         public static IConfiguration Configuration { get; private set; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
         }
@@ -27,12 +28,28 @@ namespace Musiction.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            //Encoding.GetEncoding("windows-1254");
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+            });
+
             services.AddMvc();
 
             services.AddTransient<IMailService, LocalMailService>();
 
-            var connectionString = Startup.Configuration["connectionStrings:songDBConnectionString"];
-            services.AddDbContext<SongContext>(o => o.UseSqlServer(connectionString));
+            var connectionString = Startup.Configuration["connectionStrings"];
+            services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
 
             services.AddScoped<ISongRepository, SongRepository>();
             services.AddSingleton<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
@@ -44,10 +61,10 @@ namespace Musiction.API
             SongContext songContext)
         {
             loggerFactory.AddConsole();
-
             loggerFactory.AddDebug();
-
             loggerFactory.AddNLog();
+
+
 
             songContext.EnsureSeedDataForContext();
 
@@ -55,6 +72,8 @@ namespace Musiction.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+
             app.UseStatusCodePages();
 
             Mapper.Initialize(cfg =>
@@ -65,6 +84,7 @@ namespace Musiction.API
                 cfg.CreateMap<SongForUpdateDto, Song>();
 
             });
+            app.UseCors("AllowAll");
             app.UseMvc();
 
             app.Run(async (context) =>

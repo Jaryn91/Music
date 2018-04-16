@@ -12,7 +12,7 @@ namespace Musiction.API.Test
         public void CheckNuberOfSlides()
         {
             var FiveSlidesFile = Path.Combine(Directory.GetCurrentDirectory(), @"testFiles\FiveSlides.pptx");
-            PowerPointMerger merger = new PowerPointMerger(new TestFileAndFolderPath());
+            PowerPointMerger merger = new PowerPointMerger(new FileAndFolderPathMock());
 
             var numberOfSliedes = merger.GetNumberOfSlides(FiveSlidesFile);
 
@@ -28,7 +28,7 @@ namespace Musiction.API.Test
             var test2File = Path.Combine(Directory.GetCurrentDirectory(), @"testFiles\test2.pptx");
 
             List<string> files = new List<string>() { test0File, test1File, test2File };
-            PowerPointMerger merger = new PowerPointMerger(new TestFileAndFolderPath());
+            PowerPointMerger merger = new PowerPointMerger(new FileAndFolderPathMock());
 
             //ACT
             var filePath = merger.Merge(files);
