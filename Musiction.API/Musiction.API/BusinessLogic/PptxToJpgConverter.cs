@@ -14,12 +14,15 @@ namespace Musiction.API.BusinessLogic
     public class PptxToJpgConverter
     {
         private Uri baseUri = new Uri("https://sandbox.zamzar.com/v1/");
-        private string _apiKey = Startup.Configuration["zamzarKey"];
+        private string _apiKey;
         private IFileAndFolderPathsCreator _fileAndFolderPath;
 
         public PptxToJpgConverter(IFileAndFolderPathsCreator fileAndFolderPath)
         {
             _fileAndFolderPath = fileAndFolderPath;
+
+            var propName = Startup.Configuration["environment"] + "ZamzarKey";
+            _apiKey = Startup.Configuration[propName];
         }
         public string Convert(string sourceFile)
         {

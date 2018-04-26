@@ -48,7 +48,9 @@ namespace Musiction.API
 
             services.AddTransient<IMailService, LocalMailService>();
 
-            var connectionString = Startup.Configuration["connectionStrings"];
+            var propName = Startup.Configuration["environment"] + "ConnectionString";
+            var connectionString = Startup.Configuration[propName];
+
             services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
 
             services.AddScoped<ISongRepository, SongRepository>();
@@ -63,8 +65,6 @@ namespace Musiction.API
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
             loggerFactory.AddNLog();
-
-
 
             songContext.EnsureSeedDataForContext();
 
