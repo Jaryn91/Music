@@ -18,7 +18,6 @@ namespace Musiction.API
 
         public static IWebHost BuildWebHost(string[] args)
         {
-
             var element = WebHost.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>
             {
@@ -29,6 +28,7 @@ namespace Musiction.API
                                     .AddCommandLine(args)
                                     .AddUserSecrets<Startup>();
             })
+                .UseUrls(new ConfigurationBuilder().AddCommandLine(args).Build()["url"])
                 .UseStartup<Startup>()
                 .Build();
 
