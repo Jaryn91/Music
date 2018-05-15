@@ -4,8 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <title>Dodaj piosenkę</title>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>\
+	<script type="text/javascript" src="Domain.js"></script>
     <script>
+		var link = GetDomain();
         $(document).ready(function () {
             $('#saveSong').click(function () {
                 var formData = new FormData();
@@ -13,7 +15,7 @@
 
                 formData.append('PptxFile', $('#myfile')[0].files[0]); // myFile is the input type="file" control
 
-                var _url = 'http://localhost:60870/api/songs/';
+                var _url = link + 'api/songs/';
 
                 $.ajax({
                     url: _url,
@@ -26,28 +28,42 @@
                     error: function (jqXHR) {
                     },
                     complete: function (jqXHR, status) {
-                        alert("dodano piosnkę")
+                        alert("dodano piosnkę");
+						reset($('#name'))
+						reset($('#youtube'))
+						reset($('#myfile'))
                     }
                 });
             });
         });
+		
+		window.reset = function (e) {
+		e.wrap('<form>').closest('form').get(0).reset();
+		e.unwrap();
+}
     </script>
 </head>
 
 <body>
     <div>
-        Name:
-        <input id="name" />
-        <br /> Prezentacja:
-        <input type="file" name="files" id="myfile" />
-        <br/> YouTube:
-        <input id="youtube" />
-
+		<form>
+			Name:
+			<input id="name" />
+			<br /> Prezentacja:
+			<input type="file" name="files" id="myfile" />
+			<br/> YouTube:
+			<input id="youtube" />
+		</form>
     </div>
     <div>
         <input type="submit" id="saveSong" value='Zapisz piosenkę' />
     </div>
-
+	</br>
+	</br>
+	<a href="index.html">Stwórz prezentację</a> </br>
+	<a href="addSong.html">Dodaj piosenkę</a></br>
+	<a href="deleteSong.html">Usuń piosenkę</a></br>
+	<a href="updateSong.html">Uaktualnij piosenkę</a></br>
 </body>
 
 </html>

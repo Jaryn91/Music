@@ -3,9 +3,12 @@
 <head>
     <link rel="stylesheet" type="text/css" href="mystyle.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="Domain.js"></script>
     <script>
+		var link = GetDomain();
+	
         $(document).ready(function () {
-            $.getJSON("http://localhost:60870/api/songs/",
+            $.getJSON(link + "api/songs/",
                 function (data) {
                     var option = '';
                     for (var i = 0; i < data.length; i++) {
@@ -45,7 +48,7 @@
                 });
 
                 request = request.slice(0, -1)
-                var urlRequest = "http://localhost:60870/api/presentation/" + request;
+                var urlRequest = link + "api/presentation/" + request;
 
                 callService(urlRequest);
             });
@@ -57,7 +60,7 @@
                 });
 
                 request = request.slice(0, -1)
-                var urlRequest = "http://localhost:60870/api/presentation/" + request;
+                var urlRequest = link + "api/presentation/" + request;
                 callService(urlRequest);
             });
         });
@@ -104,6 +107,12 @@
             </select>
         </div>
     </div>
+	</br>
+	</br>
+	<a href="index.html">Stwórz prezentację</a> </br>
+	<a href="addSong.html">Dodaj piosenkę</a></br>
+	<a href="deleteSong.html">Usuń piosenkę</a></br>
+	<a href="updateSong.html">Uaktualnij piosenkę</a></br>
 </body>
 
 </html>

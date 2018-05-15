@@ -287,3 +287,4 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /Musiction.API/Musiction.API/Files/Presentation
+/Musiction.API/Musiction.API/Files/Merged

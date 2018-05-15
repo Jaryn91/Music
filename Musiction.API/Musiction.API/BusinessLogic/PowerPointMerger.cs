@@ -92,8 +92,7 @@ namespace Musiction.API.BusinessLogic
                         id++;
                         sp = (SlidePart)sourcePresPart.GetPartById(slideId.RelationshipId);
 
-                        relId = sourcePresentation.Remove(sourcePresentation.LastIndexOf('.')) + id;
-                        relId = relId.Substring(relId.LastIndexOf('\\') + 1);
+                        relId = Path.GetFileNameWithoutExtension(sourcePresentation) + id;
 
                         // Add the slide part to the destination presentation.
                         destSp = destPresPart.AddPart<SlidePart>(sp, relId);

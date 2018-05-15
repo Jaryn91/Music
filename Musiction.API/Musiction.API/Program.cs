@@ -13,6 +13,7 @@ namespace Musiction.API
                 } };
 
         private static string env;
+
         public static void Main(string[] args)
         {
             BuildWebHost(args).Run();
@@ -27,7 +28,6 @@ namespace Musiction.API
                 webHostBuilderContext.HostingEnvironment.EnvironmentName = SetHostingEnvironment(args);
                 configurationbuilder.AddJsonFile("appSettings.json", optional: false)
                                     .AddInMemoryCollection(defaults)
-                                    .AddEnvironmentVariables("ASPNETCORE_")
                                     .AddCommandLine(args)
                                     .AddUserSecrets<Startup>();
             })

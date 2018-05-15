@@ -3,9 +3,11 @@
 <head>
     <link rel="stylesheet" type="text/css" href="mystyle.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="Domain.js"></script>
     <script>
+		var link = GetDomain();
         $(document).ready(function () {
-            $.getJSON("http://localhost:60870/api/songs/",
+            $.getJSON(link + "api/songs/",
                 function (data) {
                     var option = '';
                     for (var i = 0; i < data.length; i++) {
@@ -39,7 +41,7 @@
             });
 
             $('#deleteSong').click(function (e) {
-                var request = "http://localhost:60870/api/songs/";
+                var request = link + "api/songs/";
                 $('#lstBox2 option').each(function () {
                     callService(request + $(this).val());
                     $(this).remove();
@@ -87,6 +89,12 @@
             <select multiple="multiple" id='lstBox2'></select>
         </div>
     </div>
+		</br>
+	</br>
+	<a href="index.html">Stwórz prezentację</a> </br>
+	<a href="addSong.html">Dodaj piosenkę</a></br>
+	<a href="deleteSong.html">Usuń piosenkę</a></br>
+	<a href="updateSong.html">Uaktualnij piosenkę</a></br>
 </body>
 
 </html>
