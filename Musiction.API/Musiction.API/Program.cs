@@ -28,11 +28,22 @@ namespace Musiction.API
                                     .AddCommandLine(args)
                                     .AddUserSecrets<Startup>();
             })
-                .UseUrls(new ConfigurationBuilder().AddCommandLine(args).Build()["url"])
+                .UseUrls(GetUrl(args))
                 .UseStartup<Startup>()
                 .Build();
 
             return element;
+        }
+
+        private static string GetUrl(string[] args)
+        {
+            var env = new ConfigurationBuilder().AddCommandLine(args).Build()["environment"];
+            if (env == "dev")
+                return @"http://localhost:5060";
+            if (env == "prod")
+                return @"http://localhost:5050";
+
+            return null;
         }
     }
 }
