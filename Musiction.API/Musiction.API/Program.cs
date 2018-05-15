@@ -11,6 +11,8 @@ namespace Musiction.API
             new Dictionary<string, string> { {
                     WebHostDefaults.EnvironmentKey, "development"
                 } };
+
+        private static string env;
         public static void Main(string[] args)
         {
             BuildWebHost(args).Run();
@@ -18,10 +20,11 @@ namespace Musiction.API
 
         public static IWebHost BuildWebHost(string[] args)
         {
+            env = new ConfigurationBuilder().AddCommandLine(args).Build()["environment"];
             var element = WebHost.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>
             {
-                var environment = webHostBuilderContext.HostingEnvironment;
+                webHostBuilderContext.HostingEnvironment.EnvironmentName = SetHostingEnvironment(args);
                 configurationbuilder.AddJsonFile("appSettings.json", optional: false)
                                     .AddInMemoryCollection(defaults)
                                     .AddEnvironmentVariables("ASPNETCORE_")
@@ -37,13 +40,20 @@ namespace Musiction.API
 
         private static string GetUrl(string[] args)
         {
-            var env = new ConfigurationBuilder().AddCommandLine(args).Build()["environment"];
             if (env == "dev")
                 return @"http://localhost:5060";
             if (env == "prod")
                 return @"http://localhost:5050";
 
             return null;
+        }
+
+        private static string SetHostingEnvironment(string[] args)
+        {
+            if (env == "prod")
+                return "Production";
+
+            return "Development";
         }
     }
 }
