@@ -9,10 +9,17 @@ namespace Musiction.API.BusinessLogic
 {
     public class FileAndFolderPathsCreator : IFileAndFolderPathsCreator
     {
-        private string _folder = Directory.GetCurrentDirectory();
+        private string _folder;
         private const string _pptxExtension = ".pptx";
         private const string _pptxPrefix = "pptx_";
         private const string _finaleMergedFilePrefix = "finaleFile_";
+
+        public FileAndFolderPathsCreator()
+        {
+            var propName = Startup.Configuration["environment"] + "FileRoot";
+            _folder = Startup.Configuration[propName];
+        }
+
         public string GetMergedFilePath()
         {
             var folderPath = GetCombinedFolderPath("folderSettings:mergedPath");
