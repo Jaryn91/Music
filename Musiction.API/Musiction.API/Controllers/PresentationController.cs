@@ -39,17 +39,19 @@ namespace Musiction.API.Controllers
             var pathToCombinedPptx = merger.Merge(paths);
 
             if (returnLinkTo == "pptx")
-                return Ok(pathToCombinedPptx);
+            {
+                string webAddess = _fileAndFolderPath.GetWebAddressToFile(pathToCombinedPptx);
+                return Ok(webAddess);
+            }
             else if (returnLinkTo == "zip")
             {
                 var pptxConverter = new PptxToJpgConverter(_fileAndFolderPath);
                 var pathToZip = pptxConverter.Convert(pathToCombinedPptx);
-                return Ok(pathToZip);
+                string webAddess = _fileAndFolderPath.GetWebAddressToFile(pathToZip);
+                return Ok(webAddess);
             }
 
             return BadRequest();
-
-
         }
     }
 }

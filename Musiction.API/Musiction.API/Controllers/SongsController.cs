@@ -52,6 +52,7 @@ namespace Musiction.API.Controllers
                 }
 
                 var song = Mapper.Map<SongDto>(songToReturn);
+                song.Path = _fileAndFolderPath.GetWebAddressToFile(song.Path);
                 return Ok(song);
             }
             catch (Exception)

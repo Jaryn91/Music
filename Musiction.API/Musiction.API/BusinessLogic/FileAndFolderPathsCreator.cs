@@ -10,14 +10,17 @@ namespace Musiction.API.BusinessLogic
     public class FileAndFolderPathsCreator : IFileAndFolderPathsCreator
     {
         private string _folder;
+        private string _webAddress;
         private const string _pptxExtension = ".pptx";
         private const string _pptxPrefix = "pptx_";
         private const string _finaleMergedFilePrefix = "finaleFile_";
 
         public FileAndFolderPathsCreator()
         {
-            var propName = Startup.Configuration["environment"] + "FileRoot";
-            _folder = Startup.Configuration[propName];
+            var fileRoot = Startup.Configuration["environment"] + "FileRoot";
+            _folder = Startup.Configuration[fileRoot];
+            var webAddress = Startup.Configuration["environment"] + "WebAddress";
+            _webAddress = Startup.Configuration[webAddress];
         }
 
         public string GetMergedFilePath()
@@ -77,6 +80,11 @@ namespace Musiction.API.BusinessLogic
             var folderPath = Path.Combine(list.ToArray());
             EnsurePathExists(folderPath);
             return folderPath;
+        }
+
+        public string GetWebAddressToFile(string path)
+        {
+            return path.Replace(_folder, _webAddress);
         }
     }
 }

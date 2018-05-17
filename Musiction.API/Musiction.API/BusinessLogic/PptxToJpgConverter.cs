@@ -33,10 +33,11 @@ namespace Musiction.API.BusinessLogic
 
             var zipFile = WaitUntilSuccess(jobId);
             var getFilebUri = baseUri.Combine("files", zipFile.id.ToString(), "content");
-            var localFilename = _fileAndFolderPath.GetZipFilePath(zipFile.name);
+            var localFileName = _fileAndFolderPath.GetZipFilePath(zipFile.name);
 
-            Download(getFilebUri, localFilename).Wait();
-            return localFilename;
+            Download(getFilebUri, localFileName).Wait();
+
+            return localFileName;
         }
 
         private TargetFile WaitUntilSuccess(string jobId)

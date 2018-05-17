@@ -1,4 +1,4 @@
 function GetDomain() {
-    return "http://muzycznypoligon.tomaszjarzynski.ovh/"
-    // return "http://localhost:5060/";
+    // return "http://muzycznypoligon.tomaszjarzynski.ovh/"
+    return "http://localhost:5060/";
 }
