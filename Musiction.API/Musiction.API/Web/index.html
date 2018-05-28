@@ -74,7 +74,8 @@
         };
 
         function sendAlert(data) {
-            window.location.href = data;
+            $('#textarea').val(data.inforamtion);
+            window.location.href = data.path;
         };
     </script>
 </head>

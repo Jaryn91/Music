@@ -57,6 +57,7 @@ namespace Musiction.API
             services.AddScoped<ISongRepository, SongRepository>();
             services.AddSingleton<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
             services.AddSingleton<IFileSaver, FileSaver>();
+            services.AddSingleton<IOutcomeTextCreator, OutcomeTextCreator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

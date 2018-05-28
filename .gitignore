@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 /Musiction.API/Musiction.API/Files/Presentation
 /Musiction.API/Musiction.API/Files/Merged
+/Musiction.API/Musiction.API/Files/Zip

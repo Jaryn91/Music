@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Services;
@@ -15,13 +14,17 @@ namespace Musiction.API.Controllers
         private IMailService _mailService;
         private ISongRepository _songRepository;
         private IFileAndFolderPathsCreator _fileAndFolderPath;
+        private IOutcomeTextCreator _outcomeTextCreator;
 
-        public PresentationController(ILogger<SongsController> logger, IMailService mailService, ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath)
+        public PresentationController(ILogger<SongsController> logger, IMailService mailService,
+            ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath,
+            IOutcomeTextCreator outcomeTextCreator)
         {
             _logger = logger;
             _mailService = mailService;
             _songRepository = songRepository;
             _fileAndFolderPath = fileAndFolderPath;
+            _outcomeTextCreator = outcomeTextCreator;
         }
 
 
@@ -29,30 +32,17 @@ namespace Musiction.API.Controllers
 
         public IActionResult Presentation(string returnLinkTo, [FromQuery]List<int> ids)
         {
-            var songs = _songRepository.GetSongsInOrder(ids);
-
-            var paths = new List<string>();
-            foreach (var song in songs)
-            {
-                paths.Add(song.Path);
-            }
-
-            var merger = new PowerPointMerger(_fileAndFolderPath);
-            var pathToCombinedPptx = merger.Merge(paths);
-
-            var presentationResponse = new PresentationResponse();
+            var presentationResponse = new PresentationResponse(_fileAndFolderPath, _outcomeTextCreator, _songRepository);
 
             if (returnLinkTo == "pptx")
             {
-                string webAddess = _fileAndFolderPath.GetWebAddressToFile(pathToCombinedPptx);
-                return Ok(webAddess);
+                var response = presentationResponse.CreatePptxResponse(ids);
+                return Ok(response);
             }
             else if (returnLinkTo == "zip")
             {
-                var pptxConverter = new PptxToJpgConverter(_fileAndFolderPath);
-                var pathToZip = pptxConverter.Convert(pathToCombinedPptx);
-                string webAddess = _fileAndFolderPath.GetWebAddressToFile(pathToZip);
-                return Ok(webAddess);
+                var response = presentationResponse.CreateZipResponse(ids);
+                return Ok(response);
             }
 
             return BadRequest();
