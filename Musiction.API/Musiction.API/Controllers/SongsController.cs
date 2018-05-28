@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
+using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
 using Musiction.API.Services;
 using System;

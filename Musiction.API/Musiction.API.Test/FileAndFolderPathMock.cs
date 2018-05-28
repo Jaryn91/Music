@@ -1,4 +1,4 @@
-﻿using Musiction.API.BusinessLogic;
+﻿using Musiction.API.IBusinessLogic;
 using System;
 using System.IO;
 
@@ -17,6 +17,11 @@ namespace Musiction.API.Test
         }
 
         public string GetPresentationFilePath(string pptxName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetWebAddressToFile(string pathToCombinedPptx)
         {
             throw new NotImplementedException();
         }

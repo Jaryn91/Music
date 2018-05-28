@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
-namespace Musiction.API.BusinessLogic
+namespace Musiction.API.IBusinessLogic
 {
     public interface IFileSaver
     {

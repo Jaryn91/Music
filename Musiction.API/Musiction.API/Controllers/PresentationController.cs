@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Musiction.API.BusinessLogic;
+using Musiction.API.Entities;
+using Musiction.API.IBusinessLogic;
 using Musiction.API.Services;
 using System.Collections.Generic;
 
@@ -37,6 +39,8 @@ namespace Musiction.API.Controllers
 
             var merger = new PowerPointMerger(_fileAndFolderPath);
             var pathToCombinedPptx = merger.Merge(paths);
+
+            var presentationResponse = new PresentationResponse();
 
             if (returnLinkTo == "pptx")
             {

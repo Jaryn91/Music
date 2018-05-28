@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
+using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;

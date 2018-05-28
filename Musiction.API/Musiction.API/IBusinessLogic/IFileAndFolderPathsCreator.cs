@@ -1,4 +1,4 @@
-﻿namespace Musiction.API.BusinessLogic
+﻿namespace Musiction.API.IBusinessLogic
 {
     public interface IFileAndFolderPathsCreator
     {
