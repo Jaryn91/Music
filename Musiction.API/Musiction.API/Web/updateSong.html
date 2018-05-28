@@ -44,7 +44,7 @@
                 function (data) {
                     $('#songId').val(data.id);
                     $('#songName').val(data.name);
-                    $('#songYouTube').val(data.youTube);
+                    $('#youTubeUrl').val(data.youTubeUrl);
                     $("#songPPTX").attr("href", data.path)
                 });
         };
@@ -52,7 +52,7 @@
         function callService(urlRequest) {
             var formData = new FormData();
             formData.append("Name", $('#songName').val());
-            formData.append("YouTube", $('#songYouTube').val());
+            formData.append("YouTubeUrl", $('#youTubeUrl').val());
             if ($('#songFile')[0] != null)
                 formData.append('PptxFile', $('#songFile')[0].files[0]); 
 
@@ -63,6 +63,11 @@
                 processData: false,  // tell jQuery not to process the data
                 contentType: false,  // tell jQuery not to set contentType
                 success: function (result) {
+                    alert("Zedytowano :)");
+                    reset($('#songId'));
+                    reset($('#songName'));
+                    reset($('#youTubeUrl'));
+                    reset($('#songPPTX'));
                 },
                 error: function (jqXHR) {
                 },
@@ -100,7 +105,7 @@
             Nazwa: <input id="songName" />
             <br />
             <br />
-            You Tube: <input id="songYouTube" />
+            You Tube: <input id="youTubeUrl" />
             <br />
             <br />
             Prezentacja: <input type="file" name="files" id="songFile" />

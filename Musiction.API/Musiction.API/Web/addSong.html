@@ -12,7 +12,7 @@
             $('#saveSong').click(function () {
                 var formData = new FormData();
                 formData.append("Name", $('#name').val());
-
+                formData.append("YouTubeUrl", $('#youtube').val());
                 formData.append('PptxFile', $('#myfile')[0].files[0]); // myFile is the input type="file" control
 
                 var _url = link + 'api/songs/';

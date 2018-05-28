@@ -18,7 +18,7 @@ namespace Musiction.API.Entities
         public string Path { get; set; }
 
 
-        [MaxLength(200)]
+        [MaxLength(60)]
         public string YouTubeUrl { get; set; }
 
 

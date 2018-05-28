@@ -12,6 +12,9 @@ namespace Musiction.API.Models
         [MaxLength(200)]
         public string Path { get; set; }
 
+        [MaxLength(50)]
+        public string YouTubeUrl { get; set; }
+
         public IFormFile PptxFile { get; set; }
     }
 }
