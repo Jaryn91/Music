@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Musiction.API.Entities;
@@ -31,7 +32,7 @@ namespace Musiction.API.Controllers
             _fileSaver = fileSaver;
         }
 
-        [HttpGet()]
+        [HttpGet, Authorize]
         public IActionResult GetSongs()
         {
             var songs = _songRepository.GetSongs();

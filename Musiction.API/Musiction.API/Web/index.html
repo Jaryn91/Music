@@ -19,7 +19,7 @@
 
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');
-                if (selectedOpts.length == 0) {
+                if (selectedOpts.length === 0) {
                     alert("Nothing to move.");
                     e.preventDefault();
                 }
@@ -31,7 +31,7 @@
 
             $('#btnLeft').click(function (e) {
                 var selectedOpts = $('#lstBox2 option:selected');
-                if (selectedOpts.length == 0) {
+                if (selectedOpts.length === 0) {
                     alert("Nothing to move.");
                     e.preventDefault();
                 }
@@ -42,24 +42,24 @@
             });
 
             $('#saveInPPTX').click(function () {
-                var request = "pptx?"
+                var request = "pptx?";
                 $('#lstBox2 option').each(function () {
-                    request += "ids=" + $(this).val() + "&"
+                    request += "ids=" + $(this).val() + "&";
                 });
 
-                request = request.slice(0, -1)
+                request = request.slice(0, -1);
                 var urlRequest = link + "api/presentation/" + request;
 
                 callService(urlRequest);
             });
 
             $('#saveInZIP').click(function () {
-                var request = "zip?"
+                var request = "zip?";
                 $('#lstBox2 option').each(function () {
-                    request += "ids=" + $(this).val() + "&"
+                    request += "ids=" + $(this).val() + "&";
                 });
 
-                request = request.slice(0, -1)
+                request = request.slice(0, -1);
                 var urlRequest = link + "api/presentation/" + request;
                 callService(urlRequest);
             });
@@ -70,13 +70,13 @@
                 url: urlRequest,
                 type: 'GET',
                 success: sendAlert
-            })
-        };
+            });
+        }
 
         function sendAlert(data) {
             $('#textarea').val(data.inforamtion);
             window.location.href = data.path;
-        };
+        }
     </script>
 </head>
 
@@ -113,12 +113,12 @@
             <textarea id="textarea" rows="15" cols="80"></textarea>
         </center>
 
-    </br>
-    </br>
-    <a href="index.html">Stwórz prezentację</a> </br>
-    <a href="addSong.html">Dodaj piosenkę</a></br>
-    <a href="deleteSong.html">Usuń piosenkę</a></br>
-    <a href="updateSong.html">Uaktualnij piosenkę</a></br>
+    <br />
+    <br />
+    <a href="index.html">Stwórz prezentację</a><br />
+    <a href="addSong.html">Dodaj piosenkę</a><br />
+    <a href="deleteSong.html">Usuń piosenkę</a><br />
+    <a href="updateSong.html">Uaktualnij piosenkę</a><br />
 </body>
 
 </html>
