@@ -1,29 +1,13 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="mystyle.css">
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-	<script type="text/javascript" src="Domain.js"></script>
+    <script type="text/javascript" src="js/Domain.js"></script>
+    <script type="text/javascript" src="js/songs.js"></script>
     <script>
-        var link = GetDomain();
-
-
         $(document).ready(function () {
-            var url = link + "api/songs/";
-            var accessToken = localStorage.getItem('access_token');
-            var headers = { Authorization: 'Bearer ' + accessToken };
-
-            $.ajax({
-                    url: url,
-                    headers: headers
-                })
-                .done(function (result) {
-                    var option = '';
-                    for (var i = 0; i < result.length; i++) {
-                        option += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
-                    }
-                    $('#lstBox1').append(option);
-                });
+            GetAllSongs('#lstBox1', AddOptionsToListBox);
 
 
             $('#btnRight').click(function (e) {

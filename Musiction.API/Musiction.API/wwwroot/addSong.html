@@ -5,9 +5,16 @@
     <meta charset="utf-8" />
     <title>Dodaj piosenkę</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>\
-	<script type="text/javascript" src="Domain.js"></script>
+    <script type="text/javascript" src="js/Domain.js"></script>
+    <script type="text/javascript" src="js/songs.js"></script>
     <script>
-		var link = GetDomain();
+        function resetControls() {
+            alert("dodano piosnkę");
+            reset($('#name'));
+            reset($('#youtube'));
+            reset($('#myfile'));
+        }
+
         $(document).ready(function () {
             $('#saveSong').click(function () {
                 var formData = new FormData();
@@ -15,32 +22,14 @@
                 formData.append("YouTubeUrl", $('#youtube').val());
                 formData.append('PptxFile', $('#myfile')[0].files[0]); // myFile is the input type="file" control
 
-                var _url = link + 'api/songs/';
-
-                $.ajax({
-                    url: _url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,  // tell jQuery not to process the data
-                    contentType: false,  // tell jQuery not to set contentType
-                    success: function (result) {
-                    },
-                    error: function (jqXHR) {
-                    },
-                    complete: function (jqXHR, status) {
-                        alert("dodano piosnkę");
-						reset($('#name'))
-						reset($('#youtube'))
-						reset($('#myfile'))
-                    }
-                });
+                AddSong(formData, resetControls);
             });
         });
-		
-		window.reset = function (e) {
-		e.wrap('<form>').closest('form').get(0).reset();
-		e.unwrap();
-}
+
+        window.reset = function (e) {
+            e.wrap('<form>').closest('form').get(0).reset();
+            e.unwrap();
+        }
     </script>
 </head>
 

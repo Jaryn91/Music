@@ -3,19 +3,11 @@
 <head>
     <link rel="stylesheet" type="text/css" href="mystyle.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-	<script type="text/javascript" src="Domain.js"></script>
+    <script type="text/javascript" src="js/Domain.js"></script>
+    <script type="text/javascript" src="js/songs.js"></script>
     <script>
-		var link = GetDomain();
-		
         $(document).ready(function () {
-            $.getJSON(link + "api/songs/",
-                function (data) {
-                    var option = '';
-                    for (var i = 0; i < data.length; i++) {
-                        option += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-                    }
-                    $('#lstBox1').append(option);
-                });
+            GetAllSongs('#lstBox1', AddOptionsToListBox);
 
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');
@@ -23,58 +15,37 @@
                     alert("Nothing to move.");
                     e.preventDefault();
                 }
-                getSong(selectedOpts.val());
+                getSong(selectedOpts.val(), populateControls);
 
                 e.preventDefault();
             });
 
-
+            function populateControls(results) {
+                $('#songId').val(results.id);
+                $('#songName').val(results.name);
+                $('#youTubeUrl').val(results.youTubeUrl);
+                $("#songPPTX").attr("href", results.path);
+            }
 
             $('#updateSong').click(function (e) {
-                var request = link + "api/songs/" + $('#songId').val();
-                callService(request);
+                var songId = $('#songId').val();
+                var formData = new FormData();
+                formData.append("Name", $('#songName').val());
+                formData.append("YouTubeUrl", $('#youTubeUrl').val());
+                if ($('#songFile')[0] != null)
+                    formData.append('PptxFile', $('#songFile')[0].files[0]);
 
+                updateSong(songId, formData, resetControls);
             });
-
-
         });
 
-        function getSong(id) {
-            $.getJSON(link + "api/songs/" + id,
-                function (data) {
-                    $('#songId').val(data.id);
-                    $('#songName').val(data.name);
-                    $('#youTubeUrl').val(data.youTubeUrl);
-                    $("#songPPTX").attr("href", data.path)
-                });
-        };
-
-        function callService(urlRequest) {
-            var formData = new FormData();
-            formData.append("Name", $('#songName').val());
-            formData.append("YouTubeUrl", $('#youTubeUrl').val());
-            if ($('#songFile')[0] != null)
-                formData.append('PptxFile', $('#songFile')[0].files[0]); 
-
-            $.ajax({
-                url: urlRequest,
-                type: "PUT",
-                data: formData,
-                processData: false,  // tell jQuery not to process the data
-                contentType: false,  // tell jQuery not to set contentType
-                success: function (result) {
-                    alert("Zedytowano :)");
-                    reset($('#songId'));
-                    reset($('#songName'));
-                    reset($('#youTubeUrl'));
-                    reset($('#songPPTX'));
-                },
-                error: function (jqXHR) {
-                },
-                complete: function (jqXHR, status) {
-                }
-            });
-        };
+        function resetControls() {
+            alert("Zedytowano :)");
+            reset($('#songId'));
+            reset($('#songName'));
+            reset($('#youTubeUrl'));
+            reset($('#songPPTX'));
+        }
     </script>
 </head>
 
@@ -113,12 +84,12 @@
             <a href="" id="songPPTX">Pobierz piosenkę</a>
         </div>
     </div>
-		</br>
-	</br>
-	<a href="index.html">Stwórz prezentację</a> </br>
-	<a href="addSong.html">Dodaj piosenkę</a></br>
-	<a href="deleteSong.html">Usuń piosenkę</a></br>
-	<a href="updateSong.html">Uaktualnij piosenkę</a></br>
+    </br>
+    </br>
+    <a href="index.html">Stwórz prezentację</a> </br>
+    <a href="addSong.html">Dodaj piosenkę</a></br>
+    <a href="deleteSong.html">Usuń piosenkę</a></br>
+    <a href="updateSong.html">Uaktualnij piosenkę</a></br>
 </body>
 
 </html>

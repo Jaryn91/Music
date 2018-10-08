@@ -40,7 +40,7 @@ namespace Musiction.API.Controllers
             return Ok(results);
         }
 
-        [HttpGet("{id}", Name = "GetSong")]
+        [HttpGet("{id}", Name = "GetSong"), Authorize]
         public IActionResult GetSong(int id)
         {
             try
@@ -64,7 +64,7 @@ namespace Musiction.API.Controllers
         }
 
 
-        [HttpPost()]
+        [HttpPost(), Authorize]
         public async Task<IActionResult> CreateSong(SongForCreationDto song)
         {
 
@@ -89,7 +89,7 @@ namespace Musiction.API.Controllers
             return CreatedAtRoute("GetSong", new { id = createdSong.Id }, createdSong);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize]
         public IActionResult UpdateSong(int id, SongForUpdateDto song)
         {
             if (song == null)
@@ -125,7 +125,7 @@ namespace Musiction.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public IActionResult DeleteSong(int id)
         {
             var songToDelete = _songRepository.GetSong(id);

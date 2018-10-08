@@ -3,18 +3,11 @@
 <head>
     <link rel="stylesheet" type="text/css" href="mystyle.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-	<script type="text/javascript" src="Domain.js"></script>
+    <script type="text/javascript" src="js/Domain.js"></script>
+    <script type="text/javascript" src="js/songs.js"></script>
     <script>
-		var link = GetDomain();
         $(document).ready(function () {
-            $.getJSON(link + "api/songs/",
-                function (data) {
-                    var option = '';
-                    for (var i = 0; i < data.length; i++) {
-                        option += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-                    }
-                    $('#lstBox1').append(option);
-                });
+            GetAllSongs('#lstBox1', AddOptionsToListBox);
 
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');
@@ -58,7 +51,7 @@
                 url: urlRequest,
                 type: 'DELETE',
                 success: function (result) {
-                    alert("usunięto");  
+                    alert("usunięto");
                 }
             });
         };
