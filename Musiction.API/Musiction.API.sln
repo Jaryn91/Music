@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Musiction.API", "Musiction.API\Musiction.API.csproj", "{656605A6-0FA8-42E6-A49A-9B6E1710B8C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Musiction.API.Test", "Musiction.API.Test\Musiction.API.Test.csproj", "{74D5C693-F381-4ADF-8986-FE32035E57C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Musiction.API.Test", "Musiction.API.Test\Musiction.API.Test.csproj", "{74D5C693-F381-4ADF-8986-FE32035E57C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

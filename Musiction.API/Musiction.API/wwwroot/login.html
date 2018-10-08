@@ -1,0 +1,54 @@
+﻿<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Login</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="loading">
+    <img src="assets/loading.svg" alt="Loading spinner">
+  </div>
+
+  <div class="content">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Auth0 - JavaScript</a>
+
+          <button id="btn-home-view" class="btn btn-primary btn-margin">
+              Home
+          </button>
+
+          <button id="qsLoginBtn" class="btn btn-primary btn-margin">
+              Log In
+          </button>
+
+          <button id="qsLogoutBtn" class="btn btn-primary btn-margin">
+              Log Out
+          </button>
+
+        </div>
+      </div>
+    </nav>
+
+    <main class="container">
+      <!-- home view -->
+      <div id="home-view">
+        <h4></h4>
+      </div>
+
+    </main>
+
+  </div>
+
+    <script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+  <script src="auth0-variables.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

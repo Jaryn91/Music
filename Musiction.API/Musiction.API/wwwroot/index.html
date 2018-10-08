@@ -5,17 +5,26 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 	<script type="text/javascript" src="Domain.js"></script>
     <script>
-		var link = GetDomain();
-	
+        var link = GetDomain();
+
+
         $(document).ready(function () {
-            $.getJSON(link + "api/songs/",
-                function (data) {
+            var url = link + "api/songs/";
+            var accessToken = localStorage.getItem('access_token');
+            var headers = { Authorization: 'Bearer ' + accessToken };
+
+            $.ajax({
+                    url: url,
+                    headers: headers
+                })
+                .done(function (result) {
                     var option = '';
-                    for (var i = 0; i < data.length; i++) {
-                        option += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                    for (var i = 0; i < result.length; i++) {
+                        option += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
                     }
                     $('#lstBox1').append(option);
                 });
+
 
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');

@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace Musiction.API
@@ -31,23 +31,12 @@ namespace Musiction.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                    };
-                });
-
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            //Encoding.GetEncoding("windows-1254");
+
+            CreateAuthentication(services);
+            //services.AddAuthentication()
+            //    .AddOpenIdConnect(ConfigureOptions);
+
 
             services.AddCors(options =>
             {
@@ -62,17 +51,35 @@ namespace Musiction.API
                     });
             });
 
-
-
             services.AddMvc();
-
-            services.AddTransient<IMailService, LocalMailService>();
 
             var propName = Startup.Configuration["environment"] + "ConnectionString";
             var connectionString = Startup.Configuration[propName];
 
             services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
 
+            RegisterContainers(services);
+        }
+
+        private void CreateAuthentication(IServiceCollection services)
+        {
+            string domain = $"https://{Configuration["Auth0:Domain"]}/";
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = domain;
+                options.Audience = Configuration["Auth0:ApiIdentifier"];
+            });
+        }
+
+
+        private void RegisterContainers(IServiceCollection services)
+        {
+            services.AddTransient<IMailService, LocalMailService>();
             services.AddScoped<ISongRepository, SongRepository>();
             services.AddSingleton<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
             services.AddSingleton<IFileSaver, FileSaver>();
@@ -95,6 +102,8 @@ namespace Musiction.API
             }
 
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             app.UseStatusCodePages();
 
             Mapper.Initialize(cfg =>
@@ -104,6 +113,12 @@ namespace Musiction.API
                 cfg.CreateMap<Song, SongForUpdateDto>();
                 cfg.CreateMap<SongForUpdateDto, Song>();
             });
+
+            DefaultFilesOptions options = new DefaultFilesOptions();
+            options.DefaultFileNames.Clear();
+            options.DefaultFileNames.Add("login.html");
+            app.UseDefaultFiles(options);
+            app.UseStaticFiles();
 
 
             app.UseAuthentication();
