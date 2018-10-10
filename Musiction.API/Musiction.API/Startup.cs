@@ -63,7 +63,7 @@ namespace Musiction.API
 
         private void CreateAuthentication(IServiceCollection services)
         {
-            string domain = $"https://{Configuration["Auth0:Domain"]}/";
+            string domain = $"https://{Configuration[Configuration["environment"] + ":Auth0:Domain"]}/";
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -72,7 +72,7 @@ namespace Musiction.API
             }).AddJwtBearer(options =>
             {
                 options.Authority = domain;
-                options.Audience = Configuration["Auth0:ApiIdentifier"];
+                options.Audience = Configuration[Configuration["environment"] + ":Auth0:ApiIdentifier"];
             });
         }
 
