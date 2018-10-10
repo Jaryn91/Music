@@ -34,10 +34,8 @@
             });
 
             $('#deleteSong').click(function (e) {
-                var request = link + "api/songs/";
                 $('#lstBox2 option').each(function () {
                     deleteSong($(this).val());
-                    callService(request + $(this).val());
                     $(this).remove();
                     e.preventDefault();
                 });
