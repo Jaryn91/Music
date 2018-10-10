@@ -1,5 +1,4 @@
-﻿
-var songApi = link + "api/songs/";
+﻿var songApi = getDomain() + "api/songs/";
 
 function getAllSongs(lstBoxName, func) {
 

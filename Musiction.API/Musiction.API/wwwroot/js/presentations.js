@@ -1,4 +1,4 @@
-﻿var presentationsApi = link + "api/presentation/";
+﻿var presentationsApi = getDomain() + "api/presentation/";
 
 function createPresentation(outputFileType, songs, func) {
     var url = presentationsApi + outputFileType + songs;
