@@ -7,7 +7,7 @@
     <script type="text/javascript" src="js/songs.js"></script>
     <script>
         $(document).ready(function () {
-            GetAllSongs('#lstBox1', AddOptionsToListBox);
+            getAllSongs('#lstBox1', AddOptionsToListBox);
 
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');
@@ -36,6 +36,7 @@
             $('#deleteSong').click(function (e) {
                 var request = link + "api/songs/";
                 $('#lstBox2 option').each(function () {
+                    deleteSong($(this).val());
                     callService(request + $(this).val());
                     $(this).remove();
                     e.preventDefault();
@@ -82,12 +83,12 @@
             <select multiple="multiple" id='lstBox2'></select>
         </div>
     </div>
-		</br>
-	</br>
-	<a href="index.html">Stwórz prezentację</a> </br>
-	<a href="addSong.html">Dodaj piosenkę</a></br>
-	<a href="deleteSong.html">Usuń piosenkę</a></br>
-	<a href="updateSong.html">Uaktualnij piosenkę</a></br>
+    <br />
+    <br />
+    <a href="index.html">Stwórz prezentację</a><br />
+    <a href="addSong.html">Dodaj piosenkę</a><br />
+    <a href="deleteSong.html">Usuń piosenkę</a><br />
+    <a href="updateSong.html">Uaktualnij piosenkę</a><br />
 </body>
 
 </html>

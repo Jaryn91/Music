@@ -1,10 +1,12 @@
-﻿function GetAllSongs(lstBoxName, func) {
-    var link = GetDomain();
-    var url = link + "api/songs/";
+﻿
+var songApi = link + "api/songs/";
+
+function getAllSongs(lstBoxName, func) {
+
     var accessToken = localStorage.getItem('access_token');
     var headers = { Authorization: 'Bearer ' + accessToken };
     $.ajax({
-        url: url,
+        url: songApi,
         headers: headers
     })
         .done(function (result) {
@@ -24,13 +26,12 @@ function AddOptionsToListBox(lstBoxName, result) {
 
 
 function AddSong(song, func) {
-    var link = GetDomain();
-    var url = link + "api/songs/";
+
     var accessToken = localStorage.getItem('access_token');
     var headers = { Authorization: 'Bearer ' + accessToken };
 
     $.ajax({
-        url: url,
+        url: songApi,
         type: 'POST',
         data: song,
         headers: headers,
@@ -47,8 +48,7 @@ function AddSong(song, func) {
 }
 
 function getSong(songId, func) {
-    var link = GetDomain();
-    var url = link + "api/songs/" + songId;
+    var url = songApi + songId;
     var accessToken = localStorage.getItem('access_token');
     var headers = { Authorization: 'Bearer ' + accessToken };
     $.ajax({
@@ -61,10 +61,10 @@ function getSong(songId, func) {
 }
 
 function updateSong(songId, song, func) {
-    var link = GetDomain();
+    
     var accessToken = localStorage.getItem('access_token');
     var headers = { Authorization: 'Bearer ' + accessToken };
-    var url = link + "api/songs/" + songId;
+    var url = songApi + songId;
     $.ajax({
         url: url,
         type: "PUT",
@@ -80,4 +80,16 @@ function updateSong(songId, song, func) {
         complete: function (jqXHR, status) {
         }
     });
+}
+
+function deleteSong(songId) {
+    var url = songApi + songId;
+    $.ajax({
+        url: url,
+        type: 'DELETE',
+        success: function (result) {
+            alert("usunięto");
+        }
+    });
+
 }

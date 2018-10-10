@@ -5,10 +5,11 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
     <script type="text/javascript" src="js/songs.js"></script>
+    <script type="text/javascript" src="js/presentations.js"></script>
     <script>
         $(document).ready(function () {
-            GetAllSongs('#lstBox1', AddOptionsToListBox);
-            var link = GetDomain();
+            getAllSongs('#lstBox1', AddOptionsToListBox);
+            var link = getDomain();
 
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');
@@ -35,36 +36,27 @@
             });
 
             $('#saveInPPTX').click(function () {
-                var request = "pptx?";
+                var songsIds = "";
                 $('#lstBox2 option').each(function () {
-                    request += "ids=" + $(this).val() + "&";
+                    songsIds += "ids=" + $(this).val() + "&";
                 });
 
-                request = request.slice(0, -1);
-                var urlRequest = link + "api/presentation/" + request;
+                songsIds = songsIds.slice(0, -1);
 
-                callService(urlRequest);
+                createPresentation("pptx?", songsIds, sendAlert);
             });
 
             $('#saveInZIP').click(function () {
-                var request = "zip?";
+                var songsIds = "";
                 $('#lstBox2 option').each(function () {
-                    request += "ids=" + $(this).val() + "&";
+                    songsIds += "ids=" + $(this).val() + "&";
                 });
 
-                request = request.slice(0, -1);
-                var urlRequest = link + "api/presentation/" + request;
-                callService(urlRequest);
+                songsIds = songsIds.slice(0, -1);
+                createPresentation("zip?", songsIds, sendAlert);
             });
         });
 
-        function callService(urlRequest) {
-            $.ajax({
-                url: urlRequest,
-                type: 'GET',
-                success: sendAlert
-            });
-        }
 
         function sendAlert(data) {
             $('#textarea').val(data.inforamtion);
