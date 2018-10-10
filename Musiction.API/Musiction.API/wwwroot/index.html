@@ -8,7 +8,7 @@
     <script>
         $(document).ready(function () {
             GetAllSongs('#lstBox1', AddOptionsToListBox);
-
+            var link = GetDomain();
 
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');
