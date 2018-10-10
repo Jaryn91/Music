@@ -21,7 +21,7 @@ namespace Musiction.API
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            env = new ConfigurationBuilder().AddCommandLine(args).Build()["environment"];
+            env = new ConfigurationBuilder().AddCommandLine(args).Build()["env"];
             var element = WebHost.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((webHostBuilderContext, configurationbuilder) =>
             {

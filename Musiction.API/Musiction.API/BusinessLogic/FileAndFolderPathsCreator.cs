@@ -18,9 +18,9 @@ namespace Musiction.API.BusinessLogic
 
         public FileAndFolderPathsCreator()
         {
-            var fileRoot = Startup.Configuration["environment"] + "FileRoot";
+            var fileRoot = Startup.Configuration["env"] + "FileRoot";
             _folder = Startup.Configuration[fileRoot];
-            var webAddress = Startup.Configuration["environment"] + "WebAddress";
+            var webAddress = Startup.Configuration["env"] + "WebAddress";
             _webAddress = Startup.Configuration[webAddress];
         }
 

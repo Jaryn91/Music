@@ -53,7 +53,7 @@ namespace Musiction.API
 
             services.AddMvc();
 
-            var propName = Startup.Configuration["environment"] + "ConnectionString";
+            var propName = Startup.Configuration["env"] + "ConnectionString";
             var connectionString = Startup.Configuration[propName];
 
             services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
@@ -63,7 +63,7 @@ namespace Musiction.API
 
         private void CreateAuthentication(IServiceCollection services)
         {
-            string domain = $"https://{Configuration[Configuration["environment"] + ":Auth0:Domain"]}/";
+            string domain = $"https://{Configuration[Configuration["env"] + ":Auth0:Domain"]}/";
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -72,7 +72,7 @@ namespace Musiction.API
             }).AddJwtBearer(options =>
             {
                 options.Authority = domain;
-                options.Audience = Configuration[Configuration["environment"] + ":Auth0:ApiIdentifier"];
+                options.Audience = Configuration[Configuration["env"] + ":Auth0:ApiIdentifier"];
             });
         }
 
