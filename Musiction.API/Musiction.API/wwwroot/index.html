@@ -3,58 +3,61 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="css/mystyle.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stwórz prezentacje - WawrzynSlajd</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        #sortable1, #sortable2 {
+            border: 1px solid #eee;
+            width: 300px;
+            min-height: 20px;
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 0 0 0;
+            float: left;
+            margin-right: 10px;
+        }
+
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 280px;
+            }
+    </style>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
     <script type="text/javascript" src="js/songs.js"></script>
     <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
     <script>
+        $(function () {
+            $("#sortable1, #sortable2").sortable({
+                connectWith: ".connectedSortable"
+            }).disableSelection();
+        });
+
+        function getSongIds() {
+            var songsIds = "";
+            $('#sortable2 li').each(function () {
+                songsIds += "ids=" + $(this).val() + "&";
+            });
+            songsIds = songsIds.slice(0, -1);
+            return songsIds;
+        };
+
         $(document).ready(function () {
-            getAllSongs('#lstBox1', AddOptionsToListBox);
-            var link = getDomain();
+            getAllSongs('#sortable1', AddOptionsToListBox);
 
-            $('#btnRight').click(function (e) {
-                var selectedOpts = $('#lstBox1 option:selected');
-                if (selectedOpts.length === 0) {
-                    alert("Nothing to move.");
-                    e.preventDefault();
-                }
-
-                $('#lstBox2').append($(selectedOpts).clone());
-                $(selectedOpts).remove();
-                e.preventDefault();
-            });
-
-            $('#btnLeft').click(function (e) {
-                var selectedOpts = $('#lstBox2 option:selected');
-                if (selectedOpts.length === 0) {
-                    alert("Nothing to move.");
-                    e.preventDefault();
-                }
-
-                $('#lstBox1').append($(selectedOpts).clone());
-                $(selectedOpts).remove();
-                e.preventDefault();
-            });
 
             $('#saveInPPTX').click(function () {
-                var songsIds = "";
-                $('#lstBox2 option').each(function () {
-                    songsIds += "ids=" + $(this).val() + "&";
-                });
-
-                songsIds = songsIds.slice(0, -1);
-
+                var songsIds = getSongIds();
                 createPresentation("pptx?", songsIds, sendAlert);
             });
 
             $('#saveInZIP').click(function () {
-                var songsIds = "";
-                $('#lstBox2 option').each(function () {
-                    songsIds += "ids=" + $(this).val() + "&";
-                });
-
-                songsIds = songsIds.slice(0, -1);
+                var songsIds = getSongIds();
                 createPresentation("zip?", songsIds, sendAlert);
             });
         });
@@ -73,13 +76,10 @@
         <div class="newItems">
             <b>Wybierz piosenkę:</b>
             <br />
-            <select multiple="multiple" id='lstBox1'></select>
+            <ul id="sortable1" class="connectedSortable"></ul>
         </div>
         <div class="transferBtns">
             <center>
-                <input type='button' id='btnRight' value='  >  ' />
-                <br />
-                <input type='button' id='btnLeft' value='  <  ' />
                 <div class="submitContainer">
                     <input type="submit" id="saveInPPTX" value='Pobierz prezentacje w postaci pptx' />
                     <br />
@@ -90,7 +90,7 @@
         <div class="approvedItems">
             <b>Wybrane piosenki: </b>
             <br />
-            <select multiple="multiple" id='lstBox2'></select>
+            <ul id="sortable2" class="connectedSortable"></ul>
         </div>
 
     </div>
@@ -99,6 +99,10 @@
     <center>
         <textarea id="textarea" rows="15" cols="80"></textarea>
     </center>
+    <br />
+
+
+
 
     <br />
     <br />
