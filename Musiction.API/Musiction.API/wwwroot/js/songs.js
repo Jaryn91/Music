@@ -1,12 +1,9 @@
 ﻿var songApi = getDomain() + "api/songs/";
 
 function getAllSongs(lstBoxName, func) {
-
-    var accessToken = localStorage.getItem('access_token');
-    var headers = { Authorization: 'Bearer ' + accessToken };
     $.ajax({
         url: songApi,
-        headers: headers
+        headers: getAuthorizationHeader()
     })
         .done(function (result) {
             func(lstBoxName, result);
@@ -25,15 +22,11 @@ function AddOptionsToListBox(lstBoxName, result) {
 
 
 function AddSong(song, func) {
-
-    var accessToken = localStorage.getItem('access_token');
-    var headers = { Authorization: 'Bearer ' + accessToken };
-
     $.ajax({
         url: songApi,
         type: 'POST',
         data: song,
-        headers: headers,
+        headers: getAuthorizationHeader(),
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
         success: function (result) {
@@ -48,11 +41,9 @@ function AddSong(song, func) {
 
 function getSong(songId, func) {
     var url = songApi + songId;
-    var accessToken = localStorage.getItem('access_token');
-    var headers = { Authorization: 'Bearer ' + accessToken };
     $.ajax({
         url: url,
-        headers: headers
+        headers: getAuthorizationHeader()
     })
         .done(function (result) {
             func(result);
@@ -60,15 +51,12 @@ function getSong(songId, func) {
 }
 
 function updateSong(songId, song, func) {
-    
-    var accessToken = localStorage.getItem('access_token');
-    var headers = { Authorization: 'Bearer ' + accessToken };
     var url = songApi + songId;
     $.ajax({
         url: url,
         type: "PUT",
         data: song,
-        headers: headers,
+        headers: getAuthorizationHeader(),
         processData: false,  // tell jQuery not to process the data
         contentType: false,  // tell jQuery not to set contentType
         success: function (result) {
@@ -85,6 +73,7 @@ function deleteSong(songId) {
     var url = songApi + songId;
     $.ajax({
         url: url,
+        headers: getAuthorizationHeader(),
         type: 'DELETE',
         success: function (result) {
             alert("usunięto");
