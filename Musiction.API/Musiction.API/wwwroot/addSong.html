@@ -3,11 +3,10 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Dodaj piosenkę</title>
+    <title>Dodaj pieśń - Wawrzynowy Slajd!</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
-    <script type="text/javascript" src="js/songs.js"></script>
-    <script type="text/javascript" src="js/auth.js"></script>
+
     <script>
         function resetControls() {
             alert("dodano piosnkę");
@@ -41,20 +40,38 @@
 <body>
     <div id="nav-placeholder">
     </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+            </div>
+            <div class="col-lg-6 corps">
+                <div align="center">
+                    <h2>Dodaj pieśń</h2>
+                </div>
+                <div class="form-group">
+                    <label for="name">Nazwa</label>
+                    <input id="name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="youtube">You Tube</label>
+                    <input id="youtube" class="form-control" />
+                </div>
+                <label class="custom-file">
+                    <label for="songFile">Prezentacja</label>
+                    <input type="file" id="myfile" class="custom-file-input">
+                    <span class="custom-file-control"></span>
+                </label>
+                <div class="text-center">
+                    <div class="btn-group">
+                        <button type="submit" id="saveSong" value='PPTX' class="btn btn-primary">Dodaj</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+            </div>
+        </div>
+    </div>
 
-    <div>
-        <form>
-            Name:
-            <input id="name" />
-            <br /> Prezentacja:
-            <input type="file" name="files" id="myfile" />
-            <br /> YouTube:
-            <input id="youtube" />
-        </form>
-    </div>
-    <div>
-        <input type="submit" id="saveSong" value='Zapisz piosenkę' />
-    </div>
 
 </body>
 

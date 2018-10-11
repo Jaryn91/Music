@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="css/mystyle.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Uaktualnij piosenkę - WawrzynSlajd</title>
+    <title>Uaktualnij piosenkę - Wawrzynowy Slajd!</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -13,42 +13,20 @@
     <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
     <script>
-
         $(document).ready(function () {
             loadNavBar();
             getAllSongs('#sortable1', AddOptionsToListBox);
 
-            $('.connectedSortable li').click(function(e) {
+            $('#sortable1').on("click", "li.ui-state-default", (function (e) {
                 e.preventDefault();
-        
                 $that = $(this);
-        
                 $that.parent().find('li').removeClass('ui-state-active');
                 $that.addClass('ui-state-active');
-            });
 
-            $(function(){
-                console.log('ready');
-    
-                $('.list-group li').click(function(e) {
-                    e.preventDefault()
-        
-                    $that = $(this);
-        
-                    $that.parent().find('li').removeClass('active');
-                    $that.addClass('active');
-                });
-            })
+                getSong($that.val(), populateControls);
 
-
-
-
-            function populateControls(results) {
-                $('#songId').val(results.id);
-                $('#songName').val(results.name);
-                $('#youTubeUrl').val(results.youTubeUrl);
-                $("#songPPTX").attr("href", results.path);
-            }
+                e.preventDefault();
+            }));
 
             $('#updateSong').click(function (e) {
                 var songId = $('#songId').val();
@@ -60,7 +38,17 @@
 
                 updateSong(songId, formData, resetControls);
             });
-        });
+        })
+
+        function populateControls(results) {
+            $('#songId').val(results.id);
+            $('#songName').val(results.name);
+            $('#youTubeUrl').val(results.youTubeUrl);
+            $("#songPPTX").attr("href", results.path);
+        }
+
+        
+          
 
         function resetControls() {
             alert("Zedytowano :)");
@@ -84,80 +72,46 @@
                 <div align="center">
                     <h2>Pieśni</h2>
                 </div>
-                <!--<ul id="sortable1" class="connectedSortable"></ul>-->
-                
-                <ul id="sortable1" class="list-group">
-                    <li class="list-group-item active">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Morbi leo risus</li>
-                    <li class="list-group-item">Porta ac consectetur ac</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
-                    <li class="list-group-item">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Morbi leo risus</li>
-                    <li class="list-group-item">Porta ac consectetur ac</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
-                </ul>
+                <ul id="sortable1" class="list-group"></ul>
             </div>
 
-            <div class="col-lg-3">
-                <br />
+            <div class="col-lg-1">
+            </div>
+
+            <div class="col-lg-5 corps">
+                <div align="center">
+                    <h2>Edytuj pieśń</h2>
+                </div>
+                <div class="form-group">
+                    <label for="songId">Id</label>
+                    <input id="songId" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="songName">Nazwa</label>
+                    <input id="songName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="youTubeUrl">You Tube</label>
+                    <input id="youTubeUrl" class="form-control" />
+                </div>
+                <label class="custom-file">
+                    <label for="songFile">Prezentacja</label> (<a href="" id="songPPTX">Pobierz aktualną piosenkę</a>)
+                    <input type="file" id="songFile" class="custom-file-input">
+                    <span class="custom-file-control"></span>
+                </label>
+                <br>
+                
+
                 <div class="text-center">
                     <div class="btn-group">
-                        <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">PPTX</button>
+                        <button type="submit" id="updateSong" value='PPTX' class="btn btn-primary">Aktualizuj</button>
 
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-3 corps">
-                <div align="center">
-                    <h2>Wybrane pieśni</h2>
-                </div>
-
             </div>
             <div class="col-lg-1">
             </div>
         </div>
     </div>
-
-
-
-<div class="approveTermsContainer">
-    <div class="newItems">
-        <b>Wybierz piosenkę:</b>
-        <br />
-        <select multiple="multiple" id='lstBox1'></select>
-    </div>
-    <div class="transferBtns">
-        <center>
-            <input type='button' id='btnRight' value='  >  ' />
-            <br />
-            <input type='button' id='btnLeft' value='  <  ' />
-            <div class="submitContainer">
-                <input type="submit" id="updateSong" value='AKTUALIZUJ PIOSENKĘ' />
-            </div>
-        </center>
-    </div>
-    <div class="approvedItems">
-        <b>Nowe dane piosenki:</b>
-        <br />
-        Id: <input id="songId" readonly />
-        <br />
-        <br />
-        Nazwa: <input id="songName" />
-        <br />
-        <br />
-        You Tube: <input id="youTubeUrl" />
-        <br />
-        <br />
-        Prezentacja: <input type="file" name="files" id="songFile" />
-        <br>
-        <a href="" id="songPPTX">Pobierz piosenkę</a>
-    </div>
-</div>
-
-
-
 </body>
 </html>

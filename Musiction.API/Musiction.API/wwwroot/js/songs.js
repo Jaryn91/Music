@@ -8,9 +8,7 @@ function getAllSongs(lstBoxName, func) {
         .done(function (result) {
             func(lstBoxName, result);
         });
-};
-
-
+}
 
 function AddOptionsToListBox(lstBoxName, result) {
     var option = '';
@@ -18,7 +16,7 @@ function AddOptionsToListBox(lstBoxName, result) {
         option += '<li class="ui-state-default" value="' + result[i].id + '">' + result[i].name + '</li>';
     }
     $(lstBoxName).append(option);
-};
+}
 
 
 function AddSong(song, func) {
