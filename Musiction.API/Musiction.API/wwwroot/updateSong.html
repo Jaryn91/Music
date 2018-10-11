@@ -1,25 +1,47 @@
 ﻿<html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="mystyle.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Uaktualnij piosenkę - WawrzynSlajd</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
     <script type="text/javascript" src="js/songs.js"></script>
+    <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
     <script>
+
         $(document).ready(function () {
-            getAllSongs('#lstBox1', AddOptionsToListBox);
+            loadNavBar();
+            getAllSongs('#sortable1', AddOptionsToListBox);
 
-            $('#btnRight').click(function (e) {
-                var selectedOpts = $('#lstBox1 option:selected');
-                if (selectedOpts.length == 0) {
-                    alert("Nothing to move.");
-                    e.preventDefault();
-                }
-                getSong(selectedOpts.val(), populateControls);
-
+            $('.connectedSortable li').click(function(e) {
                 e.preventDefault();
+        
+                $that = $(this);
+        
+                $that.parent().find('li').removeClass('ui-state-active');
+                $that.addClass('ui-state-active');
             });
+
+            $(function(){
+                console.log('ready');
+    
+                $('.list-group li').click(function(e) {
+                    e.preventDefault()
+        
+                    $that = $(this);
+        
+                    $that.parent().find('li').removeClass('active');
+                    $that.addClass('active');
+                });
+            })
+
+
+
 
             function populateControls(results) {
                 $('#songId').val(results.id);
@@ -51,47 +73,91 @@
 </head>
 
 <body>
+    <div id="nav-placeholder">
+    </div>
 
-    <div class="approveTermsContainer">
-        <div class="newItems">
-            <b>Wybierz piosenkę:</b>
-            <br />
-            <select multiple="multiple" id='lstBox1'></select>
-        </div>
-        <div class="transferBtns">
-            <center>
-                <input type='button' id='btnRight' value='  >  ' />
-                <br />
-                <input type='button' id='btnLeft' value='  <  ' />
-                <div class="submitContainer">
-                    <input type="submit" id="updateSong" value='AKTUALIZUJ PIOSENKĘ' />
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-3 gauche">
+                <div align="center">
+                    <h2>Pieśni</h2>
                 </div>
-            </center>
-        </div>
-        <div class="approvedItems">
-            <b>Nowe dane piosenki:</b>
-            <br />
-            Id: <input id="songId" readonly />
-            <br />
-            <br />
-            Nazwa: <input id="songName" />
-            <br />
-            <br />
-            You Tube: <input id="youTubeUrl" />
-            <br />
-            <br />
-            Prezentacja: <input type="file" name="files" id="songFile" />
-            <br>
-            <a href="" id="songPPTX">Pobierz piosenkę</a>
+                <!--<ul id="sortable1" class="connectedSortable"></ul>-->
+                
+                <ul id="sortable1" class="list-group">
+                    <li class="list-group-item active">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3">
+                <br />
+                <div class="text-center">
+                    <div class="btn-group">
+                        <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">PPTX</button>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 corps">
+                <div align="center">
+                    <h2>Wybrane pieśni</h2>
+                </div>
+
+            </div>
+            <div class="col-lg-1">
+            </div>
         </div>
     </div>
-    <br />
-    <br />
-    <a href="login.html">Zaloguj się</a><br />
-    <a href="index.html">Stwórz prezentację</a><br />
-    <a href="addSong.html">Dodaj piosenkę</a><br />
-    <a href="deleteSong.html">Usuń piosenkę</a><br />
-    <a href="updateSong.html">Uaktualnij piosenkę</a><br />
-</body>
 
+
+
+<div class="approveTermsContainer">
+    <div class="newItems">
+        <b>Wybierz piosenkę:</b>
+        <br />
+        <select multiple="multiple" id='lstBox1'></select>
+    </div>
+    <div class="transferBtns">
+        <center>
+            <input type='button' id='btnRight' value='  >  ' />
+            <br />
+            <input type='button' id='btnLeft' value='  <  ' />
+            <div class="submitContainer">
+                <input type="submit" id="updateSong" value='AKTUALIZUJ PIOSENKĘ' />
+            </div>
+        </center>
+    </div>
+    <div class="approvedItems">
+        <b>Nowe dane piosenki:</b>
+        <br />
+        Id: <input id="songId" readonly />
+        <br />
+        <br />
+        Nazwa: <input id="songName" />
+        <br />
+        <br />
+        You Tube: <input id="youTubeUrl" />
+        <br />
+        <br />
+        Prezentacja: <input type="file" name="files" id="songFile" />
+        <br>
+        <a href="" id="songPPTX">Pobierz piosenkę</a>
+    </div>
+</div>
+
+
+
+</body>
 </html>

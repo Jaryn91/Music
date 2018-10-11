@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 
 <head>
     <meta charset="utf-8" />
@@ -6,25 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Stwórz prezentacje - WawrzynSlajd</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <style>
-        #sortable1, #sortable2 {
-            border: 1px solid #eee;
-            width: 300px;
-            min-height: 20px;
-            list-style-type: none;
-            margin: 0;
-            padding: 5px 0 0 0;
-            float: left;
-            margin-right: 10px;
-        }
-
-            #sortable1 li, #sortable2 li {
-                margin: 0 5px 5px 5px;
-                padding: 5px;
-                font-size: 1.2em;
-                width: 280px;
-            }
-    </style>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
@@ -48,8 +29,9 @@
         };
 
         $(document).ready(function () {
+            loadNavBar();
             getAllSongs('#sortable1', AddOptionsToListBox);
-
+            
 
             $('#saveInPPTX').click(function () {
                 var songsIds = getSongIds();
@@ -71,46 +53,57 @@
 </head>
 
 <body>
-
-    <div class="approveTermsContainer">
-        <div class="newItems">
-            <b>Wybierz piosenkę:</b>
-            <br />
-            <ul id="sortable1" class="connectedSortable"></ul>
-        </div>
-        <div class="transferBtns">
-            <center>
-                <div class="submitContainer">
-                    <input type="submit" id="saveInPPTX" value='Pobierz prezentacje w postaci pptx' />
-                    <br />
-                    <input type="submit" id="saveInZIP" value='Pobierz prezentacje w postaci zip' />
-                </div>
-            </center>
-        </div>
-        <div class="approvedItems">
-            <b>Wybrane piosenki: </b>
-            <br />
-            <ul id="sortable2" class="connectedSortable"></ul>
-        </div>
-
+    <div id="nav-placeholder">
     </div>
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-3 gauche">
+                <div align="center">
+                    <h2>Pieśni</h2>
+                </div>
+                <ul id="sortable1" class="connectedSortable"></ul>
+            </div>
+
+            <div class="col-lg-3">
+                <br />
+                <div class="text-center">
+                    <div class="btn-group">
+                        <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">PPTX</button>
+                        <button type="submit" id="saveInZIP" value='ZIP' class="btn btn-primary">ZIP</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 corps">
+                <div align="center">
+                    <h2>Wybrane pieśni</h2>
+                </div>
+                <ul id="sortable2" class="connectedSortable"></ul>
+
+            </div>
+            <div class="col-lg-1">
+            </div>
+        </div>
+    </div>
+
+    <br />
     <br />
 
-    <center>
-        <textarea id="textarea" rows="15" cols="80"></textarea>
-    </center>
-    <br />
-
-
-
-
-    <br />
-    <br />
-    <a href="login.html">Zaloguj się</a><br />
-    <a href="index.html">Stwórz prezentację</a><br />
-    <a href="addSong.html">Dodaj piosenkę</a><br />
-    <a href="deleteSong.html">Usuń piosenkę</a><br />
-    <a href="updateSong.html">Uaktualnij piosenkę</a><br />
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+            </div>
+            <div class="col-lg-8">
+                <textarea id="textarea" class="form-control" rows="15" cols="80"></textarea>
+            </div>
+            <div class="col-lg-2">
+            </div>
+        </div>
+    </div>
 </body>
-
 </html>

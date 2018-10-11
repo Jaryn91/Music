@@ -2,49 +2,51 @@
 
 <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="mystyle.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Usuń piosenkę - WawrzynSlajd</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
     <script type="text/javascript" src="js/songs.js"></script>
+    <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
     <script>
+
+        $(function () {
+            $("#sortable1, #sortable2").sortable({
+                connectWith: ".connectedSortable"
+            }).disableSelection();
+        });
+
+        function getSongIds() {
+            var songsIds = "";
+            $('#sortable2 li').each(function () {
+                songsIds += "ids=" + $(this).val() + "&";
+            });
+            songsIds = songsIds.slice(0, -1);
+            return songsIds;
+        };
+
+
+        function sendAlert(data) {
+            $('#textarea').val(data.inforamtion);
+            window.location.href = data.path;
+        }
+
         $(document).ready(function () {
-            getAllSongs('#lstBox1', AddOptionsToListBox);
-
-            $('#btnRight').click(function (e) {
-                var selectedOpts = $('#lstBox1 option:selected');
-                if (selectedOpts.length == 0) {
-                    alert("Nothing to move.");
-                    e.preventDefault();
-                }
-
-                $('#lstBox2').append($(selectedOpts).clone());
-                $(selectedOpts).remove();
-                e.preventDefault();
-            });
-
-            $('#btnLeft').click(function (e) {
-                var selectedOpts = $('#lstBox2 option:selected');
-                if (selectedOpts.length == 0) {
-                    alert("Nothing to move.");
-                    e.preventDefault();
-                }
-
-                $('#lstBox1').append($(selectedOpts).clone());
-                $(selectedOpts).remove();
-                e.preventDefault();
-            });
+            loadNavBar();
+            getAllSongs('#sortable1', AddOptionsToListBox);
 
             $('#deleteSong').click(function (e) {
-                $('#lstBox2 option').each(function () {
-                    deleteSong($(this).val());
-                    $(this).remove();
+                $('#sortable2 li').each(function () {
+                    deleteSong(this.value);
+                    this.remove();
                     e.preventDefault();
                 });
                 //location.reload();
             });
-
-
         });
 
         function callService(urlRequest) {
@@ -60,37 +62,39 @@
 </head>
 
 <body>
+    <div id="nav-placeholder">
+    </div>
 
-    <div class="approveTermsContainer">
-        <div class="newItems">
-            <b>Wybierz piosenkę:</b>
-            <br />
-            <select multiple="multiple" id='lstBox1'></select>
-        </div>
-        <div class="transferBtns">
-            <center>
-                <input type='button' id='btnRight' value='  >  ' />
-                <br />
-                <input type='button' id='btnLeft' value='  <  ' />
-                <div class="submitContainer">
-                    <input type="submit" id="deleteSong" value='USUŃ PIOSENKI' />
-                    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-3 gauche">
+                <div align="center">
+                    <h2>Pieśni</h2>
                 </div>
-            </center>
-        </div>
-        <div class="approvedItems">
-            <b>Usuń piosenki:</b>
-            <br />
-            <select multiple="multiple" id='lstBox2'></select>
+                <ul id="sortable1" class="connectedSortable"></ul>
+            </div>
+
+            <div class="col-lg-3">
+                <br />
+                <div class="text-center">
+                    <div class="btn-group">
+                        <button type="submit" id="deleteSong" value='USUŃ PIOSENKI' class="btn btn-primary">Usuń</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 corps">
+                <div align="center">
+                    <h2>Do usunięcia</h2>
+                </div>
+                <ul id="sortable2" class="connectedSortable"></ul>
+
+            </div>
+            <div class="col-lg-1">
+            </div>
         </div>
     </div>
-    <br />
-    <br />
-    <a href="login.html">Zaloguj się</a><br />
-    <a href="index.html">Stwórz prezentację</a><br />
-    <a href="addSong.html">Dodaj piosenkę</a><br />
-    <a href="deleteSong.html">Usuń piosenkę</a><br />
-    <a href="updateSong.html">Uaktualnij piosenkę</a><br />
 </body>
-
 </html>

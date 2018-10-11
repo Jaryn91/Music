@@ -1,9 +1,8 @@
-﻿window.addEventListener('load', function () {
-
-    var content = document.querySelector('.content');
-    var loadingSpinner = document.getElementById('loading');
-    content.style.display = 'block';
-    loadingSpinner.style.display = 'none';
+﻿$('document').ready(function () {
+    var content = $('.content');
+    var loadingSpinner = $('#loading');
+    content.css('display', 'block');
+    loadingSpinner.css('display', 'none');
 
     var userProfile;
     var apiUrl = 'http://localhost:3001/api';
@@ -18,52 +17,57 @@
         leeway: 60
     });
 
-    var homeView = document.getElementById('home-view');
-    var profileView = document.getElementById('profile-view');
-    var pingView = document.getElementById('ping-view');
+    var homeView = $('#home-view');
+    var profileView = $('#profile-view');
+    var pingView = $('#ping-view');
 
     // buttons and event listeners
-    var loginBtn = document.getElementById('qsLoginBtn');
-    var logoutBtn = document.getElementById('qsLogoutBtn');
+    var loginBtn = $('#qsLoginBtn');
+    var logoutBtn = $('#qsLogoutBtn');
 
-    var homeViewBtn = document.getElementById('btn-home-view');
-    var profileViewBtn = document.getElementById('btn-profile-view');
-    var pingViewBtn = document.getElementById('btn-ping-view');
+    var homeViewBtn = $('#btn-home-view');
+    var profileViewBtn = $('#btn-profile-view');
+    var pingViewBtn = $('#btn-ping-view');
 
-    var pingPublic = document.getElementById('btn-ping-public');
-    var pingPrivate = document.getElementById('btn-ping-private');
+    var pingPublic = $('#btn-ping-public');
+    var pingPrivate = $('#btn-ping-private');
+    var pingPrivateScoped = $('#btn-ping-private-scoped');
 
-    var callPrivateMessage = document.getElementById('call-private-message');
-    var pingMessage = document.getElementById('ping-message');
+    var callPrivateMessage = $('#call-private-message');
+    var pingMessage = $('#ping-message');
 
-    pingPublic.addEventListener('click', function () {
+    pingPublic.click(function () {
         callAPI('/public', false);
     });
 
-    pingPrivate.addEventListener('click', function () {
+    pingPrivate.click(function () {
         callAPI('/private', true);
     });
 
-    loginBtn.addEventListener('click', login);
-    logoutBtn.addEventListener('click', logout);
-
-    homeViewBtn.addEventListener('click', function () {
-        homeView.style.display = 'inline-block';
-        profileView.style.display = 'none';
-        pingView.style.display = 'none';
+    pingPrivateScoped.click(function () {
+        callAPI('/private-scoped', true);
     });
 
-    profileViewBtn.addEventListener('click', function () {
-        homeView.style.display = 'none';
-        pingView.style.display = 'none';
-        profileView.style.display = 'inline-block';
+    loginBtn.click(login);
+    logoutBtn.click(logout);
+
+    homeViewBtn.click(function () {
+        homeView.css('display', 'inline-block');
+        profileView.css('display', 'none');
+        pingView.css('display', 'none');
+    });
+
+    profileViewBtn.click(function () {
+        homeView.css('display', 'none');
+        pingView.css('display', 'none');
+        profileView.css('display', 'inline-block');
         getProfile();
     });
 
-    pingViewBtn.addEventListener('click', function () {
-        homeView.style.display = 'none';
-        profileView.style.display = 'none';
-        pingView.style.display = 'inline-block';
+    pingViewBtn.click(function () {
+        homeView.css('display', 'none');
+        profileView.css('display', 'none');
+        pingView.css('display', 'inline-block');
     });
 
     function login() {
@@ -85,7 +89,7 @@
         localStorage.removeItem('access_token');
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');
-        pingMessage.style.display = 'none';
+        pingMessage.css('display', 'none');
         displayButtons();
     }
 
@@ -97,26 +101,28 @@
     }
 
     function displayButtons() {
-        var loginStatus = document.querySelector('.container h4');
+        var loginStatus = $('.container h4');
         if (isAuthenticated()) {
-            loginBtn.style.display = 'none';
-            logoutBtn.style.display = 'inline-block';
-            profileViewBtn.style.display = 'inline-block';
-            pingViewBtn.style.display = 'inline-block';
-            pingPrivate.style.display = 'inline-block';
-            callPrivateMessage.style.display = 'none';
-            loginStatus.innerHTML = 'You are logged in! You can now send authenticated requests to your server.';
+            loginBtn.css('display', 'none');
+            logoutBtn.css('display', 'inline-block');
+            profileViewBtn.css('display', 'inline-block');
+            pingPrivate.css('display', 'inline-block');
+            pingPrivateScoped.css('display', 'inline-block');
+            callPrivateMessage.css('display', 'none');
+            loginStatus.text(
+                'Juhu! Jesteś zalogowany!'
+            );
         } else {
-            homeView.style.display = 'inline-block';
-            loginBtn.style.display = 'inline-block';
-            logoutBtn.style.display = 'none';
-            profileViewBtn.style.display = 'none';
-            profileView.style.display = 'none';
-            pingView.style.display = 'none';
-            pingViewBtn.style.display = 'none';
-            pingPrivate.style.display = 'none';
-            callPrivateMessage.style.display = 'block';
-            loginStatus.innerHTML = 'Zaloguj się, aby móc cokolwiek robić :D.';
+            homeView.css('display', 'inline-block');
+            loginBtn.css('display', 'inline-block');
+            logoutBtn.css('display', 'none');
+            profileViewBtn.css('display', 'none');
+            profileView.css('display', 'none');
+            pingView.css('display', 'none');
+            pingPrivate.css('display', 'none');
+            pingPrivateScoped.css('display', 'none');
+            callPrivateMessage.css('display', 'block');
+            loginStatus.text('Zaloguj się proszę :).');
         }
     }
 
@@ -141,13 +147,9 @@
 
     function displayProfile() {
         // display the profile
-        document.querySelector(
-            '#profile-view .nickname'
-        ).innerHTML = userProfile.nickname;
-        document.querySelector(
-            '#profile-view .full-profile'
-        ).innerHTML = JSON.stringify(userProfile, null, 2);
-        document.querySelector('#profile-view img').src = userProfile.picture;
+        $('#profile-view .nickname').text(userProfile.nickname);
+        $('#profile-view .full-profile').text(JSON.stringify(userProfile, null, 2));
+        $('#profile-view img').attr('src', userProfile.picture);
     }
 
     function handleAuthentication() {
@@ -155,10 +157,10 @@
             if (authResult && authResult.accessToken && authResult.idToken) {
                 window.location.hash = '';
                 setSession(authResult);
-                loginBtn.style.display = 'none';
-                homeView.style.display = 'inline-block';
+                loginBtn.css('display', 'none');
+                homeView.css('display', 'inline-block');
             } else if (err) {
-                homeView.style.display = 'inline-block';
+                homeView.css('display', 'inline-block');
                 console.log(err);
                 alert(
                     'Error: ' + err.error + '. Check the console for further details.'
@@ -172,25 +174,23 @@
 
     function callAPI(endpoint, secured) {
         var url = apiUrl + endpoint;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
-        if (secured) {
-            xhr.setRequestHeader(
-                'Authorization',
-                'Bearer ' + localStorage.getItem('access_token')
-            );
+        var accessToken = localStorage.getItem('access_token');
+
+        var headers;
+        if (secured && accessToken) {
+            headers = { Authorization: 'Bearer ' + accessToken };
         }
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                // update message
-                document.querySelector('#ping-view h2').innerHTML = JSON.parse(
-                    xhr.responseText
-                ).message;
-            } else {
-                alert('Request failed: ' + xhr.statusText);
-            }
-        };
-        xhr.send();
+
+        $.ajax({
+            url: url,
+            headers: headers
+        })
+            .done(function (result) {
+                $('#ping-view h2').text(result.message);
+            })
+            .fail(function (err) {
+                $('#ping-view h2').text('Request failed: ' + err.statusText);
+            });
     }
 
     displayButtons();

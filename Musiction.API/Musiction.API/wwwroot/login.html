@@ -1,56 +1,38 @@
-﻿<!doctype html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
+    <title>Bootstrap Example</title>
     <meta charset="utf-8">
-    <title>Calling an API</title>
-    <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="auth/auth0.js"></script>
+    <script src="js/domain.js"></script>
     <script src="auth/auth0-variables.js"></script>
     <script src="auth/app.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <script>
+        $(document).ready(function() {
+            loadNavBar();
+        });
+    </script>
 </head>
 <body>
-    <div id="loading">
-        <img src="assets/loading.svg" alt="Loading spinner">
-    </div>
-    <div class="content">
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Muzyczne Wawrzyny</a>
-                    <button id="btn-home-view" class="btn btn-primary btn-margin">
-                        Main
-                    </button>
-
-                    <button id="btn-profile-view" class="btn btn-primary btn-margin">
-                        Profile
-                    </button>
-                    <button id="btn-ping-view" class="btn btn-primary btn-margin">
-                        Ping
-                    </button>
-                    <button id="qsLoginBtn" class="btn btn-primary btn-margin">
-                        Zaloguj się
-                    </button>
-                    <button id="qsLogoutBtn" class="btn btn-primary btn-margin">
-                        Log Out
-                    </button>
-
-
-
-                    <a href="index.html" class="btn btn-info">Stwórz prezentację</a>
-                    <a href="addSong.html" class="btn btn-info" role="button">Dodaj piosenkę</a>
-                    <a href="deleteSong.html" class="btn btn-info" role="button">Usuń piosenkę</a>
-                    <a href="updateSong.html" class="btn btn-info" role="button">Uaktualnij piosenkę</a>
-                </div>
-            </div>
-        </nav>
+    
+<div id="nav-placeholder">
+</div>
+  
+<div class="container">
+    <h3>Twój profil</h3>
+    <button id="btn-profile-view" class="btn btn-primary btn-margin">Mój profil</button>
+    <button id="btn-ping-view" class="btn btn-primary btn-margin">Ping</button>
+    <button id="qsLoginBtn" class="btn btn-primary btn-margin">Zaloguj się</button>
+    <button id="qsLogoutBtn" class="btn btn-primary btn-margin">Wyloguj się</button>
+</div>
         <main class="container">
             <!-- home view -->
             <div id="home-view">
                 <h4></h4>
             </div>
+
             <!-- profile view -->
             <div id="profile-view" class="panel panel-default profile-area">
                 <div class="panel-heading"><h3>Profile</h3></div>
@@ -63,25 +45,31 @@
                     <pre class="full-profile"></pre>
                 </div>
             </div>
+
             <!-- ping view -->
             <div id="ping-view">
                 <h1>Make a Call to the Server</h1>
+
                 <p id="call-private-message">
                     Log in to call a private (secured) server endpoint.
                 </p>
+
                 <button id="btn-ping-public" class="btn btn-primary">
                     Call Public
                 </button>
+
                 <button id="btn-ping-private" class="btn btn-primary">
                     Call Private
                 </button>
+
+                <button id="btn-ping-private-scoped" class="btn btn-primary">
+                    Call Private Scoped
+                </button>
+
                 <h2 id="ping-message"></h2>
             </div>
         </main>
     </div>
-    <br />
-    <br />
-        
 
 </body>
 </html>

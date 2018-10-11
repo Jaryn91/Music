@@ -1,19 +1,42 @@
-#lstBox1, #lstBox2{
-    height:300px;
-    width:200px;
-  }
-  
-  .approveTermsContainer{
-    display:flex;
-    justify-content:center;
-  }
-  
-  .transferBtns {
+#lstBox1, #lstBox2 {
+    height: 300px;
+    width: 200px;
+}
+
+.approveTermsContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.transferBtns {
     margin-right: 30px;
     margin-left: 30px;
-  }
-  
-  .transferBtns{
-    float:left; 
-    align-self:center;
-  }
+}
+
+.transferBtns {
+    float: left;
+    align-self: center;
+}
+
+#sortable1, #sortable2 {
+    border: 1px solid #eee;
+    width: 300px;
+    min-height: 20px;
+    list-style-type: none;
+    margin: 0;
+    padding: 5px 0 0 0;
+    float: left;
+    margin-right: 10px;
+}
+
+#sortable1 li, #sortable2 li {
+    margin: 0 5px 5px 5px;
+    padding: 5px;
+    font-size: 1.2em;
+    width: 280px;
+}
+
+
+.active {
+    background: #f00;
+}
