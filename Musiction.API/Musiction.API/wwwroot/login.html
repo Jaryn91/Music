@@ -5,6 +5,9 @@
     <title>Calling an API</title>
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+    <script src="auth/auth0-variables.js"></script>
+    <script src="auth/app.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -16,10 +19,11 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Auth0 - JavaScript</a>
+                    <a class="navbar-brand" href="#">Muzyczne Wawrzyny</a>
                     <button id="btn-home-view" class="btn btn-primary btn-margin">
-                        Home
+                        Main
                     </button>
+
                     <button id="btn-profile-view" class="btn btn-primary btn-margin">
                         Profile
                     </button>
@@ -27,11 +31,18 @@
                         Ping
                     </button>
                     <button id="qsLoginBtn" class="btn btn-primary btn-margin">
-                        Log In
+                        Zaloguj się
                     </button>
                     <button id="qsLogoutBtn" class="btn btn-primary btn-margin">
                         Log Out
                     </button>
+
+
+
+                    <a href="index.html" class="btn btn-info">Stwórz prezentację</a>
+                    <a href="addSong.html" class="btn btn-info" role="button">Dodaj piosenkę</a>
+                    <a href="deleteSong.html" class="btn btn-info" role="button">Usuń piosenkę</a>
+                    <a href="updateSong.html" class="btn btn-info" role="button">Uaktualnij piosenkę</a>
                 </div>
             </div>
         </nav>
@@ -70,14 +81,7 @@
     </div>
     <br />
     <br />
-    <a href="login.html">Zaloguj się</a><br />
-    <a href="index.html">Stwórz prezentację</a><br />
-    <a href="addSong.html">Dodaj piosenkę</a><br />
-    <a href="deleteSong.html">Usuń piosenkę</a><br />
-    <a href="updateSong.html">Uaktualnij piosenkę</a><br />
+        
 
-    <script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
-    <script src="auth/auth0-variables.js"></script>
-    <script src="auth/app.js"></script>
 </body>
 </html>

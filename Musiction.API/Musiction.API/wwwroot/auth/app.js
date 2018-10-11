@@ -1,4 +1,4 @@
-window.addEventListener('load', function () {
+﻿window.addEventListener('load', function () {
 
     var content = document.querySelector('.content');
     var loadingSpinner = document.getElementById('loading');
@@ -116,7 +116,7 @@ window.addEventListener('load', function () {
             pingViewBtn.style.display = 'none';
             pingPrivate.style.display = 'none';
             callPrivateMessage.style.display = 'block';
-            loginStatus.innerHTML = 'You are not logged in! Please log in to continue.';
+            loginStatus.innerHTML = 'Zaloguj się, aby móc cokolwiek robić :D.';
         }
     }
 
