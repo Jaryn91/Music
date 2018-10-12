@@ -22,7 +22,7 @@ namespace Musiction.API.BusinessLogic
         {
             _fileAndFolderPath = fileAndFolderPath;
 
-            var propName = Startup.Configuration["env"] + "ZamzarKey";
+            var propName = Startup.Configuration["env"] + ":ZamzarKey";
             _apiKey = Startup.Configuration[propName];
         }
         public string Convert(string sourceFile)

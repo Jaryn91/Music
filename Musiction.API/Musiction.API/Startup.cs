@@ -34,9 +34,6 @@ namespace Musiction.API
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             CreateAuthentication(services);
-            //services.AddAuthentication()
-            //    .AddOpenIdConnect(ConfigureOptions);
-
 
             services.AddCors(options =>
             {
@@ -53,7 +50,7 @@ namespace Musiction.API
 
             services.AddMvc();
 
-            var propName = Startup.Configuration["env"] + "ConnectionString";
+            var propName = Startup.Configuration["env"] + ":ConnectionString";
             var connectionString = Startup.Configuration[propName];
 
             services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
