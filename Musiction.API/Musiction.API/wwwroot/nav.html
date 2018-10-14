@@ -1,12 +1,21 @@
 ﻿<html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/domain.js"></script>
     <script type="text/javascript" src="js/songs.js"></script>
     <script type="text/javascript" src="js/presentations.js"></script>
-    <script type="text/javascript" src="js/auth.js"></script>
-
+    <script src="auth/auth0.js"></script>
+    <script src="auth/auth0-variables.js"></script>
+    <script src="auth/app.js"></script>
+    <script>
+        function displayAlert(title, description) {
+            $("#error").html(description);
+            $(".modal-title")[0].textContent = title;
+            $('#myModal').modal("show");
+        }
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -24,5 +33,25 @@
             </ul>
         </div>
     </nav>
+
+    <div class="container">
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">A tutaj jest tytuł wiadomości :)</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="error"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No już, już. Zamknij to okienko.</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </body>
 </html>

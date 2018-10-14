@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Uaktualnij piosenkę - Wawrzynowy Slajd!</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
     <script type="text/javascript" src="js/songs.js"></script>
     <script type="text/javascript" src="js/presentations.js"></script>
@@ -15,7 +16,7 @@
     <script>
         $(document).ready(function () {
             loadNavBar();
-            getAllSongs('#sortable1', AddOptionsToListBox);
+            getAllSongs('#sortable1', addOptionsToListBox);
 
             $('#sortable1').on("click", "li.ui-state-default", (function (e) {
                 e.preventDefault();
@@ -36,7 +37,7 @@
                 if ($('#songFile')[0] != null)
                     formData.append('PptxFile', $('#songFile')[0].files[0]);
 
-                updateSong(songId, formData, resetControls);
+                updateSong(songId, formData, success, error);
             });
         })
 
@@ -47,11 +48,24 @@
             $("#songPPTX").attr("href", results.path);
         }
 
-        
-          
+        function error(result, status) {
+            var errorMassage = "";
+            var jsonObj = result.responseJSON;
 
-        function resetControls() {
-            alert("Zedytowano :)");
+            for (var key in jsonObj) {
+                if (jsonObj.hasOwnProperty(key)) {
+                    var validError = jsonObj[key];
+                    for (var val in validError) {
+                        errorMassage += '<p>' + validError[val] + '</p>';
+                    }
+                }
+            }
+            return errorMassage;
+        }
+
+
+        function success() {
+            displayAlert("Sukces!", "Ale super! Udało nam się zedytować " + $('#songName').val() + "!");
             reset($('#songId'));
             reset($('#songName'));
             reset($('#youTubeUrl'));
@@ -100,7 +114,7 @@
                     <span class="custom-file-control"></span>
                 </label>
                 <br>
-                
+
 
                 <div class="text-center">
                     <div class="btn-group">

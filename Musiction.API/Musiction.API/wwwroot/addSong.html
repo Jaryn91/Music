@@ -4,18 +4,37 @@
 <head>
     <meta charset="utf-8" />
     <title>Dodaj pieśń - Wawrzynowy Slajd!</title>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/domain.js"></script>
     <script type="text/javascript" src="js/songs.js"></script>
     <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
     <script>
-        function resetControls() {
-            alert("dodano piosnkę");
+        function success() {
+            displayAlert("Sukces!", "Graluję! Udało Ci się dodać " + $('#name').val() + "!");
             reset($('#name'));
             reset($('#youtube'));
             reset($('#myfile'));
         }
+
+        function error(result, status) {
+            var errorMassage = "";
+            var jsonObj = result.responseJSON;
+
+            for (var key in jsonObj) {
+                if (jsonObj.hasOwnProperty(key)) {
+                    var validError = jsonObj[key];
+                    for (var val in validError) {
+                        errorMassage += '<p>' + validError[val] + '</p>';
+                    }
+                }
+            }
+            return errorMassage;
+        }
+
 
         $(document).ready(function () {
             loadNavBar();
@@ -26,7 +45,7 @@
                 formData.append("YouTubeUrl", $('#youtube').val());
                 formData.append('PptxFile', $('#myfile')[0].files[0]); // myFile is the input type="file" control
 
-                AddSong(formData, resetControls);
+                addSong(formData, success, error);
             });
         });
 
@@ -40,6 +59,9 @@
 <body>
     <div id="nav-placeholder">
     </div>
+
+
+
     <div class="container">
         <div class="row">
             <div class="col-lg-3">

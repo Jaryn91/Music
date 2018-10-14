@@ -5,7 +5,7 @@ namespace Musiction.API.Models
 {
     public class SongForUpdateDto
     {
-        [Required(ErrorMessage = "Podaj nazwę piosenki")]
+        [Required(ErrorMessage = "Znasz piosenkę bez tytułu? Podaj jakiś tytuł, proszę!")]
         [MaxLength(100)]
         public string Name { get; set; }
 

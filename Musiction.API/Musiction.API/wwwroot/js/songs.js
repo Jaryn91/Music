@@ -3,14 +3,17 @@
 function getAllSongs(lstBoxName, func) {
     $.ajax({
         url: songApi,
-        headers: getAuthorizationHeader()
-    })
-        .done(function (result) {
+        headers: getAuthorizationHeader(),
+        success: function (result) {
             func(lstBoxName, result);
-        });
+        },
+        error: function (result, status) {
+            errorHandling(result, null);
+        }
+    });
 }
 
-function AddOptionsToListBox(lstBoxName, result) {
+function addOptionsToListBox(lstBoxName, result) {
     var option = '';
     for (var i = 0; i < result.length; i++) {
         option += '<li class="ui-state-default" value="' + result[i].id + '">' + result[i].name + '</li>';
@@ -19,7 +22,7 @@ function AddOptionsToListBox(lstBoxName, result) {
 }
 
 
-function AddSong(song, func) {
+function addSong(song, funcOk, funcError) {
     $.ajax({
         url: songApi,
         type: 'POST',
@@ -28,11 +31,13 @@ function AddSong(song, func) {
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
         success: function (result) {
+            funcOk();
         },
-        error: function (jqXHR) {
+        error: function (result, status) {
+            errorHandling(result, funcError);
         },
-        complete: function (jqXHR, status) {
-            func();
+        complete: function (result, status) {
+
         }
     });
 }
@@ -48,7 +53,7 @@ function getSong(songId, func) {
         });
 }
 
-function updateSong(songId, song, func) {
+function updateSong(songId, song, funcOk, funcError) {
     var url = songApi + songId;
     $.ajax({
         url: url,
@@ -58,11 +63,12 @@ function updateSong(songId, song, func) {
         processData: false,  // tell jQuery not to process the data
         contentType: false,  // tell jQuery not to set contentType
         success: function (result) {
-            func();
+            funcOk();
         },
-        error: function (jqXHR) {
+        error: function (result, status) {
+            errorHandling(result, funcError);
         },
-        complete: function (jqXHR, status) {
+        complete: function (result, status) {
         }
     });
 }
@@ -77,5 +83,18 @@ function deleteSong(songId) {
             alert("usunięto");
         }
     });
+}
 
+function errorHandling(result, funcError) {
+    var errorMassage;
+    if (result.status === 401) {
+        errorMassage = "No weź!! Zaloguj się, żeby coś zrobić!";
+    }
+    else if (result.status === 400) {
+        errorMassage = funcError(result, status);
+    }
+    else {
+        errorMassage = "I nawet nie wiem co nie działa :(((.";
+    }
+    displayAlert("Coś tutaj chyba nie gra", errorMassage);
 }
