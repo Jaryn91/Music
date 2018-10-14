@@ -66,6 +66,8 @@
 
         function success() {
             displayAlert("Sukces!", "Ale super! Udało nam się zedytować " + $('#songName').val() + "!");
+            $('.ui-state-active')[0].textContent = $('#songName')[0].value;
+            $('.ui-state-active').removeClass('ui-state-active');
             reset($('#songId'));
             reset($('#songName'));
             reset($('#youTubeUrl'));
