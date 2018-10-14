@@ -40,24 +40,17 @@
             getAllSongs('#sortable1', addOptionsToListBox);
 
             $('#deleteSong').click(function (e) {
+                if ($('#sortable2 li').length == 0) {
+                    displayAlert("Informacja", "Hej! Hej! Może wybierz coś co mogę usunąć :).");
+                } else {
                 $('#sortable2 li').each(function () {
-                    deleteSong(this.value);
+                    deleteSong(this.value, this.textContent);
                     this.remove();
                     e.preventDefault();
-                });
-                //location.reload();
-            });
-        });
-
-        function callService(urlRequest) {
-            $.ajax({
-                url: urlRequest,
-                type: 'DELETE',
-                success: function (result) {
-                    alert("usunięto");
+                    });
                 }
             });
-        };
+        });
     </script>
 </head>
 

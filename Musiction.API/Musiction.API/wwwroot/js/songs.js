@@ -73,14 +73,19 @@ function updateSong(songId, song, funcOk, funcError) {
     });
 }
 
-function deleteSong(songId) {
+function deleteSong(songId, songName) {
     var url = songApi + songId;
     $.ajax({
         url: url,
         headers: getAuthorizationHeader(),
         type: 'DELETE',
         success: function (result) {
-            alert("usunięto");
+            displayAlert("Sukces", "Usunąłem " + songName + "! Super, no nie?");
+        },
+        error: function (result, status) {
+            errorHandling(result, null);
+        },
+        complete: function (result, status) {
         }
     });
 }
