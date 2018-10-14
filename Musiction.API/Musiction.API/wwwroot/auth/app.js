@@ -54,20 +54,16 @@
     homeViewBtn.click(function () {
         homeView.css('display', 'inline-block');
         profileView.css('display', 'none');
-        pingView.css('display', 'none');
     });
 
     profileViewBtn.click(function () {
         homeView.css('display', 'none');
-        pingView.css('display', 'none');
         profileView.css('display', 'inline-block');
         getProfile();
     });
 
     pingViewBtn.click(function () {
-        homeView.css('display', 'none');
-        profileView.css('display', 'none');
-        pingView.css('display', 'inline-block');
+        testAuthorization();
     });
 
     function login() {

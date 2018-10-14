@@ -73,6 +73,11 @@
             reset($('#youTubeUrl'));
             reset($('#songPPTX'));
         }
+
+        window.reset = function (e) {
+            e.wrap('<form>').closest('form').get(0).reset();
+            e.unwrap();
+        }
     </script>
 </head>
 

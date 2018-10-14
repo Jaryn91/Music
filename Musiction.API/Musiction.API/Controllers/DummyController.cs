@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Musiction.API.Entities;
 
 namespace Musiction.API.Controllers
@@ -13,8 +14,17 @@ namespace Musiction.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("api/testdatabase")]
         public IActionResult TestDatabase()
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("api/testAuth")]
+        public IActionResult TestAuth()
         {
             return Ok();
         }
