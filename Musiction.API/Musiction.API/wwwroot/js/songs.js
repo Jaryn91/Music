@@ -93,7 +93,7 @@ function deleteSong(songId, songName) {
 function errorHandling(result, funcError) {
     var errorMassage;
     if (result.status === 401) {
-        errorMassage = "No weź!! Zaloguj się, żeby coś zrobić!";
+        errorMassage = "No weź!! <a href=\"login.html\">Zaloguj się</a>, żeby coś zrobić!";
     }
     else if (result.status === 400) {
         errorMassage = funcError(result, status);
