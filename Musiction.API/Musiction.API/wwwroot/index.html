@@ -39,7 +39,8 @@
 
 
             $('#searchTextBox').on('input', function (e) {
-                filter(e.target.value.toLowerCase());
+                var songs = filter(e.target.value.toLowerCase());
+                populateListBox("#sortable1", songs);
             });
 
             $('#saveInPPTX').click(function () {

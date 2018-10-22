@@ -9,6 +9,7 @@ function getAllSongs(lstBoxName, func) {
         headers: getAuthorizationHeader(),
         success: function (result) {
             func(lstBoxName, result);
+            allSongs = result;
         },
         error: function (result, status) {
             errorHandling(result, null);
@@ -22,7 +23,6 @@ function addOptionsToListBox(lstBoxName, result) {
         options += createOption(result[i]);
     }
     $(lstBoxName).append(options);
-    allSongs = result;
 }
 
 
@@ -32,11 +32,18 @@ function createOption(result) {
 }
 
 function filter(text) {
+    if (text == "")
+        return allSongs;
     var filteredSongs = new Array();
     for (var i = 0; i < allSongs.length; i++) {
         if (allSongs[i].name.toLowerCase().indexOf(text) >= 0) {
             filteredSongs.push(allSongs[i]);
         }
     }
+    return filteredSongs;
+}
 
+function populateListBox(lsbBoxName, songs) {
+    $(lsbBoxName).empty();
+    addOptionsToListBox(lsbBoxName, songs);
 }
