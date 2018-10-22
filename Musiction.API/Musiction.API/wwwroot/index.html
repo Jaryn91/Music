@@ -13,6 +13,7 @@
     <script type="text/javascript" src="js/songs.js"></script>
     <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
+    <script type="text/javascript" src="js/filteringAndPagination.js"></script>
     <script>
         $(function () {
             $("#sortable1, #sortable2").sortable({
@@ -33,6 +34,10 @@
             loadNavBar();
             getAllSongs('#sortable1', addOptionsToListBox);
 
+            $('#searchTextBox').on('input', function (e) {
+                var songs = filter(e.target.value.toLowerCase());
+                populateListBox("#sortable1", songs);
+            });
 
             $('#saveInPPTX').click(function () {
                 var songsIds = getSongIds();
@@ -58,33 +63,41 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-1">
-            </div>
-            <div class="col-lg-3 gauche">
+
+            <div class="col-lg-5 col-lg-offset-1">
                 <div align="center">
                     <h2>Pieśni</h2>
                 </div>
-                <ul id="sortable1" class="connectedSortable"></ul>
+                <div class="form-group">
+                    <label for="search">Szukaj:</label>
+                    <input type="text" class="form-control" id="searchTextBox">
+                </div>
             </div>
 
-            <div class="col-lg-3">
+            <div class="col-lg-5">
+                <div align="center">
+                    <h2>Wybrane pieśni</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5 col-lg-offset-1">
+                <ul id="sortable1" class="connectedSortable songsPlaceholder"></ul>
+            </div>
+            <div class="col-lg-5">
+                <ul id="sortable2" class="connectedSortable songsPlaceholder"></ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-5 col-lg-offset-6">
                 <br />
                 <div class="text-center">
-                    <div class="btn-group">
+                    <div class="btn-group pull-right-lg">
                         <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">PPTX</button>
                         <button type="submit" id="saveInZIP" value='ZIP' class="btn btn-primary">ZIP</button>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-3 corps">
-                <div align="center">
-                    <h2>Wybrane pieśni</h2>
-                </div>
-                <ul id="sortable2" class="connectedSortable"></ul>
-
-            </div>
-            <div class="col-lg-1">
             </div>
         </div>
     </div>
@@ -94,12 +107,8 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-2">
-            </div>
-            <div class="col-lg-8">
+            <div class="col-lg-10 col-lg-offset-1">
                 <textarea id="textarea" class="form-control" rows="15" cols="80"></textarea>
-            </div>
-            <div class="col-lg-2">
             </div>
         </div>
     </div>
