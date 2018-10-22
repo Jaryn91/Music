@@ -13,10 +13,16 @@
     <script type="text/javascript" src="js/songs.js"></script>
     <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
+    <script type="text/javascript" src="js/filteringAndPagination.js"></script>
     <script>
         $(document).ready(function () {
             loadNavBar();
             getAllSongs('#sortable1', addOptionsToListBox);
+
+            $('#searchTextBox').on('input', function (e) {
+                var songs = filter(e.target.value.toLowerCase());
+                populateListBox("#sortable1", songs);
+            });
 
             $('#sortable1').on("click", "li.ui-state-default", (function (e) {
                 e.preventDefault();
@@ -87,22 +93,28 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-1">
-            </div>
-            <div class="col-lg-3 gauche">
+
+            <div class="col-lg-5 col-lg-offset-1">
                 <div align="center">
                     <h2>Pieśni</h2>
                 </div>
-                <ul id="sortable1" class="list-group"></ul>
+                <div class="form-group">
+                    <label for="search">Szukaj:</label>
+                    <input type="text" class="form-control" id="searchTextBox">
+                </div>
             </div>
 
-            <div class="col-lg-1">
-            </div>
-
-            <div class="col-lg-5 corps">
+            <div class="col-lg-5">
                 <div align="center">
                     <h2>Edytuj pieśń</h2>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5 col-lg-offset-1">
+                <ul id="sortable1" class="connectedSortable songsPlaceholder"></ul>
+            </div>
+            <div class="col-lg-5 corps">
                 <div class="form-group">
                     <label for="songId">Id</label>
                     <input id="songId" class="form-control" readonly />
@@ -121,16 +133,17 @@
                     <span class="custom-file-control"></span>
                 </label>
                 <br>
+            </div>
 
-
-                <div class="text-center">
-                    <div class="btn-group">
-                        <button type="submit" id="updateSong" value='PPTX' class="btn btn-primary">Aktualizuj</button>
-
+            <div class="row">
+                <div class="col-lg-5 col-lg-offset-6">
+                    <br />
+                    <div class="text-center">
+                        <div class="btn-group pull-right-lg">
+                            <button type="submit" id="updateSong" value='PPTX' class="btn btn-primary">Aktualizuj</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-1">
             </div>
         </div>
     </div>

@@ -1,7 +1,6 @@
 ﻿var songApi = getDomain() + "api/songs/";
 var allSongs;
-var page = 0;
-var itemsPerPage = 5;
+
 
 function getAllSongs(lstBoxName, func) {
     $.ajax({

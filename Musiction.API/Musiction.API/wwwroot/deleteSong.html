@@ -13,6 +13,7 @@
     <script type="text/javascript" src="js/songs.js"></script>
     <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
+    <script type="text/javascript" src="js/filteringAndPagination.js"></script>
     <script>
         $(function () {
             $("#sortable1, #sortable2").sortable({
@@ -39,14 +40,19 @@
             loadNavBar();
             getAllSongs('#sortable1', addOptionsToListBox);
 
+            $('#searchTextBox').on('input', function (e) {
+                var songs = filter(e.target.value.toLowerCase());
+                populateListBox("#sortable1", songs);
+            });
+
             $('#deleteSong').click(function (e) {
                 if ($('#sortable2 li').length == 0) {
                     displayAlert("Informacja", "Hej! Hej! Może wybierz coś co mogę usunąć :).");
                 } else {
-                $('#sortable2 li').each(function () {
-                    deleteSong(this.value, this.textContent);
-                    this.remove();
-                    e.preventDefault();
+                    $('#sortable2 li').each(function () {
+                        deleteSong(this.value, this.textContent);
+                        this.remove();
+                        e.preventDefault();
                     });
                 }
             });
@@ -58,36 +64,47 @@
     <div id="nav-placeholder">
     </div>
 
+
     <div class="container">
         <div class="row">
-            <div class="col-lg-1">
-            </div>
-            <div class="col-lg-3 gauche">
+
+            <div class="col-lg-5 col-lg-offset-1">
                 <div align="center">
                     <h2>Pieśni</h2>
                 </div>
-                <ul id="sortable1" class="connectedSortable"></ul>
+                <div class="form-group">
+                    <label for="search">Szukaj:</label>
+                    <input type="text" class="form-control" id="searchTextBox">
+                </div>
             </div>
 
-            <div class="col-lg-3">
+            <div class="col-lg-5">
+                <div align="center">
+                    <h2>Do usunięcia</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5 col-lg-offset-1">
+                <ul id="sortable1" class="connectedSortable songsPlaceholder"></ul>
+            </div>
+            <div class="col-lg-5">
+                <ul id="sortable2" class="connectedSortable songsPlaceholder"></ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-5 col-lg-offset-6">
                 <br />
                 <div class="text-center">
-                    <div class="btn-group">
+                    <div class="btn-group pull-right-lg">
                         <button type="submit" id="deleteSong" value='USUŃ PIOSENKI' class="btn btn-primary">Usuń</button>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-3 corps">
-                <div align="center">
-                    <h2>Do usunięcia</h2>
-                </div>
-                <ul id="sortable2" class="connectedSortable"></ul>
-
-            </div>
-            <div class="col-lg-1">
-            </div>
         </div>
     </div>
+
+
 </body>
 </html>
