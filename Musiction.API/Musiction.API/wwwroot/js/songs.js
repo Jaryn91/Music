@@ -1,26 +1,5 @@
 ﻿var songApi = getDomain() + "api/songs/";
 
-function getAllSongs(lstBoxName, func) {
-    $.ajax({
-        url: songApi,
-        headers: getAuthorizationHeader(),
-        success: function (result) {
-            func(lstBoxName, result);
-        },
-        error: function (result, status) {
-            errorHandling(result, null);
-        }
-    });
-}
-
-function addOptionsToListBox(lstBoxName, result) {
-    var option = '';
-    for (var i = 0; i < result.length; i++) {
-        option += '<li class="ui-state-default" value="' + result[i].id + '">' + result[i].name + '</li>';
-    }
-    $(lstBoxName).append(option);
-}
-
 
 function addSong(song, funcOk, funcError) {
     $.ajax({
