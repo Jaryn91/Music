@@ -75,7 +75,9 @@ namespace Musiction.API.Controllers
 
             var finalSong = Mapper.Map<Song>(song);
 
+
             GoogleSlides googleSlides = new GoogleSlides();
+            //googleSlides.CreateFolder("Prezentacje");
             var presentationId = googleSlides.Create(song.Name);
             finalSong.PresentationId = presentationId;
 
