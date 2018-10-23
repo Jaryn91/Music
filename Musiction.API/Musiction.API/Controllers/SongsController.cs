@@ -6,7 +6,6 @@ using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
 using Musiction.API.Services;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -43,41 +42,43 @@ namespace Musiction.API.Controllers
         [HttpGet("{id}", Name = "GetSong"), Authorize]
         public IActionResult GetSong(int id)
         {
-            try
-            {
-                var songToReturn = _songRepository.GetSong(id);
-                if (songToReturn == null)
-                {
-                    _logger.LogInformation($"Song {id} is not found");
-                    return NotFound();
-                }
+            //try
+            //{
+            //    var songToReturn = _songRepository.GetSong(id);
+            //    if (songToReturn == null)
+            //    {
+            //        _logger.LogInformation($"Song {id} is not found");
+            //        return NotFound();
+            //    }
 
-                var song = Mapper.Map<SongDto>(songToReturn);
-                song.Path = _fileAndFolderPath.GetWebAddressToFile(song.Path);
-                return Ok(song);
-            }
-            catch (Exception)
-            {
-                _logger.LogInformation($"Excepction occoured while looking for song with {id}");
-                return StatusCode(500, "A problem happend on GetSong");
-            }
+            //    var song = Mapper.Map<SongDto>(songToReturn);
+            //    song.Path = _fileAndFolderPath.GetWebAddressToFile(song.Path);
+            //    return Ok(song);
+            //}
+            //catch (Exception)
+            //{
+            //    _logger.LogInformation($"Excepction occoured while looking for song with {id}");
+            return StatusCode(500, "A problem happend on GetSong");
+            //}
         }
 
 
         [HttpPost(), Authorize]
         public async Task<IActionResult> CreateSong(SongForCreationDto song)
         {
-
             if (song == null)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var filePath = _fileSaver.SaveSong(song.PptxFile, song.Name);
-
             var finalSong = Mapper.Map<Song>(song);
-            finalSong.Path = filePath.Result;
+
+            //GoogleSlides googleSlides = new GoogleSlides();
+            //var presentationId = googleSlides.Create(song.Name);
+            //finalSong.PresentationId = presentationId;
+
+            finalSong.PresentationId = "ARJoHfcGby_qhM_rAq594i7wJ0nAAXmmfI8vON3HMqI";
 
             if (!_songRepository.AddSong(finalSong))
             {
@@ -92,34 +93,34 @@ namespace Musiction.API.Controllers
         [HttpPut("{id}"), Authorize]
         public IActionResult UpdateSong(int id, SongForUpdateDto song)
         {
-            if (song == null)
-                return BadRequest();
+            //if (song == null)
+            //    return BadRequest();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            //if (!ModelState.IsValid)
+            //    return BadRequest(ModelState);
 
-            var songToUpdate = _songRepository.GetSong(id);
+            //var songToUpdate = _songRepository.GetSong(id);
 
-            string newSongPath = "";
-            if (songToUpdate.Name != song.Name)
-                newSongPath = _fileSaver.UpdateSongPath(songToUpdate.Path, song.Name);
+            //string newSongPath = "";
+            //if (songToUpdate.Name != song.Name)
+            //    newSongPath = _fileSaver.UpdateSongPath(songToUpdate.Path, song.Name);
 
 
-            if (song.PptxFile != null)
-                newSongPath = _fileSaver.SaveSong(song.PptxFile, song.Name).Result;
+            //if (song.PptxFile != null)
+            //    newSongPath = _fileSaver.SaveSong(song.PptxFile, song.Name).Result;
 
-            if (songToUpdate == null)
-                return NotFound();
+            //if (songToUpdate == null)
+            //    return NotFound();
 
-            Mapper.Map(song, songToUpdate);
+            //Mapper.Map(song, songToUpdate);
 
-            if (song.PptxFile != null || songToUpdate.Name != song.Name)
-                songToUpdate.Path = newSongPath;
+            //if (song.PptxFile != null || songToUpdate.Name != song.Name)
+            //    songToUpdate.Path = newSongPath;
 
-            if (!_songRepository.Save())
-            {
-                return StatusCode(500, "A problem happend durning updating a song");
-            }
+            //if (!_songRepository.Save())
+            //{
+            //    return StatusCode(500, "A problem happend durning updating a song");
+            //}
 
 
             return NoContent();
@@ -128,20 +129,20 @@ namespace Musiction.API.Controllers
         [HttpDelete("{id}"), Authorize]
         public IActionResult DeleteSong(int id)
         {
-            var songToDelete = _songRepository.GetSong(id);
+            //var songToDelete = _songRepository.GetSong(id);
 
-            _fileSaver.DeleteSong(songToDelete.Path);
+            //_fileSaver.DeleteSong(songToDelete.Path);
 
-            if (songToDelete == null)
-                return NotFound();
+            //if (songToDelete == null)
+            //    return NotFound();
 
-            _songRepository.RemoveSong(songToDelete);
+            //_songRepository.RemoveSong(songToDelete);
 
 
-            if (!_songRepository.Save())
-            {
-                return StatusCode(500, "A problem happend durning deleting a song");
-            }
+            //if (!_songRepository.Save())
+            //{
+            //    return StatusCode(500, "A problem happend durning deleting a song");
+            //}
 
             return NoContent();
         }

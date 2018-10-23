@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Musiction.API.Models
 {
@@ -9,9 +8,12 @@ namespace Musiction.API.Models
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public IFormFile PptxFile { get; set; }
+        //public IFormFile PptxFile { get; set; }
 
         [MaxLength(50)]
         public string YouTubeUrl { get; set; }
+
+        [MaxLength(50)]
+        public string PresentationId { get; set; }
     }
 }

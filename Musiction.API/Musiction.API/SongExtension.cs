@@ -17,14 +17,12 @@ namespace Musiction.API
                 new Song()
                 {
                     Name = "Błogosławieni Miłosierni",
-                    Path = @"C:/Blogoslawnie.pptx",
                     YouTubeUrl = @"www.youtube.com/Blogoslawnie"
                 },
 
                 new Song()
                 {
                     Name = "Barka",
-                    Path = @"C:/Barka.pptx",
                     YouTubeUrl = @"www.youtube.com/Barka"
                 }
             };

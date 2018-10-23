@@ -13,14 +13,11 @@ namespace Musiction.API.Entities
         [MaxLength(50)]
         public string Name { get; set; }
 
-        [Required]
-        [MaxLength(150)]
-        public string Path { get; set; }
-
-
         [MaxLength(60)]
         public string YouTubeUrl { get; set; }
 
+        [MaxLength(50)]
+        public string PresentationId { get; set; }
 
     }
 }

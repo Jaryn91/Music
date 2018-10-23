@@ -11,9 +11,10 @@ using System;
 namespace Musiction.API.Migrations
 {
     [DbContext(typeof(SongContext))]
-    partial class SongContextModelSnapshot : ModelSnapshot
+    [Migration("20181023124926_SongDbAddPresentationId")]
+    partial class SongDbAddPresentationId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +30,10 @@ namespace Musiction.API.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(150);
 
                     b.Property<string>("PresentationId")
                         .HasMaxLength(50);
