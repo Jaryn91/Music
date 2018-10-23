@@ -8,13 +8,9 @@ namespace Musiction.API.Models
         [MaxLength(100)]
         public string Name { get; set; }
 
-        //[MaxLength(200)]
-        //public string Path { get; set; }
-
         [MaxLength(50)]
         public string YouTubeUrl { get; set; }
 
-        //public IFormFile PptxFile { get; set; }
 
         [MaxLength(50)]
         public string PresentationId { get; set; }

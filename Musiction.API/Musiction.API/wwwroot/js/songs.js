@@ -10,7 +10,7 @@ function addSong(song, funcOk, funcError) {
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
         success: function (result) {
-            funcOk();
+            funcOk(result);
         },
         error: function (result, status) {
             errorHandling(result, funcError);

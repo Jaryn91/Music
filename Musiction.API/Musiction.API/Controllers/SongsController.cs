@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
@@ -74,11 +75,9 @@ namespace Musiction.API.Controllers
 
             var finalSong = Mapper.Map<Song>(song);
 
-            //GoogleSlides googleSlides = new GoogleSlides();
-            //var presentationId = googleSlides.Create(song.Name);
-            //finalSong.PresentationId = presentationId;
-
-            finalSong.PresentationId = "ARJoHfcGby_qhM_rAq594i7wJ0nAAXmmfI8vON3HMqI";
+            GoogleSlides googleSlides = new GoogleSlides();
+            var presentationId = googleSlides.Create(song.Name);
+            finalSong.PresentationId = presentationId;
 
             if (!_songRepository.AddSong(finalSong))
             {
@@ -87,7 +86,7 @@ namespace Musiction.API.Controllers
 
             var createdSong = Mapper.Map<SongDto>(finalSong);
 
-            return CreatedAtRoute("GetSong", new { id = createdSong.Id }, createdSong);
+            return Ok(createdSong);
         }
 
         [HttpPut("{id}"), Authorize]
