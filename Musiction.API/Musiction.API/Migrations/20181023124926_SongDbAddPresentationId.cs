@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Musiction.API.Migrations
 {
@@ -17,13 +14,6 @@ namespace Musiction.API.Migrations
                 oldClrType: typeof(string),
                 oldMaxLength: 200,
                 oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Id",
-                table: "Songs",
-                nullable: false,
-                oldClrType: typeof(int))
-                .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
             migrationBuilder.AddColumn<string>(
                 name: "PresentationId",
@@ -46,13 +36,6 @@ namespace Musiction.API.Migrations
                 oldClrType: typeof(string),
                 oldMaxLength: 60,
                 oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Id",
-                table: "Songs",
-                nullable: false,
-                oldClrType: typeof(int))
-                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
         }
     }
 }
