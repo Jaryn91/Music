@@ -27,7 +27,7 @@ namespace Musiction.API.BusinessLogic
         public string GetMergedFilePath()
         {
             var folderPath = GetCombinedFolderPath("folderSettings:mergedPath");
-            string outcomeFileName = _finaleMergedFilePrefix + DateTime.Now.ToString("yyyyMMddHHmmss") + _pptxExtension;
+            string outcomeFileName = _finaleMergedFilePrefix + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + _pptxExtension;
             return Path.Combine(folderPath, outcomeFileName);
         }
 

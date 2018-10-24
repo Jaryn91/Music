@@ -26,8 +26,7 @@ namespace Musiction.API.BusinessLogic
 
             try
             {
-                var fileName = "final" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pptx";
-                var finalPresentation = Path.Combine(Startup.Configuration[Startup.Configuration["env"] + ":FileRoot"], fileName);
+                var finalPresentation = _fileAndFolderPath.GetMergedFilePath();
                 using (var client = new WebClient())
                 {
                     client.DownloadFile(files.First(), finalPresentation);
