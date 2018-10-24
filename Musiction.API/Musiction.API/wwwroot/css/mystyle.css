@@ -55,3 +55,11 @@
 .pull-center-lg {
     float: center;
 }
+
+.hideDiv {
+    display: none;
+}
+
+.showDiv {
+    display: block;
+}

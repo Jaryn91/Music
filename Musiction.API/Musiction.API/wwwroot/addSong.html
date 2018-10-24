@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Dodaj pieśń - Wawrzynowy Slajd!</title>
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -17,14 +18,14 @@
             displayAlert("Sukces!", "Graluję! Udało Ci się dodać " + $('#name').val() + "!");
             var linkToPresentation =
                 "https://docs.google.com/presentation/d/" + results.presentationId + "/edit?usp=sharing";
-            var win = window.open(linkToPresentation, '_blank');
-            if (win) {
-                win.focus();
-            } else {
-                alert('Please allow popups for this website');
-            }
-            reset($('#name'));
-            reset($('#youtube'));
+
+            $("#googlePresentation").attr("href", linkToPresentation);
+            $("#googlePresentation").attr("target", "_blank");
+            $("#linkToPresentation").removeClass('hideDiv');
+            $("#saveSongDiv").addClass('hideDiv');
+            $('#name').prop('readonly', true);
+            $('#youtube').prop('readonly', true);
+            
         }
 
         function error(result, status) {
@@ -50,7 +51,6 @@
                 var formData = new FormData();
                 formData.append("Name", $('#name').val());
                 formData.append("YouTubeUrl", $('#youtube').val());
-
                 addSong(formData, success, error);
             });
         });
@@ -84,9 +84,23 @@
                     <label for="youtube">You Tube</label>
                     <input id="youtube" class="form-control" />
                 </div>
-                <div class="text-center">
+                <div class="text-center" id="saveSongDiv">
                     <div class="btn-group">
-                        <button type="submit" id="saveSong"  class="btn btn-primary">Dodaj i przejedź do nowej prezetnacji </button>
+                        <button type="submit" id="saveSong" class="btn btn-primary">Dodaj pieśń i stwórz prezetnację</button>
+                    </div>
+                </div>
+                <div class="text-center hideDiv" id="linkToPresentation">
+                    <div class="btn-group">
+                        <div class="btn-group pull-center-lg">
+                            <a class="btn btn-primary" href="#" id="googlePresentation" role="button" target="_blank">Edytuj prezentacje z pieśnią</a>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="btn-group">
+                        <div class="btn-group pull-center-lg">
+                            <a class="btn btn-primary" href="addSong.html" id="addNewSong" role="button">Dodaj nową pieśń</a>
+                        </div>
                     </div>
                 </div>
             </div>
