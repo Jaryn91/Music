@@ -1,76 +1,63 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
-using Google.Apis.Requests;
 using Google.Apis.Services;
 using Google.Apis.Slides.v1;
 using Google.Apis.Slides.v1.Data;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace Musiction.API.BusinessLogic
 {
     public class GoogleSlides
     {
-        static string[] Scopes = { SlidesService.Scope.Presentations };
         static string ApplicationName = "Google Slides API .NET Quickstart";
 
-        private readonly UserCredential credential;
+        private readonly UserCredential _credential;
+        private readonly SlidesService _slidesService;
+        private readonly DriveService _driveService;
+        private readonly string _folder;
         public GoogleSlides()
         {
+            _folder = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:Folder"];
+
             var clientSecrets = new ClientSecrets()
             {
                 ClientId = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:ClientId"],
                 ClientSecret = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:ClientSecret"]
             };
 
-            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+            _credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 clientSecrets,
-                Scopes,
+                new[] { DriveService.Scope.Drive, SlidesService.Scope.Presentations },
                 "user",
                 CancellationToken.None).Result;
-        }
 
-        public string Create(string title)
-        {
-            var folderId = "1MILEOahox-bDuu4umu8KRLbvMIbpn4Br";
-            var service = new SlidesService(new BaseClientService.Initializer()
+            _slidesService = new SlidesService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = credential,
+                HttpClientInitializer = _credential,
+                ApplicationName = ApplicationName,
+            });
+
+            _driveService = new DriveService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = _credential,
                 ApplicationName = ApplicationName,
             });
 
 
-            var fileMetadata = new File()
-            {
-                Name = title,
-                Parents = new List<string>
-                {
-                    folderId
-                }
-            };
+        }
 
-
-            var createRequest = service.Presentations.Create(new Presentation()
+        public string Create(string title)
+        {
+            var createRequest = _slidesService.Presentations.Create(new Presentation()
             {
-                Title = title
+                Title = title,
             });
             var pres = createRequest.Execute();
-
-            DriveService driveService = GetService_v3();
-            var getRequest = driveService.Files.Get(pres.PresentationId);
-            getRequest.Fields = "parents";
-            var file = getRequest.Execute();
-            var previousParents = String.Join(",", file.Parents);
-            // Move the file to the new folder
-            var updateRequest = driveService.Files.Update(new File(), pres.PresentationId);
-            updateRequest.Fields = "id, parents";
-            updateRequest.AddParents = folderId;
-            updateRequest.RemoveParents = previousParents;
-            file = updateRequest.Execute();
-
-            return pres.PresentationId;
+            var fileId = pres.PresentationId;
+            MoveFileToFolder(fileId);
+            return fileId;
         }
 
         public void Download(int id)
@@ -78,78 +65,19 @@ namespace Musiction.API.BusinessLogic
 
         }
 
-        private void InsertPermissions()
+        private void MoveFileToFolder(string fileId)
         {
-            var driveService = new DriveService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = "Drive API Sample",
-            });
-            var fileId = "1sTWaJ_j7PkjzaBWtNc3IzovK5hQf21FbOw9yLeeLPNQ";
-            var batch = new BatchRequest(driveService);
-            BatchRequest.OnResponse<Permission> callback = delegate (
-                Permission permission,
-                RequestError error,
-                int index,
-                System.Net.Http.HttpResponseMessage message)
-            {
-                if (error != null)
-                {
-                    // Handle error
-                    Console.WriteLine(error.Message);
-                }
-                else
-                {
-                    Console.WriteLine("Permission ID: " + permission.Id);
-                }
-            };
-            Permission userPermission = new Permission()
-            {
+            var getRequest = _driveService.Files.Get(fileId);
+            getRequest.Fields = "parents";
+            var file = getRequest.Execute();
+            var previousParents = String.Join(",", file.Parents);
 
-                Type = "user",
-                Role = "writer",
-                EmailAddress = "user@example.com"
-            };
-            var request = driveService.Permissions.Create(userPermission, fileId);
-            request.Fields = "id";
-            batch.Queue(request, callback);
-
-            Permission domainPermission = new Permission()
-            {
-                Type = "domain",
-                Role = "reader",
-                Domain = "example.com"
-            };
-            request = driveService.Permissions.Create(domainPermission, fileId);
-            request.Fields = "id";
-            batch.Queue(request, callback);
-            var task = batch.ExecuteAsync();
-        }
-
-        public void CreateFolder(string FolderName)
-        {
-            DriveService service = GetService_v3();
-
-            File FileMetaData = new File();
-            FileMetaData.Name = FolderName;
-            FileMetaData.MimeType = "application/vnd.google-apps.folder";
-
-            FilesResource.CreateRequest request;
-
-            request = service.Files.Create(FileMetaData);
-            request.Fields = "id";
-            var file = request.Execute();
-            //Console.WriteLine("Folder ID: " + file.Id);
-        }
-
-        private DriveService GetService_v3()
-        {
-            var driveService = new DriveService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = "Drive API Sample",
-            });
-            return driveService;
+            // Move the file to the new folder
+            var updateRequest = _driveService.Files.Update(new File(), fileId);
+            updateRequest.Fields = "id, parents";
+            updateRequest.AddParents = _folder;
+            updateRequest.RemoveParents = previousParents;
+            var response = updateRequest.Execute();
         }
     }
 }
