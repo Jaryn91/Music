@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 
 namespace Musiction.API.BusinessLogic
 {
@@ -23,17 +24,21 @@ namespace Musiction.API.BusinessLogic
             if (files.Count < 1)
                 return "";
 
-            string outcomeFilePath = _fileAndFolderPath.GetMergedFilePath();
-
             try
             {
-                File.Copy(files.First(), outcomeFilePath, true);
+                var fileName = "final" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pptx";
+                var finalPresentation = Path.Combine(Startup.Configuration[Startup.Configuration["env"] + ":FileRoot"], fileName);
+                using (var client = new WebClient())
+                {
+                    client.DownloadFile(files.First(), finalPresentation);
+                }
+
                 files.RemoveAt(0);
 
-                foreach (string sourcePresentation in files)
-                    MergeSlides(sourcePresentation, outcomeFilePath);
+                foreach (string presentationId in files)
+                    MergeSlides(presentationId, finalPresentation);
 
-                return outcomeFilePath;
+                return finalPresentation;
             }
             catch (Exception ex)
             {
@@ -41,6 +46,16 @@ namespace Musiction.API.BusinessLogic
             }
         }
 
+
+        public PresentationDocument GetPresentationDocument(string url, bool isEditable)
+        {    //Create a stream for the file
+            using (var client = new WebClient())
+            {
+                var content = client.DownloadData(url);
+                var stream = new MemoryStream(content);
+                return PresentationDocument.Open(stream, isEditable);
+            }
+        }
 
         public int GetNumberOfSlides(string filePath)
         {
@@ -51,15 +66,13 @@ namespace Musiction.API.BusinessLogic
             }
         }
 
-        private void MergeSlides(string sourcePresentation, string outcomeFilePath)
+        private void MergeSlides(string presentationId, string finalPresentation)
         {
             int id = 0;
 
-            // Open the destination presentation.
-            using (PresentationDocument myDestDeck = PresentationDocument.Open(outcomeFilePath, true))
+            using (PresentationDocument myDestDeck = PresentationDocument.Open(finalPresentation, true))
             {
                 PresentationPart destPresPart = myDestDeck.PresentationPart;
-
                 // If the merged presentation does not have a SlideIdList 
                 // element yet, add it.
                 if (destPresPart.Presentation.SlideIdList == null)
@@ -67,7 +80,7 @@ namespace Musiction.API.BusinessLogic
 
                 // Open the source presentation. This will throw an exception if
                 // the source presentation does not exist.
-                using (PresentationDocument mySourceDeck = PresentationDocument.Open(sourcePresentation, false))
+                using (PresentationDocument mySourceDeck = GetPresentationDocument(presentationId, false))
                 {
                     PresentationPart sourcePresPart = mySourceDeck.PresentationPart;
 
@@ -93,7 +106,7 @@ namespace Musiction.API.BusinessLogic
                         id++;
                         sp = (SlidePart)sourcePresPart.GetPartById(slideId.RelationshipId);
 
-                        relId = Path.GetFileNameWithoutExtension(sourcePresentation) + id;
+                        relId = Path.GetFileNameWithoutExtension(presentationId) + id;
 
                         // Add the slide part to the destination presentation.
                         destSp = destPresPart.AddPart<SlidePart>(sp, relId);
@@ -125,7 +138,7 @@ namespace Musiction.API.BusinessLogic
                     FixSlideLayoutIds(destPresPart, uniqueId);
                 }
 
-                // Save the changes to the destination deck.
+                //// Save the changes to the destination deck.
                 destPresPart.Presentation.Save();
             }
         }

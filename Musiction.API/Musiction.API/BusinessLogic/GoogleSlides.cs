@@ -44,8 +44,6 @@ namespace Musiction.API.BusinessLogic
                 HttpClientInitializer = _credential,
                 ApplicationName = ApplicationName,
             });
-
-
         }
 
         public string Create(string title)

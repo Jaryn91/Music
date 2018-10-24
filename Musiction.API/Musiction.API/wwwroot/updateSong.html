@@ -40,8 +40,6 @@
                 var formData = new FormData();
                 formData.append("Name", $('#songName').val());
                 formData.append("YouTubeUrl", $('#youTubeUrl').val());
-                if ($('#songFile')[0] != null)
-                    formData.append('PptxFile', $('#songFile')[0].files[0]);
 
                 updateSong(songId, formData, success, error);
             });
@@ -51,7 +49,9 @@
             $('#songId').val(results.id);
             $('#songName').val(results.name);
             $('#youTubeUrl').val(results.youTubeUrl);
-            $("#songPPTX").attr("href", results.path);
+            var link = "https://docs.google.com/presentation/d/" + results.presentationId + "/edit#slide=id.p";
+            $("#googlePresentation").attr("href", link);
+            $("#googlePresentation").attr("target", "_blank");
         }
 
         function error(result, status) {
@@ -77,7 +77,8 @@
             reset($('#songId'));
             reset($('#songName'));
             reset($('#youTubeUrl'));
-            reset($('#songPPTX'));
+            $('#googlePresentation').attr("href", "#");
+            $('#googlePresentation').removeAttr("target");
         }
 
         window.reset = function (e) {
@@ -108,42 +109,43 @@
                 <div align="center">
                     <h2>Edytuj pieśń</h2>
                 </div>
+                <div class="form-group">
+                    <label for="songId">Id pieśni</label>
+                    <input id="songId" class="form-control" readonly />
+                </div>
             </div>
+
         </div>
         <div class="row">
             <div class="col-lg-5 col-lg-offset-1">
                 <ul id="sortable1" class="connectedSortable songsPlaceholder"></ul>
             </div>
-            <div class="col-lg-5 corps">
+            <div class="col-lg-5">
+
                 <div class="form-group">
-                    <label for="songId">Id</label>
-                    <input id="songId" class="form-control" readonly />
-                </div>
-                <div class="form-group">
-                    <label for="songName">Nazwa</label>
+                    <label for="songName">Nazwa pieśni</label>
                     <input id="songName" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="youTubeUrl">You Tube</label>
+                    <label for="youTubeUrl">Link do pieśni na YouTubie</label>
                     <input id="youTubeUrl" class="form-control" />
                 </div>
-                <label class="custom-file" has-error>
-                    <label for="songFile">Prezentacja</label> (<a href="" id="songPPTX">Pobierz aktualną piosenkę</a>)
-                    <input type="file" id="songFile" class="custom-file-input">
-                    <span class="custom-file-control"></span>
-                </label>
-                <br>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-5 col-lg-offset-6">
-                    <br />
-                    <div class="text-center">
-                        <div class="btn-group pull-right-lg">
-                            <button type="submit" id="updateSong" value='PPTX' class="btn btn-primary">Aktualizuj</button>
+                <div class="text-center">
+                    <div class="btn-group pull-center-lg">
+                        <button type="submit" id="updateSong" value='PPTX' class="btn btn-primary">Aktualizuj nazwę i YouTube pieśni</button>
+                    </div>
+                </div>
+                <div>
+                    <br>
+                </div>
+                <div class="text-center">
+                    <div class="btn-group">
+                        <div class="btn-group pull-center-lg">
+                            <a class="btn btn-primary" href="#" id="googlePresentation" role="button" target="_blank">Edytuj pieśń</a>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

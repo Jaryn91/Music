@@ -29,7 +29,7 @@ namespace Musiction.API.Entities
             var paths = new List<string>();
             foreach (var song in songs)
             {
-                //paths.Add(song.Path);
+                paths.Add($"https://docs.google.com/presentation/d/{song.PresentationId}/export/pptx");
             }
 
             var merger = new PowerPointMerger(_fileAndFolderPath);
@@ -45,7 +45,7 @@ namespace Musiction.API.Entities
             var paths = new List<string>();
             foreach (var song in songs)
             {
-                //paths.Add(song.Path);
+                paths.Add($"https://docs.google.com/presentation/d/{song.PresentationId}/export/pptx");
             }
 
             var merger = new PowerPointMerger(_fileAndFolderPath);
