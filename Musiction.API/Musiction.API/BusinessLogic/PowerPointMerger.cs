@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Musiction.API.BusinessLogic
 {
@@ -105,7 +106,9 @@ namespace Musiction.API.BusinessLogic
                         id++;
                         sp = (SlidePart)sourcePresPart.GetPartById(slideId.RelationshipId);
 
-                        relId = Path.GetFileNameWithoutExtension(presentationId) + id;
+                        var result = GetUniqueIdOfPresentation(presentationId);
+
+                        relId = result + id;
 
                         // Add the slide part to the destination presentation.
                         destSp = destPresPart.AddPart<SlidePart>(sp, relId);
@@ -140,6 +143,17 @@ namespace Musiction.API.BusinessLogic
                 //// Save the changes to the destination deck.
                 destPresPart.Presentation.Save();
             }
+        }
+
+        private string GetUniqueIdOfPresentation(string presentationId)
+        {
+            int pFrom = presentationId.IndexOf(@"presentation/d/") + @"presentation/d/".Length;
+            int pTo = presentationId.LastIndexOf(@"/export/pptx");
+
+            var result = presentationId.Substring(pFrom, pTo - pFrom);
+            Regex rgx = new Regex("[^a-zA-Z]");
+            result = rgx.Replace(result, "");
+            return result;
         }
 
         private void FixSlideLayoutIds(PresentationPart presPart, uint uniqueId)

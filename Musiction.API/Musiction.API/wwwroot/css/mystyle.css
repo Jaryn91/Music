@@ -56,10 +56,10 @@
     float: center;
 }
 
-.hideDiv {
+.hide {
     display: none;
 }
 
-.showDiv {
+.show {
     display: block;
 }

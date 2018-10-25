@@ -21,6 +21,11 @@
             }).disableSelection();
         });
 
+        function success(songName) {
+            displayAlert("Sukces", "Usunąłem " + songName + "! Super, no nie?");
+            $("#deleteSong").button('reset');
+        }
+
         function getSongIds() {
             var songsIds = "";
             $('#sortable2 li').each(function () {
@@ -49,8 +54,9 @@
                 if ($('#sortable2 li').length == 0) {
                     displayAlert("Informacja", "Hej! Hej! Może wybierz coś co mogę usunąć :).");
                 } else {
+                    $("#deleteSong").button('loading');
                     $('#sortable2 li').each(function () {
-                        deleteSong(this.value, this.textContent);
+                        deleteSong(success, this.value, this.textContent);
                         this.remove();
                         e.preventDefault();
                     });
@@ -98,7 +104,7 @@
                 <br />
                 <div class="text-center">
                     <div class="btn-group pull-center-lg">
-                        <button type="submit" id="deleteSong" value='USUŃ PIOSENKI' class="btn btn-primary">Usuń</button>
+                        <button type="submit" id="deleteSong"  data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Usuwam pieśń" class="btn btn-primary">Usuń</button>
                     </div>
                 </div>
             </div>

@@ -33,6 +33,7 @@
         $(document).ready(function () {
             loadNavBar();
             getAllSongs('#sortable1', addOptionsToListBox);
+            $("#processingButton").button('loading');
 
             $('#searchTextBox').on('input', function (e) {
                 var songs = filter(e.target.value.toLowerCase());
@@ -40,19 +41,26 @@
             });
 
             $('#saveInPPTX').click(function () {
+                $('#createPresentationButtons').addClass("hide");
+                $('#loadingButton').removeClass("hide");
+                
                 var songsIds = getSongIds();
-                createPresentation("pptx?", songsIds, sendAlert);
+                createPresentation("pptx?", songsIds, success);
             });
 
             $('#saveInZIP').click(function () {
+                $('#createPresentationButtons').addClass("hide");
+                $('#loadingButton').removeClass("hide");
                 var songsIds = getSongIds();
-                createPresentation("zip?", songsIds, sendAlert);
+                createPresentation("zip?", songsIds, success);
             });
         });
 
-        function sendAlert(data) {
+        function success(data) {
             $('#textarea').val(data.inforamtion);
             window.location.href = data.path;
+            $('#createPresentationButtons').removeClass("hide");
+            $('#loadingButton').addClass("hide");
         }
     </script>
 </head>
@@ -92,10 +100,15 @@
         <div class="row">
             <div class="col-lg-5 col-lg-offset-6">
                 <br />
-                <div class="text-center">
+                <div class="text-center" id="createPresentationButtons">
                     <div class="btn-group pull-center-lg">
                         <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">PPTX</button>
                         <button type="submit" id="saveInZIP" value='ZIP' class="btn btn-primary">ZIP</button>
+                    </div>
+                </div>
+                <div class="text-center hide" id="loadingButton" >
+                    <div class="btn-group pull-center-lg">
+                        <button type="submit" id="processingButton" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Tworzę prezentację" class="btn btn-primary">Tworzę</button>
                     </div>
                 </div>
             </div>

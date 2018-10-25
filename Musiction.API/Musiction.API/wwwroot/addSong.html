@@ -14,18 +14,21 @@
     <script type="text/javascript" src="js/presentations.js"></script>
     <script type="text/javascript" src="js/auth.js"></script>
     <script>
+
+
         function success(results) {
             displayAlert("Sukces!", "Graluję! Udało Ci się dodać " + $('#name').val() + "!");
             var linkToPresentation =
                 "https://docs.google.com/presentation/d/" + results.presentationId + "/edit?usp=sharing";
 
-            $("#googlePresentation").attr("href", linkToPresentation);
-            $("#googlePresentation").attr("target", "_blank");
-            $("#linkToPresentation").removeClass('hideDiv');
-            $("#saveSongDiv").addClass('hideDiv');
+            $("#googlePresentation").prop("href", linkToPresentation);
+            $("#googlePresentation").prop("target", "_blank");
+            $("#googlePresentation").text("Edytuj prezentacje: " + $('#name').val());
+            $("#linkToPresentation").removeClass('hide');
+            $("#saveSongDiv").addClass('hide');
             $('#name').prop('readonly', true);
             $('#youtube').prop('readonly', true);
-            
+            $("#saveSong").button('reset');
         }
 
         function error(result, status) {
@@ -48,10 +51,12 @@
             loadNavBar();
 
             $('#saveSong').click(function () {
+                $("#saveSong").button('loading');
                 var formData = new FormData();
                 formData.append("Name", $('#name').val());
                 formData.append("YouTubeUrl", $('#youtube').val());
                 addSong(formData, success, error);
+
             });
         });
 
@@ -86,10 +91,10 @@
                 </div>
                 <div class="text-center" id="saveSongDiv">
                     <div class="btn-group">
-                        <button type="submit" id="saveSong" class="btn btn-primary">Dodaj pieśń i stwórz prezetnację</button>
+                        <button type="submit" id="saveSong" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Dodaję pieśń i tworzę prezentację">Dodaj pieśń i stwórz prezetnację</button>
                     </div>
                 </div>
-                <div class="text-center hideDiv" id="linkToPresentation">
+                <div class="text-center hide" id="linkToPresentation">
                     <div class="btn-group">
                         <div class="btn-group pull-center-lg">
                             <a class="btn btn-primary" href="#" id="googlePresentation" role="button" target="_blank">Edytuj prezentacje z pieśnią</a>

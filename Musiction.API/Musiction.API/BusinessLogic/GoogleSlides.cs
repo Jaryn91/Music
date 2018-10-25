@@ -4,12 +4,13 @@ using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Slides.v1;
 using Google.Apis.Slides.v1.Data;
+using Musiction.API.IBusinessLogic;
 using System;
 using System.Threading;
 
 namespace Musiction.API.BusinessLogic
 {
-    public class GoogleSlides
+    public class GoogleSlides : IGoogleSlides
     {
         static string ApplicationName = "Google Slides API .NET Quickstart";
 
@@ -76,6 +77,14 @@ namespace Musiction.API.BusinessLogic
             updateRequest.AddParents = _folder;
             updateRequest.RemoveParents = previousParents;
             var response = updateRequest.Execute();
+        }
+
+        public void Remove(string presentationId)
+        {
+            if (presentationId == "")
+                return;
+            if (_driveService.Files.Get(presentationId).FileId != null)
+                _driveService.Files.Delete(presentationId).Execute();
         }
     }
 }

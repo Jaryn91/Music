@@ -52,14 +52,14 @@ function updateSong(songId, song, funcOk, funcError) {
     });
 }
 
-function deleteSong(songId, songName) {
+function deleteSong(funcOk, songId, songName) {
     var url = songApi + songId;
     $.ajax({
         url: url,
         headers: getAuthorizationHeader(),
         type: 'DELETE',
         success: function (result) {
-            displayAlert("Sukces", "Usunąłem " + songName + "! Super, no nie?");
+            funcOk(songName);
         },
         error: function (result, status) {
             errorHandling(result, null);

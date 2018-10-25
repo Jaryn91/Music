@@ -81,6 +81,7 @@ namespace Musiction.API
             services.AddSingleton<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
             services.AddSingleton<IFileSaver, FileSaver>();
             services.AddSingleton<IOutcomeTextCreator, OutcomeTextCreator>();
+            services.AddSingleton<IGoogleSlides, GoogleSlides>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,

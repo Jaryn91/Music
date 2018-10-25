@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
@@ -22,15 +21,17 @@ namespace Musiction.API.Controllers
         private ISongRepository _songRepository;
         private IFileAndFolderPathsCreator _fileAndFolderPath;
         private IFileSaver _fileSaver;
+        private IGoogleSlides _googleSlides;
 
         public SongsController(ILogger<SongsController> logger,
-            IMailService mailService, ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath, IFileSaver fileSaver)
+            IMailService mailService, ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath, IFileSaver fileSaver, IGoogleSlides googleSlides)
         {
             _logger = logger;
             _mailService = mailService;
             _songRepository = songRepository;
             _fileAndFolderPath = fileAndFolderPath;
             _fileSaver = fileSaver;
+            _googleSlides = googleSlides;
         }
 
         [HttpGet, Authorize]
@@ -73,12 +74,13 @@ namespace Musiction.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            string presentationId = "";
+
             try
             {
-                var finalSong = Mapper.Map<Song>(song);
+                presentationId = _googleSlides.Create(song.Name);
 
-                GoogleSlides googleSlides = new GoogleSlides();
-                var presentationId = googleSlides.Create(song.Name);
+                var finalSong = Mapper.Map<Song>(song);
                 finalSong.PresentationId = presentationId;
 
                 if (!_songRepository.AddSong(finalSong))
@@ -92,6 +94,7 @@ namespace Musiction.API.Controllers
             }
             catch (Exception ex)
             {
+                _googleSlides.Remove(presentationId);
                 return StatusCode(500, ex.InnerException);
             }
         }
@@ -130,11 +133,11 @@ namespace Musiction.API.Controllers
                 return NotFound();
 
             _songRepository.RemoveSong(songToDelete);
-
             if (!_songRepository.Save())
             {
                 return StatusCode(500, "A problem happend durning deleting a song");
             }
+            _googleSlides.Remove(songToDelete.PresentationId);
 
             return Ok();
         }

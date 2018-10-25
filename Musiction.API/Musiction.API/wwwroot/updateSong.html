@@ -36,6 +36,7 @@
             }));
 
             $('#updateSong').click(function (e) {
+                $("#updateSong").button('loading');
                 var songId = $('#songId').val();
                 var formData = new FormData();
                 formData.append("Name", $('#songName').val());
@@ -52,6 +53,8 @@
             var link = "https://docs.google.com/presentation/d/" + results.presentationId + "/edit#slide=id.p";
             $("#googlePresentation").attr("href", link);
             $("#googlePresentation").attr("target", "_blank");
+            $("#googlePresentation").text("Edytuj prezentacje: " + results.name);
+            $("#buttons").removeClass("hide");
         }
 
         function error(result, status) {
@@ -79,6 +82,7 @@
             reset($('#youTubeUrl'));
             $('#googlePresentation').attr("href", "#");
             $('#googlePresentation').removeAttr("target");
+            $("#updateSong").button('reset');
         }
 
         window.reset = function (e) {
@@ -130,22 +134,23 @@
                     <label for="youTubeUrl">Link do pieśni na YouTubie</label>
                     <input id="youTubeUrl" class="form-control" />
                 </div>
-                <div class="text-center">
-                    <div class="btn-group pull-center-lg">
-                        <button type="submit" id="updateSong" value='PPTX' class="btn btn-primary">Aktualizuj nazwę i YouTube pieśni</button>
-                    </div>
-                </div>
-                <div>
-                    <br>
-                </div>
-                <div class="text-center">
-                    <div class="btn-group">
+                <div id="buttons" class="hide">
+                    <div class="text-center">
                         <div class="btn-group pull-center-lg">
-                            <a class="btn btn-primary" href="#" id="googlePresentation" role="button" target="_blank">Edytuj prezentacje z pieśnią</a>
+                            <button type="submit" id="updateSong" value='PPTX' class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Aktualizuję pieśń">Aktualizuj nazwę i YouTube pieśni</button>
+                        </div>
+                    </div>
+                    <div>
+                        <br>
+                    </div>
+                    <div class="text-center">
+                        <div class="btn-group">
+                            <div class="btn-group pull-center-lg">
+                                <a class="btn btn-primary" href="#" id="googlePresentation" role="button" target="_blank">Edytuj prezentacje z pieśnią</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

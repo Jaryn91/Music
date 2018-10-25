@@ -10,9 +10,5 @@ namespace Musiction.API.Models
 
         [MaxLength(50)]
         public string YouTubeUrl { get; set; }
-
-
-        [MaxLength(50)]
-        public string PresentationId { get; set; }
     }
 }
