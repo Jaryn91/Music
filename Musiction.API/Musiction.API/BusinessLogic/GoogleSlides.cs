@@ -27,8 +27,9 @@ namespace Musiction.API.BusinessLogic
                 ClientId = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:ClientId"],
                 ClientSecret = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:ClientSecret"]
             };
-
-            _credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+            dsAuthorizationBroker.RedirectUri =
+                Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:RedirectUri"];
+            _credential = dsAuthorizationBroker.AuthorizeAsync(
                 clientSecrets,
                 new[] { DriveService.Scope.Drive, SlidesService.Scope.Presentations },
                 "user",
