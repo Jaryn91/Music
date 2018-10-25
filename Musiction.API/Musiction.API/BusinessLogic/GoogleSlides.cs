@@ -4,6 +4,7 @@ using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Slides.v1;
 using Google.Apis.Slides.v1.Data;
+using Google.Apis.Util.Store;
 using Musiction.API.IBusinessLogic;
 using System;
 using System.Threading;
@@ -27,13 +28,15 @@ namespace Musiction.API.BusinessLogic
                 ClientId = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:ClientId"],
                 ClientSecret = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:ClientSecret"]
             };
-            dsAuthorizationBroker.RedirectUri =
-                Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:RedirectUri"];
-            _credential = dsAuthorizationBroker.AuthorizeAsync(
+
+            string credPath = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:Token"];
+
+            _credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 clientSecrets,
                 new[] { DriveService.Scope.Drive, SlidesService.Scope.Presentations },
                 "user",
-                CancellationToken.None).Result;
+                CancellationToken.None,
+                new FileDataStore(credPath, true)).Result;
 
             _slidesService = new SlidesService(new BaseClientService.Initializer()
             {
