@@ -1,8 +1,8 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
+using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Slides.v1;
-using Google.Apis.Slides.v1.Data;
 using Google.Apis.Util.Store;
 using Musiction.API.IBusinessLogic;
 using System;
@@ -18,9 +18,11 @@ namespace Musiction.API.BusinessLogic
         private readonly SlidesService _slidesService;
         private readonly DriveService _driveService;
         private readonly string _folder;
+        private readonly string _presentationTemplate;
         public GoogleSlides()
         {
             _folder = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:Folder"];
+            _presentationTemplate = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:Template"];
 
             var clientSecrets = new ClientSecrets()
             {
@@ -52,12 +54,12 @@ namespace Musiction.API.BusinessLogic
 
         public string Create(string title)
         {
-            var createRequest = _slidesService.Presentations.Create(new Presentation()
-            {
-                Title = title,
-            });
-            var pres = createRequest.Execute();
-            var fileId = pres.PresentationId;
+            File file = new File();
+            file.Name = title;
+            var copyRequest = _driveService.Files.Copy(file, _presentationTemplate);
+            var pres = copyRequest.Execute();
+
+            var fileId = pres.Id;
             MoveFileToFolder(fileId);
             return fileId;
         }
@@ -75,7 +77,7 @@ namespace Musiction.API.BusinessLogic
             var previousParents = String.Join(",", file.Parents);
 
             // Move the file to the new folder
-            var updateRequest = _driveService.Files.Update(new Google.Apis.Drive.v3.Data.File(), fileId);
+            var updateRequest = _driveService.Files.Update(new File(), fileId);
             updateRequest.Fields = "id, parents";
             updateRequest.AddParents = _folder;
             updateRequest.RemoveParents = previousParents;
