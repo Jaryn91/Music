@@ -1,9 +1,9 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Slides.v1;
 using Google.Apis.Slides.v1.Data;
+using Google.Apis.Util.Store;
 using Musiction.API.IBusinessLogic;
 using System;
 using System.Threading;
@@ -28,11 +28,14 @@ namespace Musiction.API.BusinessLogic
                 ClientSecret = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:ClientSecret"]
             };
 
+            string credPath = Startup.Configuration[Startup.Configuration["env"] + ":GoogleApi:Token"];
+
             _credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 clientSecrets,
                 new[] { DriveService.Scope.Drive, SlidesService.Scope.Presentations },
                 "user",
-                CancellationToken.None).Result;
+                CancellationToken.None,
+                new FileDataStore(credPath, true)).Result;
 
             _slidesService = new SlidesService(new BaseClientService.Initializer()
             {
@@ -72,7 +75,7 @@ namespace Musiction.API.BusinessLogic
             var previousParents = String.Join(",", file.Parents);
 
             // Move the file to the new folder
-            var updateRequest = _driveService.Files.Update(new File(), fileId);
+            var updateRequest = _driveService.Files.Update(new Google.Apis.Drive.v3.Data.File(), fileId);
             updateRequest.Fields = "id, parents";
             updateRequest.AddParents = _folder;
             updateRequest.RemoveParents = previousParents;
