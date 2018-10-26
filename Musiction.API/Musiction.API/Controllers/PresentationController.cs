@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Services;
@@ -47,14 +46,6 @@ namespace Musiction.API.Controllers
             }
 
             return BadRequest();
-        }
-
-        [HttpGet("BulkUpdate")]
-        public IActionResult BulkUpdate()
-        {
-            GoogleSlides google = new GoogleSlides();
-            google.ChangeFileName();
-            return Ok();
         }
     }
 }
