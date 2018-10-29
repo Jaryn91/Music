@@ -20,6 +20,7 @@ namespace Musiction.API
 {
     public class Startup
     {
+        private IGetValue _valueRetrieval;
         public static IConfiguration Configuration { get; private set; }
 
         public Startup(IConfiguration configuration, IHostingEnvironment env)
@@ -32,6 +33,10 @@ namespace Musiction.API
         public void ConfigureServices(IServiceCollection services)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            RegisterContainers(services);
+            var sp = services.BuildServiceProvider();
+            _valueRetrieval = sp.GetService<IGetValue>();
 
             CreateAuthentication(services);
 
@@ -50,17 +55,16 @@ namespace Musiction.API
 
             services.AddMvc();
 
-            var propName = Startup.Configuration["env"] + ":ConnectionString";
-            var connectionString = Startup.Configuration[propName];
+
+            var connectionString = _valueRetrieval.Get("ConnectionString");
 
             services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
 
-            RegisterContainers(services);
         }
 
         private void CreateAuthentication(IServiceCollection services)
         {
-            string domain = $"https://{Configuration[Configuration["env"] + ":Auth0:Domain"]}/";
+            string domain = $"https://{_valueRetrieval.Get("Auth0:Domain")}/";
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -69,19 +73,21 @@ namespace Musiction.API
             }).AddJwtBearer(options =>
             {
                 options.Authority = domain;
-                options.Audience = Configuration[Configuration["env"] + ":Auth0:ApiIdentifier"];
+                options.Audience = _valueRetrieval.Get("Auth0:ApiIdentifier");
             });
         }
 
 
         private void RegisterContainers(IServiceCollection services)
         {
-            services.AddTransient<IMailService, LocalMailService>();
             services.AddScoped<ISongRepository, SongRepository>();
             services.AddSingleton<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
-            services.AddSingleton<IFileSaver, FileSaver>();
+            services.AddSingleton<IGetValue, ValueRetrieval>();
             services.AddSingleton<IOutcomeTextCreator, OutcomeTextCreator>();
             services.AddSingleton<IGoogleSlides, GoogleSlides>();
+            services.AddSingleton<ICreatePresentationResponse, PresentationResponse>();
+            services.AddSingleton<IConvertPresentation, PptxToJpgConverter>();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,

@@ -12,18 +12,18 @@ using UrlCombineLib;
 
 namespace Musiction.API.BusinessLogic
 {
-    public class PptxToJpgConverter
+    public class PptxToJpgConverter : IConvertPresentation
     {
         private Uri baseUri = new Uri("https://sandbox.zamzar.com/v1/");
         private string _apiKey;
-        private IFileAndFolderPathsCreator _fileAndFolderPath;
+        private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
+        private readonly IGetValue _valueRetrieval;
 
-        public PptxToJpgConverter(IFileAndFolderPathsCreator fileAndFolderPath)
+        public PptxToJpgConverter(IFileAndFolderPathsCreator fileAndFolderPath, IGetValue valueRetrieval)
         {
             _fileAndFolderPath = fileAndFolderPath;
-
-            var propName = Startup.Configuration["env"] + ":ZamzarKey";
-            _apiKey = Startup.Configuration[propName];
+            _valueRetrieval = valueRetrieval;
+            _apiKey = _valueRetrieval.Get("ZamzarKey");
         }
         public string Convert(string sourceFile)
         {

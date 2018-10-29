@@ -13,7 +13,7 @@ namespace Musiction.API.BusinessLogic
 {
     public class PowerPointMerger
     {
-        private IFileAndFolderPathsCreator _fileAndFolderPath;
+        private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
 
         public PowerPointMerger(IFileAndFolderPathsCreator fileAndFolderPath)
         {

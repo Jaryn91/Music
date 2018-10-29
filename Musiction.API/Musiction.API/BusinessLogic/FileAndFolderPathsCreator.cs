@@ -1,27 +1,22 @@
-﻿using Microsoft.Extensions.Configuration;
-using Musiction.API.IBusinessLogic;
+﻿using Musiction.API.IBusinessLogic;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Musiction.API.BusinessLogic
 {
     public class FileAndFolderPathsCreator : IFileAndFolderPathsCreator
     {
-        private string _folder;
-        private string _webAddress;
+        private readonly string _folder;
+        private readonly string _webAddress;
         private const string _pptxExtension = ".pptx";
-        private const string _pptxPrefix = "pptx_";
         private const string _finaleMergedFilePrefix = "finaleFile_";
+        private readonly IGetValue _valueRetrieval;
 
-        public FileAndFolderPathsCreator()
+        public FileAndFolderPathsCreator(IGetValue valueRetrieval)
         {
-            var fileRoot = Startup.Configuration["env"] + ":FileRoot";
-            _folder = Startup.Configuration[fileRoot];
-            var webAddress = Startup.Configuration["env"] + ":WebAddress";
-            _webAddress = Startup.Configuration[webAddress];
+            _valueRetrieval = valueRetrieval;
+            _folder = _valueRetrieval.Get("FileRoot");
+            _webAddress = _valueRetrieval.Get("FilWebAddresseRoot");
         }
 
         public string GetMergedFilePath()
@@ -38,13 +33,6 @@ namespace Musiction.API.BusinessLogic
             return outcomeFilePath;
         }
 
-        public string GetPresentationFilePath(string songName)
-        {
-            var folderPath = GetCombinedFolderPath("folderSettings:presentationPath");
-            var pptxName = CreatePresentationName(songName);
-            return Path.Combine(folderPath, pptxName);
-        }
-
         private void EnsurePathExists(string path)
         {
             if (!Directory.Exists(path))
@@ -53,30 +41,9 @@ namespace Musiction.API.BusinessLogic
             }
         }
 
-        private string CreatePresentationName(string songName)
-        {
-            var withoutPolishLetters = RemoveDiacritics(songName);
-            var pptxSongName = RemoveSpecialCharacters(withoutPolishLetters);
-            return _pptxPrefix + pptxSongName + _pptxExtension;
-        }
-
-
-        private string RemoveDiacritics(string songName)
-        {
-            string asciiEquivalents = Encoding.ASCII.GetString(Encoding.GetEncoding("Cyrillic").GetBytes(songName));
-
-            return asciiEquivalents;
-        }
-
-        private string RemoveSpecialCharacters(string str)
-        {
-            return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
-        }
-
         private string GetCombinedFolderPath(string sectionInAppSetting)
         {
-            var list = new List<string>();
-            Startup.Configuration.GetSection(sectionInAppSetting).Bind(list);
+            var list = _valueRetrieval.GetSectionToList(sectionInAppSetting);
             list.Insert(0, _folder);
             var folderPath = Path.Combine(list.ToArray());
             EnsurePathExists(folderPath);

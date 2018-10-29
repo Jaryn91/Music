@@ -8,7 +8,6 @@ namespace Musiction.API.Services
         IEnumerable<Song> GetSongs();
         Song GetSong(int songId);
         bool AddSong(Song song);
-
         bool Save();
         void RemoveSong(Song song);
         IEnumerable<Song> GetSongsInOrder(List<int> ids);

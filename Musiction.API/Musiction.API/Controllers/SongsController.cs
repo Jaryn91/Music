@@ -8,7 +8,6 @@ using Musiction.API.Models;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Musiction.API.Controllers
 {
@@ -16,21 +15,15 @@ namespace Musiction.API.Controllers
     public class SongsController : Controller
     {
 
-        private ILogger<SongsController> _logger;
-        private IMailService _mailService;
-        private ISongRepository _songRepository;
-        private IFileAndFolderPathsCreator _fileAndFolderPath;
-        private IFileSaver _fileSaver;
-        private IGoogleSlides _googleSlides;
+        private readonly ILogger<SongsController> _logger;
+        private readonly ISongRepository _songRepository;
+        private readonly IGoogleSlides _googleSlides;
 
         public SongsController(ILogger<SongsController> logger,
-            IMailService mailService, ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath, IFileSaver fileSaver, IGoogleSlides googleSlides)
+            ISongRepository songRepository, IGoogleSlides googleSlides)
         {
             _logger = logger;
-            _mailService = mailService;
             _songRepository = songRepository;
-            _fileAndFolderPath = fileAndFolderPath;
-            _fileSaver = fileSaver;
             _googleSlides = googleSlides;
         }
 
@@ -66,7 +59,7 @@ namespace Musiction.API.Controllers
 
 
         [HttpPost(), Authorize]
-        public async Task<IActionResult> CreateSong(SongForCreationDto song)
+        public IActionResult CreateSong(SongForCreationDto song)
         {
             if (song == null)
                 return BadRequest();

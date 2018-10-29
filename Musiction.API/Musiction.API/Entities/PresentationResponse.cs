@@ -5,16 +5,19 @@ using System.Collections.Generic;
 
 namespace Musiction.API.Entities
 {
-    public class PresentationResponse
+    public class PresentationResponse : ICreatePresentationResponse
     {
-        private IOutcomeTextCreator _outcomeTextCreator;
-        private IFileAndFolderPathsCreator _fileAndFolderPath;
-        private ISongRepository _songRepository;
+        private readonly IOutcomeTextCreator _outcomeTextCreator;
+        private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
+        private readonly ISongRepository _songRepository;
+        private readonly IConvertPresentation _presentationConverter;
 
 
         public PresentationResponse(IFileAndFolderPathsCreator fileAndFolderPath,
-            IOutcomeTextCreator outcomeTextCreator, ISongRepository songRepository)
+            IOutcomeTextCreator outcomeTextCreator, ISongRepository songRepository,
+            IConvertPresentation presentationConverter)
         {
+            _presentationConverter = presentationConverter;
             _outcomeTextCreator = outcomeTextCreator;
             _fileAndFolderPath = fileAndFolderPath;
             _songRepository = songRepository;
@@ -51,8 +54,7 @@ namespace Musiction.API.Entities
             var merger = new PowerPointMerger(_fileAndFolderPath);
             var pathToCombinedPptx = merger.Merge(paths);
 
-            var pptxConverter = new PptxToJpgConverter(_fileAndFolderPath);
-            var pathToZip = pptxConverter.Convert(pathToCombinedPptx);
+            var pathToZip = _presentationConverter.Convert(pathToCombinedPptx);
             Path = _fileAndFolderPath.GetWebAddressToFile(pathToZip);
             Inforamtion = _outcomeTextCreator.CreateSciprtWithNamesOfSongsAndYouTubeLinks(songs);
             return this;

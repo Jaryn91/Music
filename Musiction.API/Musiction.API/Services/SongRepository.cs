@@ -6,7 +6,7 @@ namespace Musiction.API.Services
 {
     public class SongRepository : ISongRepository
     {
-        private SongContext _context;
+        private readonly SongContext _context;
 
         public SongRepository(SongContext context)
         {

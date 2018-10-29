@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
-using Musiction.API.Services;
 using System.Collections.Generic;
 
 namespace Musiction.API.Controllers
@@ -10,38 +7,25 @@ namespace Musiction.API.Controllers
     [Route("api/presentation")]
     public class PresentationController : Controller
     {
-        private ILogger<SongsController> _logger;
-        private IMailService _mailService;
-        private ISongRepository _songRepository;
-        private IFileAndFolderPathsCreator _fileAndFolderPath;
-        private IOutcomeTextCreator _outcomeTextCreator;
+        private readonly ICreatePresentationResponse _presentationResponse;
 
-        public PresentationController(ILogger<SongsController> logger, IMailService mailService,
-            ISongRepository songRepository, IFileAndFolderPathsCreator fileAndFolderPath,
-            IOutcomeTextCreator outcomeTextCreator)
+        public PresentationController(ICreatePresentationResponse presentationResponse)
         {
-            _logger = logger;
-            _mailService = mailService;
-            _songRepository = songRepository;
-            _fileAndFolderPath = fileAndFolderPath;
-            _outcomeTextCreator = outcomeTextCreator;
+            _presentationResponse = presentationResponse;
         }
 
 
         [HttpGet("{returnLinkTo}")]
-
         public IActionResult Presentation(string returnLinkTo, [FromQuery]List<int> ids)
         {
-            var presentationResponse = new PresentationResponse(_fileAndFolderPath, _outcomeTextCreator, _songRepository);
-
             if (returnLinkTo == "pptx")
             {
-                var response = presentationResponse.CreatePptxResponse(ids);
+                var response = _presentationResponse.CreatePptxResponse(ids);
                 return Ok(response);
             }
             else if (returnLinkTo == "zip")
             {
-                var response = presentationResponse.CreateZipResponse(ids);
+                var response = _presentationResponse.CreateZipResponse(ids);
                 return Ok(response);
             }
 
