@@ -85,8 +85,8 @@ namespace Musiction.API
             services.AddTransient<IGetValue, ValueRetrieval>();
             services.AddTransient<IOutcomeTextCreator, OutcomeTextCreator>();
             services.AddTransient<IGoogleSlides, GoogleSlides>();
-            services.AddTransient<IConvertPresentation, PptxToJpgConverter>();
-            services.AddTransient<ICreatePresentationResponse, PresentationResponse>();
+            services.AddTransient<IConvertPresentation, PptxToZipConverter>();
+            services.AddTransient<IMerge, PowerPointMerger>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
@@ -130,7 +130,7 @@ namespace Musiction.API
 
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                await context.Response.WriteAsync("No cześć! A Ty co tutaj robisz :)?");
             });
         }
     }

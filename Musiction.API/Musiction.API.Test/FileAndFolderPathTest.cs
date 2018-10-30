@@ -11,7 +11,7 @@ namespace Musiction.API.Test
             var fileAndFolderPath = new FileAndFolderPathsCreator();
             var songName = "Barka";
 
-            var path = fileAndFolderPath.GetZipFilePath(songName);
+            var path = fileAndFolderPath.GetPathToZipFiles(songName);
 
             Assert.True(path != null);
         }

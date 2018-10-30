@@ -5,32 +5,29 @@ using Google.Apis.Services;
 using Google.Apis.Slides.v1;
 using Google.Apis.Util.Store;
 using Musiction.API.IBusinessLogic;
+using Musiction.API.Resources;
 using System.Threading;
 
 namespace Musiction.API.BusinessLogic
 {
     public class GoogleSlides : IGoogleSlides
     {
-        static string ApplicationName = "Google Slides API .NET Quickstart";
-
         private readonly DriveService _driveService;
-        private readonly IGetValue _valueRetrieval;
         private readonly string _folder;
         private readonly string _presentationTemplate;
 
         public GoogleSlides(IGetValue valueRetrieval)
         {
-            _valueRetrieval = valueRetrieval;
-            _folder = _valueRetrieval.Get("GoogleApi:Folder");
-            _presentationTemplate = _valueRetrieval.Get("GoogleApi:Template");
+            _folder = valueRetrieval.Get(KeyConfig.GoogleFolder);
+            _presentationTemplate = valueRetrieval.Get(KeyConfig.PresentationTemplate);
 
             var clientSecrets = new ClientSecrets()
             {
-                ClientId = _valueRetrieval.Get("GoogleApi:ClientId"),
-                ClientSecret = _valueRetrieval.Get("GoogleApi:ClientSecret")
+                ClientId = valueRetrieval.Get(KeyConfig.GoogleApiClient),
+                ClientSecret = valueRetrieval.Get(KeyConfig.GoogleApiSecret)
             };
 
-            string credPath = _valueRetrieval.Get("GoogleApi:Token");
+            var credPath = valueRetrieval.Get(KeyConfig.GoogleApiToken);
 
             var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 clientSecrets,
@@ -41,8 +38,7 @@ namespace Musiction.API.BusinessLogic
 
             _driveService = new DriveService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = credential,
-                ApplicationName = ApplicationName,
+                HttpClientInitializer = credential
             });
         }
 

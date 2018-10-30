@@ -6,7 +6,7 @@ namespace Musiction.API.Test
 {
     public class FileAndFolderPathMock : IFileAndFolderPathsCreator
     {
-        public string GetMergedFilePath()
+        public string GetPathToMergedFiles()
         {
             string outcomeFileName = "FinaleFile_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pptx";
             string folder = Directory.GetCurrentDirectory();
@@ -26,7 +26,7 @@ namespace Musiction.API.Test
             throw new NotImplementedException();
         }
 
-        public string GetZipFilePath(string zipName)
+        public string GetPathToZipFiles(string zipName)
         {
             string folder = Directory.GetCurrentDirectory();
             string folderPath = Path.Combine(folder, "Zip");

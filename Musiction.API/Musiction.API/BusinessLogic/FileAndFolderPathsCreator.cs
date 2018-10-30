@@ -1,5 +1,5 @@
 ﻿using Musiction.API.IBusinessLogic;
-using System;
+using Musiction.API.Resources;
 using System.IO;
 
 namespace Musiction.API.BusinessLogic
@@ -8,8 +8,6 @@ namespace Musiction.API.BusinessLogic
     {
         private readonly string _folder;
         private readonly string _webAddress;
-        private const string _pptxExtension = ".pptx";
-        private const string _finaleMergedFilePrefix = "finaleFile_";
         private readonly IGetValue _valueRetrieval;
 
         public FileAndFolderPathsCreator(IGetValue valueRetrieval)
@@ -19,17 +17,17 @@ namespace Musiction.API.BusinessLogic
             _webAddress = _valueRetrieval.Get("WebAddress");
         }
 
-        public string GetMergedFilePath()
+        public string GetPathToMergedFiles()
         {
             var folderPath = GetCombinedFolderPath("folderSettings:mergedPath");
-            string outcomeFileName = _finaleMergedFilePrefix + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + _pptxExtension;
+            var outcomeFileName = MagicString.FinalFileName;
             return Path.Combine(folderPath, outcomeFileName);
         }
 
-        public string GetZipFilePath(string zipName)
+        public string GetPathToZipFiles(string zipName)
         {
             var folderPath = GetCombinedFolderPath("folderSettings:zipPath");
-            string outcomeFilePath = Path.Combine(folderPath, zipName);
+            var outcomeFilePath = Path.Combine(folderPath, zipName);
             return outcomeFilePath;
         }
 

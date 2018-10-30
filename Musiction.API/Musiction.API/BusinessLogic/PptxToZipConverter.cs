@@ -1,5 +1,6 @@
 ﻿using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
+using Musiction.API.Resources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -12,29 +13,27 @@ using UrlCombineLib;
 
 namespace Musiction.API.BusinessLogic
 {
-    public class PptxToJpgConverter : IConvertPresentation
+    public class PptxToZipConverter : IConvertPresentation
     {
-        private Uri baseUri = new Uri("https://sandbox.zamzar.com/v1/");
-        private string _apiKey;
+        private readonly Uri _baseUri = new Uri(MagicString.ZamzarApiUrl);
+        private readonly string _apiKey;
         private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
-        private readonly IGetValue _valueRetrieval;
 
-        public PptxToJpgConverter(IFileAndFolderPathsCreator fileAndFolderPath, IGetValue valueRetrieval)
+        public PptxToZipConverter(IFileAndFolderPathsCreator fileAndFolderPath, IGetValue valueRetrieval)
         {
             _fileAndFolderPath = fileAndFolderPath;
-            _valueRetrieval = valueRetrieval;
-            _apiKey = _valueRetrieval.Get("ZamzarKey");
+            _apiKey = valueRetrieval.Get(KeyConfig.ZamzarKey);
         }
         public string Convert(string sourceFile)
         {
-            string targetFormat = "jpg";
+            var targetFormat = "jpg";
 
-            var uploadUri = baseUri.Combine("jobs");
+            var uploadUri = _baseUri.Combine("jobs");
             var jobId = Upload(uploadUri, sourceFile, targetFormat).Result;
 
             var zipFile = WaitUntilSuccess(jobId);
-            var getFilebUri = baseUri.Combine("files", zipFile.id.ToString(), "content");
-            var localFileName = _fileAndFolderPath.GetZipFilePath(zipFile.name);
+            var getFilebUri = _baseUri.Combine("files", zipFile.id.ToString(), "content");
+            var localFileName = _fileAndFolderPath.GetPathToZipFiles(zipFile.name);
 
             Download(getFilebUri, localFileName).Wait();
 
@@ -43,7 +42,7 @@ namespace Musiction.API.BusinessLogic
 
         private TargetFile WaitUntilSuccess(string jobId)
         {
-            var getJobUri = baseUri.Combine("jobs", jobId);
+            var getJobUri = _baseUri.Combine("jobs", jobId);
 
             Job job;
             do

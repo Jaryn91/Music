@@ -1,7 +1,9 @@
 ﻿
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
+using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
+using Musiction.API.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace Musiction.API.BusinessLogic
 {
-    public class PowerPointMerger
+    public class PowerPointMerger : IMerge
     {
         private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
 
@@ -20,34 +22,38 @@ namespace Musiction.API.BusinessLogic
             _fileAndFolderPath = fileAndFolderPath;
         }
 
-        public string Merge(List<string> files)
+        public string Merge(IEnumerable<Song> songs)
+        {
+            var paths = new List<string>();
+            foreach (var song in songs)
+            {
+                paths.Add(string.Format(MagicString.UrlToPptxExport, song.PresentationId));
+            }
+
+            var pathToCombinedPptx = Merge(paths);
+            return pathToCombinedPptx;
+        }
+
+        private string Merge(List<string> files)
         {
             if (files.Count < 1)
                 return "";
 
-            try
+            var finalPresentation = _fileAndFolderPath.GetPathToMergedFiles();
+            using (var client = new WebClient())
             {
-                var finalPresentation = _fileAndFolderPath.GetMergedFilePath();
-                using (var client = new WebClient())
-                {
-                    client.DownloadFile(files.First(), finalPresentation);
-                }
-
-                files.RemoveAt(0);
-
-                foreach (string presentationId in files)
-                    MergeSlides(presentationId, finalPresentation);
-
-                return finalPresentation;
+                client.DownloadFile(files.First(), finalPresentation);
             }
-            catch (Exception ex)
-            {
-                return $"Error durning merging. {ex.Message}";
-            }
+
+            files.RemoveAt(0);
+
+            foreach (string presentationId in files)
+                MergeSlides(presentationId, finalPresentation);
+
+            return finalPresentation;
         }
 
-
-        public PresentationDocument GetPresentationDocument(string url, bool isEditable)
+        private PresentationDocument GetPresentationDocument(string url, bool isEditable)
         {    //Create a stream for the file
             using (var client = new WebClient())
             {
@@ -59,20 +65,20 @@ namespace Musiction.API.BusinessLogic
 
         public int GetNumberOfSlides(string filePath)
         {
-            using (PresentationDocument mySourceDeck = PresentationDocument.Open(filePath, false))
+            using (var mySourceDeck = PresentationDocument.Open(filePath, false))
             {
-                PresentationPart sourcePresPart = mySourceDeck.PresentationPart;
+                var sourcePresPart = mySourceDeck.PresentationPart;
                 return sourcePresPart.Presentation.SlideIdList.Count();
             }
         }
 
         private void MergeSlides(string presentationId, string finalPresentation)
         {
-            int id = 0;
+            var id = 0;
 
-            using (PresentationDocument myDestDeck = PresentationDocument.Open(finalPresentation, true))
+            using (var myDestDeck = PresentationDocument.Open(finalPresentation, true))
             {
-                PresentationPart destPresPart = myDestDeck.PresentationPart;
+                var destPresPart = myDestDeck.PresentationPart;
                 // If the merged presentation does not have a SlideIdList 
                 // element yet, add it.
                 if (destPresPart.Presentation.SlideIdList == null)
@@ -80,58 +86,56 @@ namespace Musiction.API.BusinessLogic
 
                 // Open the source presentation. This will throw an exception if
                 // the source presentation does not exist.
-                using (PresentationDocument mySourceDeck = GetPresentationDocument(presentationId, false))
+                using (var mySourceDeck = GetPresentationDocument(presentationId, false))
                 {
-                    PresentationPart sourcePresPart = mySourceDeck.PresentationPart;
+                    var sourcePresPart = mySourceDeck.PresentationPart;
 
                     // Get unique ids for the slide master and slide lists
                     // for use later.
-                    uint uniqueId = GetMaxSlideMasterId(destPresPart.Presentation.SlideMasterIdList);
+                    var uniqueId = GetMaxSlideMasterId(destPresPart.Presentation.SlideMasterIdList);
 
-                    uint maxSlideId = GetMaxSlideId(destPresPart.Presentation.SlideIdList);
+                    var maxSlideId = GetMaxSlideId(destPresPart.Presentation.SlideIdList);
 
                     // Copy each slide in the source presentation, in order, to 
                     // the destination presentation.
-                    foreach (SlideId slideId in
+                    foreach (var openXmlElement in
                       sourcePresPart.Presentation.SlideIdList)
                     {
-                        SlidePart sp;
-                        SlidePart destSp;
-                        SlideMasterPart destMasterPart;
-                        string relId;
-                        SlideMasterId newSlideMasterId;
-                        SlideId newSlideId;
-
+                        var slideId = (SlideId)openXmlElement;
                         // Create a unique relationship id.
                         id++;
-                        sp = (SlidePart)sourcePresPart.GetPartById(slideId.RelationshipId);
+                        var sp = (SlidePart)sourcePresPart.GetPartById(slideId.RelationshipId);
 
                         var result = GetUniqueIdOfPresentation(presentationId);
 
-                        relId = result + id;
+                        var relId = result + id;
 
                         // Add the slide part to the destination presentation.
-                        destSp = destPresPart.AddPart<SlidePart>(sp, relId);
+                        var destSp = destPresPart.AddPart<SlidePart>(sp, relId);
 
                         // The slide master part was added. Make sure the
                         // relationship between the main presentation part and
                         // the slide master part is in place.
-                        destMasterPart = destSp.SlideLayoutPart.SlideMasterPart;
+                        var destMasterPart = destSp.SlideLayoutPart.SlideMasterPart;
                         destPresPart.AddPart(destMasterPart);
 
                         // Add the slide master id to the slide master id list.
                         uniqueId++;
-                        newSlideMasterId = new SlideMasterId();
-                        newSlideMasterId.RelationshipId = destPresPart.GetIdOfPart(destMasterPart);
-                        newSlideMasterId.Id = uniqueId;
+                        var newSlideMasterId = new SlideMasterId
+                        {
+                            RelationshipId = destPresPart.GetIdOfPart(destMasterPart),
+                            Id = uniqueId
+                        };
 
                         destPresPart.Presentation.SlideMasterIdList.Append(newSlideMasterId);
 
                         // Add the slide id to the slide id list.
                         maxSlideId++;
-                        newSlideId = new SlideId();
-                        newSlideId.RelationshipId = relId;
-                        newSlideId.Id = maxSlideId;
+                        var newSlideId = new SlideId
+                        {
+                            RelationshipId = relId,
+                            Id = maxSlideId
+                        };
 
                         destPresPart.Presentation.SlideIdList.Append(newSlideId);
                     }
@@ -147,8 +151,8 @@ namespace Musiction.API.BusinessLogic
 
         private string GetUniqueIdOfPresentation(string presentationId)
         {
-            int pFrom = presentationId.IndexOf(@"presentation/d/") + @"presentation/d/".Length;
-            int pTo = presentationId.LastIndexOf(@"/export/pptx");
+            int pFrom = presentationId.IndexOf(@"presentation/d/", StringComparison.Ordinal) + @"presentation/d/".Length;
+            int pTo = presentationId.LastIndexOf(@"/export/pptx", StringComparison.Ordinal);
 
             var result = presentationId.Substring(pFrom, pTo - pFrom);
             Regex rgx = new Regex("[^a-zA-Z]");
@@ -159,7 +163,7 @@ namespace Musiction.API.BusinessLogic
         private void FixSlideLayoutIds(PresentationPart presPart, uint uniqueId)
         {
             // Make sure that all slide layouts have unique ids.
-            foreach (SlideMasterPart slideMasterPart in
+            foreach (var slideMasterPart in
               presPart.SlideMasterParts)
             {
                 foreach (SlideLayoutId slideLayoutId in
@@ -179,15 +183,16 @@ namespace Musiction.API.BusinessLogic
             // equal to 256 and a maximum value of less than 2147483648. 
             uint max = 256;
 
-            if (slideIdList != null)
-                // Get the maximum id value from the current set of children.
-                foreach (SlideId child in slideIdList.Elements<SlideId>())
-                {
-                    uint id = child.Id;
+            if (slideIdList == null)
+                return max;
 
-                    if (id > max)
-                        max = id;
-                }
+            foreach (var child in slideIdList.Elements<SlideId>())
+            {
+                uint id = child.Id;
+
+                if (id > max)
+                    max = id;
+            }
 
             return max;
         }
@@ -200,7 +205,7 @@ namespace Musiction.API.BusinessLogic
 
             if (slideMasterIdList != null)
                 // Get the maximum id value from the current set of children.
-                foreach (SlideMasterId child in
+                foreach (var child in
                   slideMasterIdList.Elements<SlideMasterId>())
                 {
                     uint id = child.Id;

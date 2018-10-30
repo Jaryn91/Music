@@ -2,8 +2,8 @@
 {
     public interface IFileAndFolderPathsCreator
     {
-        string GetMergedFilePath();
-        string GetZipFilePath(string zipName);
+        string GetPathToMergedFiles();
+        string GetPathToZipFiles(string zipName);
         string GetWebAddressToFile(string pathToCombinedPptx);
     }
 }
