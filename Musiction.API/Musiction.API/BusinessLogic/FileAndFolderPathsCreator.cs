@@ -16,7 +16,7 @@ namespace Musiction.API.BusinessLogic
         {
             _valueRetrieval = valueRetrieval;
             _folder = _valueRetrieval.Get("FileRoot");
-            _webAddress = _valueRetrieval.Get("FilWebAddresseRoot");
+            _webAddress = _valueRetrieval.Get("WebAddress");
         }
 
         public string GetMergedFilePath()

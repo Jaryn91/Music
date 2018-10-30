@@ -9,9 +9,9 @@ namespace Musiction.API.Controllers
     {
         private readonly ICreatePresentationResponse _presentationResponse;
 
-        public PresentationController(ICreatePresentationResponse presentationResponse)
+        public PresentationController(ICreatePresentationResponse createPresentationResponse)
         {
-            _presentationResponse = presentationResponse;
+            _presentationResponse = createPresentationResponse;
         }
 
 

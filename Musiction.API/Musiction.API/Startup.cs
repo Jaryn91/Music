@@ -80,14 +80,13 @@ namespace Musiction.API
 
         private void RegisterContainers(IServiceCollection services)
         {
-            services.AddScoped<ISongRepository, SongRepository>();
-            services.AddSingleton<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
-            services.AddSingleton<IGetValue, ValueRetrieval>();
-            services.AddSingleton<IOutcomeTextCreator, OutcomeTextCreator>();
-            services.AddSingleton<IGoogleSlides, GoogleSlides>();
-            services.AddSingleton<ICreatePresentationResponse, PresentationResponse>();
-            services.AddSingleton<IConvertPresentation, PptxToJpgConverter>();
-
+            services.AddTransient<ISongRepository, SongRepository>();
+            services.AddTransient<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
+            services.AddTransient<IGetValue, ValueRetrieval>();
+            services.AddTransient<IOutcomeTextCreator, OutcomeTextCreator>();
+            services.AddTransient<IGoogleSlides, GoogleSlides>();
+            services.AddTransient<IConvertPresentation, PptxToJpgConverter>();
+            services.AddTransient<ICreatePresentationResponse, PresentationResponse>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
