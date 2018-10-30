@@ -45,22 +45,30 @@
                 $('#loadingButton').removeClass("hide");
                 
                 var songsIds = getSongIds();
-                createPresentation("pptx?", songsIds, success);
+                createPresentation("pptx?", songsIds, success, error);
             });
 
             $('#saveInZIP').click(function () {
                 $('#createPresentationButtons').addClass("hide");
                 $('#loadingButton').removeClass("hide");
                 var songsIds = getSongIds();
-                createPresentation("zip?", songsIds, success);
+                createPresentation("zip?", songsIds, success, error);
             });
         });
+
 
         function success(data) {
             $('#textarea').val(data.information);
             window.location.href = data.url;
             $('#createPresentationButtons').removeClass("hide");
             $('#loadingButton').addClass("hide");
+        }
+
+        function error(data) {
+            $('#textarea').val(data.responseJSON.information);
+            $('#createPresentationButtons').removeClass("hide");
+            $('#loadingButton').addClass("hide");
+            return data.responseJSON.alertMessage;
         }
     </script>
 </head>

@@ -59,7 +59,7 @@ function deleteSong(funcOk, songId, songName) {
         headers: getAuthorizationHeader(),
         type: 'DELETE',
         success: function (result) {
-            funcOk(songName);
+            funcOk(result);
         },
         error: function (result, status) {
             errorHandling(result, null);

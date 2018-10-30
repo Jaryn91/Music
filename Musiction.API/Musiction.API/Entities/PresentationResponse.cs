@@ -1,6 +1,5 @@
 ﻿using Musiction.API.BusinessLogic;
 using Musiction.API.IBusinessLogic;
-using System;
 using System.Collections.Generic;
 
 namespace Musiction.API.Entities
@@ -20,12 +19,12 @@ namespace Musiction.API.Entities
             Url = urlToMergedPresentations;
         }
 
-        public void CreateExceptionResponse(IEnumerable<Song> songs, Exception ex)
+        public void CreateExceptionResponse(IEnumerable<Song> songs, string exceptionMessage)
         {
             IOutcomeTextCreator outcomeTextCreator = new OutcomeTextCreator();
             Information = outcomeTextCreator.CreateSciprtWithNamesOfSongsAndYouTubeLinks(songs);
 
-            AlertMessage = ex.Message;
+            AlertMessage = exceptionMessage;
         }
     }
 }

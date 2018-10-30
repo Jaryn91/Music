@@ -4,6 +4,7 @@ using Musiction.API.IBusinessLogic;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Musiction.API.Controllers
 {
@@ -31,6 +32,12 @@ namespace Musiction.API.Controllers
             try
             {
                 songs = _songRepository.GetSongsInOrder(ids);
+                if (!songs.Any())
+                {
+                    presentationResponse.CreateExceptionResponse(songs, "Nie wybrałeś żadnej pieśni :(");
+                    return BadRequest(presentationResponse);
+                }
+
                 var urlToMergedPresentations = _powerPointMerger.Merge(songs);
 
                 if (returnLinkTo == "pptx")
@@ -48,7 +55,7 @@ namespace Musiction.API.Controllers
             }
             catch (Exception ex)
             {
-                presentationResponse.CreateExceptionResponse(songs, ex);
+                presentationResponse.CreateExceptionResponse(songs, ex.Message);
                 return BadRequest(presentationResponse);
             }
             return BadRequest();
