@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
+using Musiction.API.Resources;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
@@ -30,30 +31,42 @@ namespace Musiction.API.Controllers
         [HttpGet, Authorize]
         public IActionResult GetSongs()
         {
-            var songs = _songRepository.GetSongs();
-            var results = Mapper.Map<IEnumerable<SongDto>>(songs);
-            return Ok(results);
+            var songResponse = new SongResponse();
+            try
+            {
+                var songs = _songRepository.GetSongs();
+                var results = Mapper.Map<IEnumerable<SongDto>>(songs);
+                songResponse.Songs = results;
+                return Ok(songResponse);
+            }
+            catch (Exception ex)
+            {
+                songResponse.AlertMessage = ex.Message;
+                return BadRequest(songResponse);
+            }
         }
 
         [HttpGet("{id}", Name = "GetSong"), Authorize]
         public IActionResult GetSong(int id)
         {
+            var songResponse = new SongResponse();
             try
             {
                 var songToReturn = _songRepository.GetSong(id);
                 if (songToReturn == null)
                 {
-                    _logger.LogInformation($"Song {id} is not found");
-                    return NotFound();
+                    songResponse.AlertMessage = string.Format(MagicString.SongWithIdDoesntExist, id);
+                    return BadRequest(songResponse);
                 }
 
                 var song = Mapper.Map<SongDto>(songToReturn);
-                return Ok(song);
+                songResponse.Songs = new List<SongDto>() { song };
+                return Ok(songResponse);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                _logger.LogInformation($"Excepction occoured while looking for song with {id}");
-                return StatusCode(500, "A problem happend on GetSong");
+                songResponse.AlertMessage = ex.Message;
+                return BadRequest(songResponse);
             }
         }
 
@@ -67,8 +80,8 @@ namespace Musiction.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string presentationId = "";
-
+            var presentationId = "";
+            var songResponse = new SongResponse();
             try
             {
                 presentationId = _googleSlides.Create(song.Name);
@@ -78,7 +91,9 @@ namespace Musiction.API.Controllers
 
                 if (!_songRepository.AddSong(finalSong))
                 {
-                    return StatusCode(500, "A problem happend durning saving a song");
+                    _googleSlides.Remove(presentationId);
+                    songResponse.AlertMessage = MagicString.ProblemOucuredDuringSavingSongToDatabase;
+                    return BadRequest(songResponse);
                 }
 
                 var createdSong = Mapper.Map<SongDto>(finalSong);
@@ -88,7 +103,8 @@ namespace Musiction.API.Controllers
             catch (Exception ex)
             {
                 _googleSlides.Remove(presentationId);
-                return StatusCode(500, ex.InnerException);
+                songResponse.AlertMessage = ex.Message;
+                return BadRequest(songResponse);
             }
         }
 
@@ -101,39 +117,64 @@ namespace Musiction.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var songToUpdate = _songRepository.GetSong(id);
-
-            if (songToUpdate == null)
-                return NotFound();
-
-            Mapper.Map(song, songToUpdate);
-
-
-            if (!_songRepository.Save())
+            var songResponse = new SongResponse();
+            try
             {
-                return StatusCode(500, "A problem happend durning updating a song");
-            }
+                var songToUpdate = _songRepository.GetSong(id);
 
-            return Ok();
+                if (songToUpdate == null)
+                {
+                    songResponse.AlertMessage = string.Format(MagicString.SongWithIdDoesntExist, id);
+                    return BadRequest(songResponse);
+                }
+
+                Mapper.Map(song, songToUpdate);
+
+                if (!_songRepository.Save())
+                {
+                    songResponse.AlertMessage = MagicString.ProblemOucuredDuringSavingSongToDatabase;
+                    return BadRequest(songResponse);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                songResponse.AlertMessage = ex.Message;
+                return BadRequest(songResponse);
+            }
         }
 
         [HttpDelete("{id}"), Authorize]
         public IActionResult DeleteSong(int id)
         {
-            var songToDelete = _songRepository.GetSong(id);
-
-            if (songToDelete == null)
-                return NotFound();
-
-            _songRepository.RemoveSong(songToDelete);
-            if (!_songRepository.Save())
+            var songResponse = new SongResponse();
+            try
             {
-                return StatusCode(500, "A problem happend durning deleting a song");
+                var songToDelete = _songRepository.GetSong(id);
+
+                if (songToDelete == null)
+                {
+                    songResponse.AlertMessage = string.Format(MagicString.SongWithIdDoesntExist, id);
+                    return BadRequest(songResponse);
+                }
+
+                _songRepository.RemoveSong(songToDelete);
+                if (!_songRepository.Save())
+                {
+                    songResponse.AlertMessage = MagicString.ProblemOucuredDuringSavingSongToDatabase;
+                    return BadRequest(songResponse);
+                }
+
+                _googleSlides.Remove(songToDelete.PresentationId);
+
+                return Ok();
             }
-            _googleSlides.Remove(songToDelete.PresentationId);
-
-            return Ok();
+            catch (Exception ex)
+            {
+                songResponse.AlertMessage = ex.Message;
+                return BadRequest(songResponse);
+            }
         }
-
     }
 }

@@ -17,21 +17,22 @@ function getAllSongs(lstBoxName, func) {
 }
 
 function addOptionsToListBox(lstBoxName, result) {
-    var options = '';
-    for (var i = 0; i < result.length; i++) {
-        options += createOption(result[i]);
+    var options = "";
+    var songs = result.songs;
+    for (var i = 0; i < songs.length; i++) {
+        options += createOption(songs[i]);
     }
     $(lstBoxName).append(options);
 }
 
 
 function createOption(result) {
-    var option = '<li class="ui-state-default" value="' + result.id + '">' + result.name + '</li>';
+    var option = '<li class="ui-state-default" value="' + result.id + '">' + result.name + "</li>";
     return option;
 }
 
 function filter(text) {
-    if (text == "")
+    if (text === "")
         return allSongs;
     var filteredSongs = new Array();
     for (var i = 0; i < allSongs.length; i++) {

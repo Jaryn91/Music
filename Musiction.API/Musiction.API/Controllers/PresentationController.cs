@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
+using Musiction.API.Resources;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace Musiction.API.Controllers
                 songs = _songRepository.GetSongsInOrder(ids);
                 if (!songs.Any())
                 {
-                    presentationResponse.CreateExceptionResponse(songs, "Nie wybrałeś żadnej pieśni :(");
+                    presentationResponse.CreateExceptionResponse(songs, MagicString.NoSongSelected);
                     return BadRequest(presentationResponse);
                 }
 

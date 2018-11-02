@@ -8,7 +8,6 @@ namespace Musiction.API.Entities
     {
         public string Url { get; set; }
         public string Information { get; set; }
-
         public string AlertMessage { get; set; }
 
         public void CreateSuccessResponse(IEnumerable<Song> songs, string urlToMergedPresentations)

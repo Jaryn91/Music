@@ -9,5 +9,11 @@ namespace Musiction.API.Resources
             "https://docs.google.com/presentation/d/{0}/export/pptx";
 
         public static string ZamzarApiUrl => "https://sandbox.zamzar.com/v1/";
+        public static string NoSongSelected => "Nie wybrano żodnej pieśni. Noo... Weź coś wybierz :)!";
+        public static string SongWithIdDoesntExist => "Pieśń o id: {0} nie istnieje w bazie.";
+
+        public static string ProblemOucuredDuringSavingSongToDatabase =>
+            "Pojawił się problem podczas zapisywania piosenki do bazy danych";
+
     }
 }

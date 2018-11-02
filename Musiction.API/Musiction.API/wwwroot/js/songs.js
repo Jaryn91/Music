@@ -22,13 +22,21 @@ function addSong(song, funcOk, funcError) {
 }
 
 function getSong(songId, func) {
+    if (allSongs.songs !== null) {
+        var song = $.grep(allSongs.songs, function (e) { return e.id === songId; });
+        if (song !== null) {
+            func(song[0]);
+            return;
+        }
+    }
+
     var url = songApi + songId;
     $.ajax({
         url: url,
         headers: getAuthorizationHeader()
     })
         .done(function (result) {
-            func(result);
+            func(result.songs[0]);
         });
 }
 
@@ -52,7 +60,7 @@ function updateSong(songId, song, funcOk, funcError) {
     });
 }
 
-function deleteSong(funcOk, songId, songName) {
+function deleteSong(funcOk, songId) {
     var url = songApi + songId;
     $.ajax({
         url: url,
