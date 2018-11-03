@@ -8,6 +8,7 @@
         public static string GoogleApiSecret => "GoogleApi:ClientSecret";
         public static string GoogleApiToken => "GoogleApi:Token";
         public static string ZamzarKey => "ZamzarKey";
+        public static string ZamzarUrl => "zamzarUrl";
 
 
     }

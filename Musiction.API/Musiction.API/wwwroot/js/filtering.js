@@ -8,7 +8,7 @@ function getAllSongs(lstBoxName, func) {
         headers: getAuthorizationHeader(),
         success: function (result) {
             allSongs = result.songs;
-            func(lstBoxName);
+            func(lstBoxName, allSongs);
             
         },
         error: function (result, status) {
@@ -17,10 +17,10 @@ function getAllSongs(lstBoxName, func) {
     });
 }
 
-function addOptionsToListBox(lstBoxName) {
+function addOptionsToListBox(lstBoxName, songs) {
     var options = "";
-    for (var i = 0; i < allSongs.length; i++) {
-        options += createOption(allSongs[i]);
+    for (var i = 0; i < songs.length; i++) {
+        options += createOption(songs[i]);
     }
     $(lstBoxName).append(options);
 }
