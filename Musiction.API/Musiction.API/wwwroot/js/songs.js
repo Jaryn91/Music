@@ -69,6 +69,7 @@ function deleteSong(funcOk, songId) {
         type: 'DELETE',
         success: function (result) {
             funcOk(result);
+            deleteSongFromList(songId);
         },
         error: function (result, status) {
             errorHandling(result, null);
@@ -101,6 +102,6 @@ function updateSongInList(songId, songToUpdate) {
 }
 
 function deleteSongFromList(songId) {
-    var index = allSongs.findIndex(item => item.id == songId);
-    delete allSongs[index];
+    var index = allSongs.findIndex(item => item.id === songId);
+    allSongs.splice(index, 1);
 }
