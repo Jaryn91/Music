@@ -87,6 +87,7 @@ namespace Musiction.API
             services.AddTransient<IGoogleSlides, GoogleSlides>();
             services.AddTransient<IConvertPresentation, PptxToZipConverter>();
             services.AddTransient<IMerge, PowerPointMerger>();
+            services.AddTransient<IAccount, Account>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,

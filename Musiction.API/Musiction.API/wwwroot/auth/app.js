@@ -5,7 +5,6 @@
     loadingSpinner.css('display', 'none');
 
     var userProfile;
-    var apiUrl = 'http://localhost:3001/api';
 
     var webAuth = new auth0.WebAuth({
         domain: AUTH0_DOMAIN,
@@ -25,36 +24,13 @@
     var loginBtn = $('#qsLoginBtn');
     var logoutBtn = $('#qsLogoutBtn');
 
-    var homeViewBtn = $('#btn-home-view');
     var profileViewBtn = $('#btn-profile-view');
     var pingViewBtn = $('#btn-ping-view');
 
-    var pingPublic = $('#btn-ping-public');
-    var pingPrivate = $('#btn-ping-private');
-    var pingPrivateScoped = $('#btn-ping-private-scoped');
-
-    var callPrivateMessage = $('#call-private-message');
-    var pingMessage = $('#ping-message');
-
-    pingPublic.click(function () {
-        callAPI('/public', false);
-    });
-
-    pingPrivate.click(function () {
-        callAPI('/private', true);
-    });
-
-    pingPrivateScoped.click(function () {
-        callAPI('/private-scoped', true);
-    });
 
     loginBtn.click(login);
     logoutBtn.click(logout);
 
-    homeViewBtn.click(function () {
-        homeView.css('display', 'inline-block');
-        profileView.css('display', 'none');
-    });
 
     profileViewBtn.click(function () {
         homeView.css('display', 'none');
@@ -68,10 +44,10 @@
 
     function login() {
         webAuth.authorize();
+
     }
 
     function setSession(authResult) {
-        // Set the time that the access token will expire at
         var expiresAt = JSON.stringify(
             authResult.expiresIn * 1000 + new Date().getTime()
         );
@@ -81,17 +57,13 @@
     }
 
     function logout() {
-        // Remove tokens and expiry time from localStorage
         localStorage.removeItem('access_token');
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');
-        pingMessage.css('display', 'none');
         displayButtons();
     }
 
     function isAuthenticated() {
-        // Check whether the current time is past the
-        // access token's expiry time
         var expiresAt = JSON.parse(localStorage.getItem('expires_at'));
         return new Date().getTime() < expiresAt;
     }
@@ -102,12 +74,9 @@
             loginBtn.css('display', 'none');
             logoutBtn.css('display', 'inline-block');
             profileViewBtn.css('display', 'inline-block');
-            pingPrivate.css('display', 'inline-block');
-            pingPrivateScoped.css('display', 'inline-block');
-            callPrivateMessage.css('display', 'none');
             loginStatus.text(
-                'Juhu! Jesteś zalogowany!'
-            );
+                'Juhu! Jesteś zalogowany!');
+            getRemainingCredits(displayCredits);
         } else {
             homeView.css('display', 'inline-block');
             loginBtn.css('display', 'inline-block');
@@ -115,9 +84,6 @@
             profileViewBtn.css('display', 'none');
             profileView.css('display', 'none');
             pingView.css('display', 'none');
-            pingPrivate.css('display', 'none');
-            pingPrivateScoped.css('display', 'none');
-            callPrivateMessage.css('display', 'block');
             loginStatus.text('Zaloguj się proszę :).');
         }
     }
@@ -148,6 +114,11 @@
         $('#profile-view img').attr('src', userProfile.picture);
     }
 
+    function displayCredits(credits) {
+        var zipsLeft = $('.container h5');
+        zipsLeft.text('Do końca miesiąca można jeszcze wygenerować ' + credits + ' zipów.');
+    }
+
     function handleAuthentication() {
         webAuth.parseHash(function (err, authResult) {
             if (authResult && authResult.accessToken && authResult.idToken) {
@@ -167,27 +138,6 @@
     }
 
     handleAuthentication();
-
-    function callAPI(endpoint, secured) {
-        var url = apiUrl + endpoint;
-        var accessToken = localStorage.getItem('access_token');
-
-        var headers;
-        if (secured && accessToken) {
-            headers = { Authorization: 'Bearer ' + accessToken };
-        }
-
-        $.ajax({
-            url: url,
-            headers: headers
-        })
-            .done(function (result) {
-                $('#ping-view h2').text(result.message);
-            })
-            .fail(function (err) {
-                $('#ping-view h2').text('Request failed: ' + err.statusText);
-            });
-    }
 
     displayButtons();
 });
