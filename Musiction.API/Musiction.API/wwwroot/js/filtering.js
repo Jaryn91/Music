@@ -7,8 +7,9 @@ function getAllSongs(lstBoxName, func) {
         url: songApi,
         headers: getAuthorizationHeader(),
         success: function (result) {
-            func(lstBoxName, result);
-            allSongs = result;
+            allSongs = result.songs;
+            func(lstBoxName);
+            
         },
         error: function (result, status) {
             errorHandling(result, null);
@@ -16,11 +17,10 @@ function getAllSongs(lstBoxName, func) {
     });
 }
 
-function addOptionsToListBox(lstBoxName, result) {
+function addOptionsToListBox(lstBoxName) {
     var options = "";
-    var songs = result.songs;
-    for (var i = 0; i < songs.length; i++) {
-        options += createOption(songs[i]);
+    for (var i = 0; i < allSongs.length; i++) {
+        options += createOption(allSongs[i]);
     }
     $(lstBoxName).append(options);
 }

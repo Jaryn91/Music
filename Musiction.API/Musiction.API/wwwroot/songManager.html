@@ -113,9 +113,8 @@
 
         function deleteSongSuccess() {
             $(".ui-state-active").remove();
+            displayAlert("Sukces", "Usunąłem " + songName().val() + "! Super, no nie?");
             resetAllFields();
-            displayAlert("Sukces", "Usunąłem " + songNameongName().val() + "! Super, no nie?");
-
         }
 
         function populateControls(song) {

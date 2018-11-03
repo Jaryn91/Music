@@ -17,7 +17,7 @@
 
 
         function success(results) {
-            displayAlert("Sukces!", "Graluję! Udało Ci się dodać " + $('#name').val() + "!");
+            displayAlert("Sukces!", "Gratuluję! Udało Ci się dodać <b>" + $('#name').val() + "</b>!");
             var linkToPresentation =
                 "https://docs.google.com/presentation/d/" + results.presentationId + "/edit?usp=sharing";
 
@@ -92,20 +92,20 @@
                 </div>
                 <div class="text-center" id="saveSongDiv">
                     <div class="btn-group">
-                        <button type="submit" id="saveSong" class="btn btn-primary" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Dodaję pieśń i tworzę prezentację">Dodaj pieśń i stwórz prezetnację</button>
+                        <button type="submit" id="saveSong" class="btn btn-default" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Dodaję pieśń i tworzę prezentację">Dodaj pieśń i stwórz prezetnację</button>
                     </div>
                 </div>
                 <div class="text-center hide" id="linkToPresentation">
                     <div class="btn-group">
                         <div class="btn-group pull-center-lg">
-                            <a class="btn btn-primary" href="#" id="googlePresentation" role="button" target="_blank">Edytuj prezentacje z pieśnią</a>
+                            <a class="btn btn-default" href="#" id="googlePresentation" role="button" target="_blank">Edytuj prezentacje z pieśnią</a>
                         </div>
                     </div>
                     <br />
                     <br />
                     <div class="btn-group">
                         <div class="btn-group pull-center-lg">
-                            <a class="btn btn-primary" href="addSong.html" id="addNewSong" role="button">Dodaj nową pieśń</a>
+                            <a class="btn btn-default" href="addSong.html" id="addNewSong" role="button">Dodaj nową pieśń</a>
                         </div>
                     </div>
                 </div>

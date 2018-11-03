@@ -22,8 +22,8 @@ function addSong(song, funcOk, funcError) {
 }
 
 function getSong(songId, func) {
-    if (allSongs.songs !== null) {
-        var song = $.grep(allSongs.songs, function (e) { return e.id === songId; });
+    if (allSongs !== null) {
+        var song = $.grep(allSongs, function (e) { return e.id === songId; });
         if (song !== null) {
             func(song[0]);
             return;
@@ -40,16 +40,17 @@ function getSong(songId, func) {
         });
 }
 
-function updateSong(songId, song, funcOk, funcError) {
+function updateSong(songId, songToUpdate, funcOk, funcError) {
     var url = songApi + songId;
     $.ajax({
         url: url,
         type: "PUT",
-        data: song,
+        data: songToUpdate,
         headers: getAuthorizationHeader(),
         processData: false,  // tell jQuery not to process the data
         contentType: false,  // tell jQuery not to set contentType
         success: function (result) {
+            updateSongInList(songId, songToUpdate);
             funcOk();
         },
         error: function (result, status) {
@@ -89,4 +90,17 @@ function errorHandling(result, funcError) {
         errorMassage = "I nawet nie wiem co nie działa :(((.";
     }
     displayAlert("Coś tutaj chyba nie gra", errorMassage);
+}
+
+function updateSongInList(songId, songToUpdate) {
+    if (allSongs !== null) {
+        song = allSongs.find(item => item.id == songId);
+        song.name = songToUpdate.get("Name");
+        song.youTubeUrl = songToUpdate.get("YouTubeUrl");
+    }
+}
+
+function deleteSongFromList(songId) {
+    var index = allSongs.findIndex(item => item.id == songId);
+    delete allSongs[index];
 }
