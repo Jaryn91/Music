@@ -13,10 +13,11 @@ namespace Musiction.API.BusinessLogic
     public class Account : IAccount
     {
         private readonly string _apiKey;
-        private readonly Uri _baseUri = new Uri(MagicString.ZamzarApiUrl);
+        private readonly Uri _baseUri;
 
         public Account(IGetValue valueRetrieval)
         {
+            _baseUri = new Uri(valueRetrieval.Get(KeyConfig.ZamzarUrl));
             _apiKey = valueRetrieval.Get(KeyConfig.ZamzarKey);
         }
 

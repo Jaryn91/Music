@@ -15,13 +15,14 @@ namespace Musiction.API.BusinessLogic
 {
     public class PptxToZipConverter : IConvertPresentation
     {
-        private readonly Uri _baseUri = new Uri(MagicString.ZamzarApiUrl);
+        private readonly Uri _baseUri;
         private readonly string _apiKey;
         private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
 
         public PptxToZipConverter(IFileAndFolderPathsCreator fileAndFolderPath, IGetValue valueRetrieval)
         {
             _fileAndFolderPath = fileAndFolderPath;
+            _baseUri = new Uri(valueRetrieval.Get(KeyConfig.ZamzarUrl));
             _apiKey = valueRetrieval.Get(KeyConfig.ZamzarKey);
         }
         public string Convert(string sourceFile)
