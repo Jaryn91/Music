@@ -39,7 +39,7 @@ namespace Musiction.API.Controllers
                     return BadRequest(presentationResponse);
                 }
 
-                var urlToMergedPresentations = _powerPointMerger.Merge(songs);
+                var urlToMergedPresentations = _powerPointMerger.Merge(songs, true);
 
                 if (returnLinkTo == "pptx")
                 {

@@ -4,6 +4,6 @@
     {
         string GetPathToMergedFiles();
         string GetPathToZipFiles(string zipName);
-        string GetWebAddressToFile(string pathToCombinedPptx);
+        string GetUrlToFile(string pathToCombinedPptx);
     }
 }
