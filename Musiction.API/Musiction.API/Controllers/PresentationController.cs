@@ -15,13 +15,16 @@ namespace Musiction.API.Controllers
         private readonly ISongRepository _songRepository;
         private readonly IMerge _powerPointMerger;
         private readonly IConvertPresentation _pptxToZipConverter;
+        private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
 
         public PresentationController(ISongRepository songRepository,
-            IConvertPresentation pptxToZipConverter, IMerge powerPointMerger)
+            IConvertPresentation pptxToZipConverter, IMerge powerPointMerger,
+            IFileAndFolderPathsCreator fileAndFolderPath)
         {
             _powerPointMerger = powerPointMerger;
             _songRepository = songRepository;
             _pptxToZipConverter = pptxToZipConverter;
+            _fileAndFolderPath = fileAndFolderPath;
         }
 
 
@@ -39,17 +42,19 @@ namespace Musiction.API.Controllers
                     return BadRequest(presentationResponse);
                 }
 
-                var urlToMergedPresentations = _powerPointMerger.Merge(songs);
+                var pathToMergedPresentation = _powerPointMerger.Merge(songs);
 
                 if (returnLinkTo == "pptx")
                 {
-                    presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentations);
+                    var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(pathToMergedPresentation);
+                    presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
                     return Ok(presentationResponse);
                 }
 
                 if (returnLinkTo == "zip")
                 {
-                    var urlToZip = _pptxToZipConverter.Convert(urlToMergedPresentations);
+                    var pathToZip = _pptxToZipConverter.Convert(pathToMergedPresentation);
+                    var urlToZip = _fileAndFolderPath.GetUrlToFile(pathToZip);
                     presentationResponse.CreateSuccessResponse(songs, urlToZip);
                     return Ok(presentationResponse);
                 }

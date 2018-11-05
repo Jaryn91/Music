@@ -21,7 +21,7 @@ namespace Musiction.API.Test
             throw new NotImplementedException();
         }
 
-        public string GetWebAddressToFile(string pathToCombinedPptx)
+        public string GetUrlToFile(string pathToCombinedPptx)
         {
             throw new NotImplementedException();
         }
