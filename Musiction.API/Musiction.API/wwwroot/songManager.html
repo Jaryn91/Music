@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="css/mystyle.css">
-    <link rel='shortcut icon' type='image/x-icon' href='css/favicon.ico' />
+    <link rel='shortcut icon' type='image/x-icon' href='img/favicon.ico' />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Uaktualnij piosenkę - Wawrzynowy Slajd!</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -29,20 +29,27 @@
             return $('#googlePresentation');
         }
         function btnUpdateSong() {
-             return $("#updateSong");
+            return $("#updateSong");
         }
         function btnDeleteSong() {
-             return $("#deleteSong");
+            return $("#deleteSong");
         }
         function deleteModal() {
-             return $("#deleteModal");
+            return $("#deleteModal");
         }
         function buttonsDiv() {
             return $("#buttons");
         }
         function searchTextBox() {
-             return $('#searchTextBox');
+            return $('#searchTextBox');
         }
+        function addModal() {
+            return $('#addModal');
+        }
+        function addSongName() {
+            return $('#addSongName');
+        }
+
 
         $(document).ready(function () {
             loadNavBar();
@@ -78,6 +85,17 @@
                 deleteModal().modal("show");
             });
 
+            $('#addSongConfirmation').click(function (e) {
+                $("#btnAddNewSong").button('loading');
+                //var newSongName = addSongName().val();
+                addSong(addSongName().val(), successAddedSong, errorAddedSong);
+                addModal().modal("show");
+            });
+
+            $('#btnAddNewSong').click(function (e) {
+                addModal().modal("show");
+            });
+
             $('#deleteSongConfirmation').click(function (e) {
                 deleteModal().modal("hide");
                 btnDeleteSong().button('loading');
@@ -86,6 +104,38 @@
                 deleteSong(deleteSongSuccess, songId().val());
             });
         });
+
+
+        function successAddedSong(results) {
+            displayAlert("Sukces!", "Gratuluję! Udało Ci się dodać <b>" + addSongName().val() + "</b>!");
+            var linkToPresentation =
+                "https://docs.google.com/presentation/d/" + results.presentationId + "/edit?usp=sharing";
+
+            $("#googlePresentation").prop("href", linkToPresentation);
+            $("#googlePresentation").prop("target", "_blank");
+            $("#googlePresentation").text("Edytuj prezentacje: " + $('#name').val());
+            $("#linkToPresentation").removeClass('hide');
+            $("#saveSongDiv").addClass('hide');
+            $('#name').prop('readonly', true);
+            $('#youtube').prop('readonly', true);
+            $("#saveSong").button('reset');
+        }
+
+        function errorAddedSong(result, status) {
+            var errorMassage = "";
+            var jsonObj = result.responseJSON;
+
+            for (var key in jsonObj) {
+                if (jsonObj.hasOwnProperty(key)) {
+                    var validError = jsonObj[key];
+                    for (var val in validError) {
+                        errorMassage += '<p>' + validError[val] + '</p>';
+                    }
+                }
+            }
+            $("#saveSong").button('reset');
+            return errorMassage;
+        }
 
         function makeButtonsReadonly() {
             btnDeleteSong().attr("disabled", true);
@@ -169,9 +219,8 @@
 <body>
     <div id="nav-placeholder">
     </div>
-
+    <!-- Delete confirmation modal -->
     <div class="container">
-
         <div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -186,10 +235,35 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal">Aaa... Namyśliłem się, nie chcę</button>
                         <button type="button" id="deleteSongConfirmation" class="btn btn-danger">Tak, usuń!</button>
                     </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Add  modal -->
+    <div class="container">
+        <div class="modal fade" tabindex="-1" role="dialog" id="addModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Dodaj pieśń</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Tytuł nowej pieśni</label>
+                            <input id="addSongName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Aaa... Namyśliłem się, nie chcę</button>
+                        <button type="button" id="addSongConfirmation" class="btn btn-info">Dodaj nową pieśń</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row">
 
@@ -252,6 +326,20 @@
                             <div class="btn-group pull-center-lg">
                                 <button type="submit" id="deleteSong" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Usuwam pieśń" class="btn btn-danger">Usuń pieśń</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+                <div class="text-center">
+
+                    <div class="btn-group ">
+                        <div class="btn-group pull-center-lg">
+                            <a class="btn btn-default" id="btnAddNewSong" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Dodaję pieśń" role="button">Dodaj nową pieśń</a>
                         </div>
                     </div>
                 </div>

@@ -72,31 +72,27 @@ namespace Musiction.API.Controllers
 
 
         [HttpPost(), Authorize]
-        public IActionResult CreateSong(SongForCreationDto song)
+        public IActionResult CreateSong(string songName)
         {
-            if (song == null)
+            if (songName == null)
                 return BadRequest();
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
             var presentationId = "";
             var songResponse = new SongResponse();
             try
             {
-                presentationId = _googleSlides.Create(song.Name);
+                presentationId = _googleSlides.Create(songName);
 
-                var finalSong = Mapper.Map<Song>(song);
-                finalSong.PresentationId = presentationId;
+                var song = new Song() { Name = songName, PresentationId = presentationId };
 
-                if (!_songRepository.AddSong(finalSong))
+                if (!_songRepository.AddSong(song))
                 {
                     _googleSlides.Remove(presentationId);
                     songResponse.AlertMessage = MagicString.ProblemOucuredDuringSavingSongToDatabase;
                     return BadRequest(songResponse);
                 }
 
-                var createdSong = Mapper.Map<SongDto>(finalSong);
+                var createdSong = Mapper.Map<SongDto>(song);
 
                 return Ok(createdSong);
             }

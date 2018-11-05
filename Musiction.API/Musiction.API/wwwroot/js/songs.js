@@ -1,11 +1,11 @@
 ﻿var songApi = getDomain() + "api/songs/";
 
 
-function addSong(song, funcOk, funcError) {
+function addSong(songName, funcOk, funcError) {
     $.ajax({
         url: songApi,
         type: 'POST',
-        data: song,
+        data: songName,
         headers: getAuthorizationHeader(),
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
