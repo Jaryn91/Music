@@ -22,7 +22,7 @@ namespace Musiction.API.BusinessLogic
             _fileAndFolderPath = fileAndFolderPath;
         }
 
-        public string Merge(IEnumerable<Song> songs, bool convertPathToUrl = false)
+        public string Merge(IEnumerable<Song> songs)
         {
             var paths = new List<string>();
             foreach (var song in songs)
@@ -31,11 +31,6 @@ namespace Musiction.API.BusinessLogic
             }
 
             var pathToCombinedPptx = Merge(paths);
-            if (convertPathToUrl)
-            {
-                return _fileAndFolderPath.GetUrlToFile(pathToCombinedPptx);
-            }
-
             return pathToCombinedPptx;
         }
 

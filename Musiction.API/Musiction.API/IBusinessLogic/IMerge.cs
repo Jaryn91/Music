@@ -5,6 +5,6 @@ namespace Musiction.API.IBusinessLogic
 {
     public interface IMerge
     {
-        string Merge(IEnumerable<Song> songs, bool convertPathToUrl = false);
+        string Merge(IEnumerable<Song> songs);
     }
 }
