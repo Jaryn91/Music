@@ -71,10 +71,10 @@ namespace Musiction.API.Controllers
         }
 
 
-        [HttpPost(), Authorize]
+        [HttpPost("{songName}"), Authorize]
         public IActionResult CreateSong(string songName)
         {
-            if (songName == null)
+            if (songName == "")
                 return BadRequest();
 
             var presentationId = "";

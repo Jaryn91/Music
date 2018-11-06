@@ -87,9 +87,8 @@
 
             $('#addSongConfirmation').click(function (e) {
                 $("#btnAddNewSong").button('loading');
-                //var newSongName = addSongName().val();
                 addSong(addSongName().val(), successAddedSong, errorAddedSong);
-                addModal().modal("show");
+                addModal().modal("hide");
             });
 
             $('#btnAddNewSong').click(function (e) {
@@ -107,18 +106,7 @@
 
 
         function successAddedSong(results) {
-            displayAlert("Sukces!", "Gratuluję! Udało Ci się dodać <b>" + addSongName().val() + "</b>!");
-            var linkToPresentation =
-                "https://docs.google.com/presentation/d/" + results.presentationId + "/edit?usp=sharing";
-
-            $("#googlePresentation").prop("href", linkToPresentation);
-            $("#googlePresentation").prop("target", "_blank");
-            $("#googlePresentation").text("Edytuj prezentacje: " + $('#name').val());
-            $("#linkToPresentation").removeClass('hide');
-            $("#saveSongDiv").addClass('hide');
-            $('#name').prop('readonly', true);
-            $('#youtube').prop('readonly', true);
-            $("#saveSong").button('reset');
+            getAllSongs('#sortable1', addOptionsToListBox);
         }
 
         function errorAddedSong(result, status) {

@@ -2,10 +2,14 @@
 
 
 function addSong(songName, funcOk, funcError) {
+    var song = {
+        Name: songName
+    };
+    var songJSON = JSON.stringify(song);
+
     $.ajax({
-        url: songApi,
+        url: songApi + songName,
         type: 'POST',
-        data: songName,
         headers: getAuthorizationHeader(),
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
