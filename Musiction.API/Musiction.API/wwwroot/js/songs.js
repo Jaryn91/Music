@@ -2,11 +2,6 @@
 
 
 function addSong(songName, funcOk, funcError) {
-    var song = {
-        Name: songName
-    };
-    var songJSON = JSON.stringify(song);
-
     $.ajax({
         url: songApi + songName,
         type: 'POST',

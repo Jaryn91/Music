@@ -31,6 +31,9 @@
         function btnUpdateSong() {
             return $("#updateSong");
         }
+        function btnAddNewSong() {
+            return $("#btnAddNewSong");
+        }
         function btnDeleteSong() {
             return $("#deleteSong");
         }
@@ -49,33 +52,33 @@
         function addSongName() {
             return $('#addSongName');
         }
-
+        function songsList() {
+            return $('#songsList');
+        }
 
         $(document).ready(function () {
             loadNavBar();
-            getAllSongs('#sortable1', addOptionsToListBox);
+            getAllSongs('#songsList', addOptionsToListBox);
 
             searchTextBox().on('input', function (e) {
                 var songs = filter(e.target.value.toLowerCase());
-                populateListBox("#sortable1", songs);
+                populateListBox("#songsList", songs);
             });
 
-            $('#sortable1').on("click", "li.ui-state-default", (function (e) {
-                $that = $(this);
-                $that.parent().find('li').removeClass('ui-state-active');
-                $that.addClass('ui-state-active');
-                getSong($that.val(), populateControls);
-
+            songsList().on("click", "li.ui-state-default", (function (e) {
+                var selectedSong = $(this);
+                makeActiveOption(selectedSong);
+                getSong(selectedSong.val(), populateControls);
             }));
 
             btnUpdateSong().click(function (e) {
                 btnUpdateSong().button('loading');
                 makeButtonsReadonly();
+                makeFiledsReadOnly();
                 removeLinkToPresentation();
                 var formData = new FormData();
                 formData.append("Name", songName().val());
                 formData.append("YouTubeUrl", youTubeUrl().val());
-
                 updateSong(songId().val(), formData, editSongSuccess, editSongSError);
             });
 
@@ -86,7 +89,9 @@
             });
 
             $('#addSongConfirmation').click(function (e) {
-                $("#btnAddNewSong").button('loading');
+                btnAddNewSong().button('loading');
+                makeButtonsReadonly();
+                makeFiledsReadOnly();
                 addSong(addSongName().val(), successAddedSong, errorAddedSong);
                 addModal().modal("hide");
             });
@@ -100,13 +105,35 @@
                 btnDeleteSong().button('loading');
                 removeLinkToPresentation();
                 makeButtonsReadonly();
+                makeFiledsReadOnly();
                 deleteSong(deleteSongSuccess, songId().val());
             });
         });
 
+        function makeActiveOption(option) {
+            option.parent().find('li').removeClass('ui-state-active');
+            option.addClass('ui-state-active');
+        }
 
-        function successAddedSong(results) {
-            getAllSongs('#sortable1', addOptionsToListBox);
+        function successAddedSong(addedSong) {
+            allSongs.push(addedSong);
+            allSongs.sort(compareString);
+            populateListBox('#songsList', allSongs);
+            resetAllFields();
+            var songElement = $('#' + addedSong.id);
+            songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
+            songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
+            makeActiveOption(songElement);
+            getSong(songElement.val(), populateControls);
+            displayAlert("Sukces", "Dodałem <b>" + addSongName().val() + "</b>! Super, no nie?");
+        }
+
+        function compareString(a,b) {
+            if (a.name.toLowerCase() < b.name.toLowerCase())
+                return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase())
+                return 1;
+            return 0;
         }
 
         function errorAddedSong(result, status) {
@@ -129,20 +156,31 @@
             btnDeleteSong().attr("disabled", true);
             btnUpdateSong().attr("disabled", true);
             btnGooglePresentation().attr("disabled", true);
+            btnAddNewSong().attr("disabled", true);
         };
 
+        function makeFiledsReadOnly() {
+            songName().prop("readonly", true);
+            youTubeUrl().prop("readonly", true);
+        }
+
         function resetAllFields() {
-            reset(songId());
-            reset(songName());
-            reset(youTubeUrl());
-            removeLinkToPresentation();
+            songName().prop("readonly", false);
+            youTubeUrl().prop("readonly", false);
+            //reset(songId());
+            //reset(songName());
+            //reset(youTubeUrl());
+            //reset(addSongName());
+            //removeLinkToPresentation();
             btnUpdateSong().button('reset');
             btnDeleteSong().button('reset');
-            buttonsDiv().addClass("hide");
+            btnAddNewSong().button('reset');
+            //buttonsDiv().addClass("hide");
             btnGooglePresentation().attr("disabled", false);
             btnDeleteSong().attr("disabled", false);
             btnUpdateSong().attr("disabled", false);
-            $('.ui-state-active').removeClass('ui-state-active');
+            btnAddNewSong().attr("disabled", false);
+            //$('.ui-state-active').removeClass('ui-state-active');
         }
 
         function removeLinkToPresentation() {
@@ -192,8 +230,9 @@
 
 
         function editSongSuccess() {
-            displayAlert("Sukces!", "Ale super! Udało nam się zedytować " + songName().val() + "!");
+            displayAlert("Sukces!", "Ale super! Udało nam się zedytować <b>" + songName().val() + "</b>!");
             $('.ui-state-active')[0].textContent = songName().val();
+            btnGooglePresentation().text("Edytuj prezentacje: " + songName().val());
             resetAllFields();
         }
 
@@ -278,7 +317,7 @@
         </div>
         <div class="row">
             <div class="col-lg-5 col-lg-offset-1">
-                <ul id="sortable1" class="connectedSortable songsPlaceholder"></ul>
+                <ul id="songsList" class="connectedSortable songsPlaceholder"></ul>
             </div>
             <div class="col-lg-5">
 
