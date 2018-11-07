@@ -97,6 +97,7 @@
             });
 
             $('#btnAddNewSong').click(function (e) {
+                reset(addSongName());
                 addModal().modal("show");
             });
 
@@ -119,7 +120,7 @@
             allSongs.push(addedSong);
             allSongs.sort(compareString);
             populateListBox('#songsList', allSongs);
-            resetAllFields();
+            resetAllButtons();
             var songElement = $('#' + addedSong.id);
             songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
             songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
@@ -165,22 +166,24 @@
         }
 
         function resetAllFields() {
+            reset(songId());
+            reset(songName());
+            reset(youTubeUrl());
+            removeLinkToPresentation();
+            buttonsDiv().addClass("hide");
+            $('.ui-state-active').removeClass('ui-state-active');
+        }
+
+        function resetAllButtons() {
             songName().prop("readonly", false);
             youTubeUrl().prop("readonly", false);
-            //reset(songId());
-            //reset(songName());
-            //reset(youTubeUrl());
-            //reset(addSongName());
-            //removeLinkToPresentation();
             btnUpdateSong().button('reset');
             btnDeleteSong().button('reset');
             btnAddNewSong().button('reset');
-            //buttonsDiv().addClass("hide");
             btnGooglePresentation().attr("disabled", false);
             btnDeleteSong().attr("disabled", false);
             btnUpdateSong().attr("disabled", false);
             btnAddNewSong().attr("disabled", false);
-            //$('.ui-state-active').removeClass('ui-state-active');
         }
 
         function removeLinkToPresentation() {
@@ -190,7 +193,8 @@
 
         function deleteSongSuccess() {
             $(".ui-state-active").remove();
-            displayAlert("Sukces", "Usunąłem " + songName().val() + "! Super, no nie?");
+            displayAlert("Sukces", "Usunąłem <b>" + songName().val() + "</b>! Super, no nie?");
+            resetAllButtons();
             resetAllFields();
         }
 
@@ -233,7 +237,7 @@
             displayAlert("Sukces!", "Ale super! Udało nam się zedytować <b>" + songName().val() + "</b>!");
             $('.ui-state-active')[0].textContent = songName().val();
             btnGooglePresentation().text("Edytuj prezentacje: " + songName().val());
-            resetAllFields();
+            resetAllButtons();
         }
 
         window.reset = function (e) {

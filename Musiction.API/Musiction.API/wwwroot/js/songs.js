@@ -101,6 +101,6 @@ function updateSongInList(songId, songToUpdate) {
 }
 
 function deleteSongFromList(songId) {
-    var index = allSongs.findIndex(item => item.id === songId);
+    var index = allSongs.findIndex(item => item.id == songId);
     allSongs.splice(index, 1);
 }
