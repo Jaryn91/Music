@@ -27,7 +27,7 @@ function addOptionsToListBox(lstBoxName, songs) {
 
 
 function createOption(result) {
-    var option = '<li class="ui-state-default" value="' + result.id + '">' + result.name + "</li>";
+    var option = '<li class="ui-state-default" id="' + result.id + '" value="' + result.id + '">' + result.name + "</li>";
     return option;
 }
 

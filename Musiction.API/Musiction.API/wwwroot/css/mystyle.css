@@ -18,7 +18,7 @@
     align-self: center;
 }
 
-#sortable1, #sortable2 {
+#songsList, #sortable2 {
     border: 1px solid #eee;
     width: 100%;
     list-style-type: none;
@@ -28,7 +28,7 @@
     margin-right: 10px;
 }
 
-#sortable1 li, #sortable2 li {
+#songsList li, #sortable2 li {
     margin: 0 5px 5px 5px;
     padding: 5px;
     font-size: 1.2em;

@@ -1,11 +1,10 @@
 ﻿var songApi = getDomain() + "api/songs/";
 
 
-function addSong(song, funcOk, funcError) {
+function addSong(songName, funcOk, funcError) {
     $.ajax({
-        url: songApi,
+        url: songApi + songName,
         type: 'POST',
-        data: song,
         headers: getAuthorizationHeader(),
         processData: false, // tell jQuery not to process the data
         contentType: false, // tell jQuery not to set contentType
@@ -102,6 +101,6 @@ function updateSongInList(songId, songToUpdate) {
 }
 
 function deleteSongFromList(songId) {
-    var index = allSongs.findIndex(item => item.id === songId);
+    var index = allSongs.findIndex(item => item.id == songId);
     allSongs.splice(index, 1);
 }

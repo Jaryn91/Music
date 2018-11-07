@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="css/mystyle.css">
-    <link rel='shortcut icon' type='image/x-icon' href='css/favicon.ico' />
+    <link rel='shortcut icon' type='image/x-icon' href='img/favicon.ico' />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Uaktualnij piosenkę - Wawrzynowy Slajd!</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -29,46 +29,56 @@
             return $('#googlePresentation');
         }
         function btnUpdateSong() {
-             return $("#updateSong");
+            return $("#updateSong");
+        }
+        function btnAddNewSong() {
+            return $("#btnAddNewSong");
         }
         function btnDeleteSong() {
-             return $("#deleteSong");
+            return $("#deleteSong");
         }
         function deleteModal() {
-             return $("#deleteModal");
+            return $("#deleteModal");
         }
         function buttonsDiv() {
             return $("#buttons");
         }
         function searchTextBox() {
-             return $('#searchTextBox');
+            return $('#searchTextBox');
+        }
+        function addModal() {
+            return $('#addModal');
+        }
+        function addSongName() {
+            return $('#addSongName');
+        }
+        function songsList() {
+            return $('#songsList');
         }
 
         $(document).ready(function () {
             loadNavBar();
-            getAllSongs('#sortable1', addOptionsToListBox);
+            getAllSongs('#songsList', addOptionsToListBox);
 
             searchTextBox().on('input', function (e) {
                 var songs = filter(e.target.value.toLowerCase());
-                populateListBox("#sortable1", songs);
+                populateListBox("#songsList", songs);
             });
 
-            $('#sortable1').on("click", "li.ui-state-default", (function (e) {
-                $that = $(this);
-                $that.parent().find('li').removeClass('ui-state-active');
-                $that.addClass('ui-state-active');
-                getSong($that.val(), populateControls);
-
+            songsList().on("click", "li.ui-state-default", (function (e) {
+                var selectedSong = $(this);
+                makeActiveOption(selectedSong);
+                getSong(selectedSong.val(), populateControls);
             }));
 
             btnUpdateSong().click(function (e) {
                 btnUpdateSong().button('loading');
                 makeButtonsReadonly();
+                makeFiledsReadOnly();
                 removeLinkToPresentation();
                 var formData = new FormData();
                 formData.append("Name", songName().val());
                 formData.append("YouTubeUrl", youTubeUrl().val());
-
                 updateSong(songId().val(), formData, editSongSuccess, editSongSError);
             });
 
@@ -78,33 +88,102 @@
                 deleteModal().modal("show");
             });
 
+            $('#addSongConfirmation').click(function (e) {
+                btnAddNewSong().button('loading');
+                makeButtonsReadonly();
+                makeFiledsReadOnly();
+                addSong(addSongName().val(), successAddedSong, errorAddedSong);
+                addModal().modal("hide");
+            });
+
+            $('#btnAddNewSong').click(function (e) {
+                reset(addSongName());
+                addModal().modal("show");
+            });
+
             $('#deleteSongConfirmation').click(function (e) {
                 deleteModal().modal("hide");
                 btnDeleteSong().button('loading');
                 removeLinkToPresentation();
                 makeButtonsReadonly();
+                makeFiledsReadOnly();
                 deleteSong(deleteSongSuccess, songId().val());
             });
         });
+
+        function makeActiveOption(option) {
+            option.parent().find('li').removeClass('ui-state-active');
+            option.addClass('ui-state-active');
+        }
+
+        function successAddedSong(addedSong) {
+            allSongs.push(addedSong);
+            allSongs.sort(compareString);
+            populateListBox('#songsList', allSongs);
+            resetAllButtons();
+            var songElement = $('#' + addedSong.id);
+            songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
+            songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
+            makeActiveOption(songElement);
+            getSong(songElement.val(), populateControls);
+            displayAlert("Sukces", "Dodałem <b>" + addSongName().val() + "</b>! Super, no nie?");
+        }
+
+        function compareString(a,b) {
+            if (a.name.toLowerCase() < b.name.toLowerCase())
+                return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase())
+                return 1;
+            return 0;
+        }
+
+        function errorAddedSong(result, status) {
+            var errorMassage = "";
+            var jsonObj = result.responseJSON;
+
+            for (var key in jsonObj) {
+                if (jsonObj.hasOwnProperty(key)) {
+                    var validError = jsonObj[key];
+                    for (var val in validError) {
+                        errorMassage += '<p>' + validError[val] + '</p>';
+                    }
+                }
+            }
+            $("#saveSong").button('reset');
+            return errorMassage;
+        }
 
         function makeButtonsReadonly() {
             btnDeleteSong().attr("disabled", true);
             btnUpdateSong().attr("disabled", true);
             btnGooglePresentation().attr("disabled", true);
+            btnAddNewSong().attr("disabled", true);
         };
+
+        function makeFiledsReadOnly() {
+            songName().prop("readonly", true);
+            youTubeUrl().prop("readonly", true);
+        }
 
         function resetAllFields() {
             reset(songId());
             reset(songName());
             reset(youTubeUrl());
             removeLinkToPresentation();
+            buttonsDiv().addClass("hide");
+            $('.ui-state-active').removeClass('ui-state-active');
+        }
+
+        function resetAllButtons() {
+            songName().prop("readonly", false);
+            youTubeUrl().prop("readonly", false);
             btnUpdateSong().button('reset');
             btnDeleteSong().button('reset');
-            buttonsDiv().addClass("hide");
+            btnAddNewSong().button('reset');
             btnGooglePresentation().attr("disabled", false);
             btnDeleteSong().attr("disabled", false);
             btnUpdateSong().attr("disabled", false);
-            $('.ui-state-active').removeClass('ui-state-active');
+            btnAddNewSong().attr("disabled", false);
         }
 
         function removeLinkToPresentation() {
@@ -114,7 +193,8 @@
 
         function deleteSongSuccess() {
             $(".ui-state-active").remove();
-            displayAlert("Sukces", "Usunąłem " + songName().val() + "! Super, no nie?");
+            displayAlert("Sukces", "Usunąłem <b>" + songName().val() + "</b>! Super, no nie?");
+            resetAllButtons();
             resetAllFields();
         }
 
@@ -154,9 +234,10 @@
 
 
         function editSongSuccess() {
-            displayAlert("Sukces!", "Ale super! Udało nam się zedytować " + songName().val() + "!");
+            displayAlert("Sukces!", "Ale super! Udało nam się zedytować <b>" + songName().val() + "</b>!");
             $('.ui-state-active')[0].textContent = songName().val();
-            resetAllFields();
+            btnGooglePresentation().text("Edytuj prezentacje: " + songName().val());
+            resetAllButtons();
         }
 
         window.reset = function (e) {
@@ -169,9 +250,8 @@
 <body>
     <div id="nav-placeholder">
     </div>
-
+    <!-- Delete confirmation modal -->
     <div class="container">
-
         <div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -186,10 +266,35 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal">Aaa... Namyśliłem się, nie chcę</button>
                         <button type="button" id="deleteSongConfirmation" class="btn btn-danger">Tak, usuń!</button>
                     </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Add  modal -->
+    <div class="container">
+        <div class="modal fade" tabindex="-1" role="dialog" id="addModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Dodaj pieśń</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Tytuł nowej pieśni</label>
+                            <input id="addSongName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Aaa... Namyśliłem się, nie chcę</button>
+                        <button type="button" id="addSongConfirmation" class="btn btn-info">Dodaj nową pieśń</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row">
 
@@ -216,7 +321,7 @@
         </div>
         <div class="row">
             <div class="col-lg-5 col-lg-offset-1">
-                <ul id="sortable1" class="connectedSortable songsPlaceholder"></ul>
+                <ul id="songsList" class="connectedSortable songsPlaceholder"></ul>
             </div>
             <div class="col-lg-5">
 
@@ -252,6 +357,20 @@
                             <div class="btn-group pull-center-lg">
                                 <button type="submit" id="deleteSong" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Usuwam pieśń" class="btn btn-danger">Usuń pieśń</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+                <div class="text-center">
+
+                    <div class="btn-group ">
+                        <div class="btn-group pull-center-lg">
+                            <a class="btn btn-default" id="btnAddNewSong" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Dodaję pieśń" role="button">Dodaj nową pieśń</a>
                         </div>
                     </div>
                 </div>

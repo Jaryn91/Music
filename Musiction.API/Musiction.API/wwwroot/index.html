@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="css/mystyle.css">
-    <link rel='shortcut icon' type='image/x-icon' href='css/favicon.ico' />
+    <link rel='shortcut icon' type='image/x-icon' href='img/favicon.ico' />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Stwórz prezentacje - Wawrzynowy Slajd!</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -17,7 +17,7 @@
     <script type="text/javascript" src="js/filtering.js"></script>
     <script>
         $(function () {
-            $("#sortable1, #sortable2").sortable({
+            $("#songsList, #sortable2").sortable({
                 connectWith: ".connectedSortable"
             }).disableSelection();
         });
@@ -33,12 +33,12 @@
 
         $(document).ready(function () {
             loadNavBar();
-            getAllSongs('#sortable1', addOptionsToListBox);
+            getAllSongs('#songsList', addOptionsToListBox);
             $("#processingButton").button('loading');
 
             $('#searchTextBox').on('input', function (e) {
                 var songs = filter(e.target.value.toLowerCase());
-                populateListBox("#sortable1", songs);
+                populateListBox("#songsList", songs);
             });
 
             $('#saveInPPTX').click(function () {
@@ -99,7 +99,7 @@
         </div>
         <div class="row">
             <div class="col-lg-5 col-lg-offset-1">
-                <ul id="sortable1" class="connectedSortable songsPlaceholder"></ul>
+                <ul id="songsList" class="connectedSortable songsPlaceholder"></ul>
             </div>
             <div class="col-lg-5">
                 <ul id="sortable2" class="connectedSortable songsPlaceholder"></ul>
