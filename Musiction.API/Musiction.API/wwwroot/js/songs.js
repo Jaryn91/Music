@@ -22,8 +22,8 @@ function addSong(songName, funcOk, funcError) {
 
 function getSong(songId, func) {
     if (allSongs !== null) {
-        var song = $.grep(allSongs, function (e) { return e.id === songId; });
-        if (song !== null) {
+        var song = $.grep(allSongs, function (e) { return e.id == songId; });
+        if (song !== null && song.length !== 0) {
             func(song[0]);
             return;
         }
@@ -104,3 +104,17 @@ function deleteSongFromList(songId) {
     var index = allSongs.findIndex(item => item.id == songId);
     allSongs.splice(index, 1);
 }
+
+function resortListWithSongs() {
+    allSongs.sort(compareString);
+    populateListBox('#songsList', allSongs);
+}
+
+function compareString(a, b) {
+    if (a.name.toLowerCase() < b.name.toLowerCase())
+        return -1;
+    if (a.name.toLowerCase() > b.name.toLowerCase())
+        return 1;
+    return 0;
+}
+

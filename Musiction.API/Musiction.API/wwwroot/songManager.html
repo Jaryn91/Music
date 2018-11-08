@@ -34,6 +34,9 @@
         function btnAddNewSong() {
             return $("#btnAddNewSong");
         }
+        function songsList() {
+            return $('#songsList');
+        }
         function btnDeleteSong() {
             return $("#deleteSong");
         }
@@ -52,8 +55,9 @@
         function addSongName() {
             return $('#addSongName');
         }
-        function songsList() {
-            return $('#songsList');
+
+        function activeElement() {
+            return $('.ui-state-active')[0];
         }
 
         $(document).ready(function () {
@@ -118,24 +122,21 @@
 
         function successAddedSong(addedSong) {
             allSongs.push(addedSong);
-            allSongs.sort(compareString);
-            populateListBox('#songsList', allSongs);
+            resortListWithSongs();
             resetAllButtons();
-            var songElement = $('#' + addedSong.id);
-            songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
-            songsList().animate({ scrollTop: songElement.offset().top - 330 }, 1000);
-            makeActiveOption(songElement);
-            getSong(songElement.val(), populateControls);
+            navigateToSongInList(addedSong.id);
+            getSong(activeElement().id, populateControls);
             displayAlert("Sukces", "Dodałem <b>" + addSongName().val() + "</b>! Super, no nie?");
         }
 
-        function compareString(a,b) {
-            if (a.name.toLowerCase() < b.name.toLowerCase())
-                return -1;
-            if (a.name.toLowerCase() > b.name.toLowerCase())
-                return 1;
-            return 0;
+        function navigateToSongInList(sogeId) {
+            var songElement = $('#' + sogeId);
+            songsList().animate({ scrollTop: 0 }, 0);
+            songsList().animate({ scrollTop: songElement.offset().top - 300 }, 1000);
+            makeActiveOption(songElement);
         }
+
+
 
         function errorAddedSong(result, status) {
             var errorMassage = "";
@@ -171,7 +172,8 @@
             reset(youTubeUrl());
             removeLinkToPresentation();
             buttonsDiv().addClass("hide");
-            $('.ui-state-active').removeClass('ui-state-active');
+            if (activeElement() !== undefined)
+                activeElement().classList.remove("ui-state-active");
         }
 
         function resetAllButtons() {
@@ -192,7 +194,7 @@
         }
 
         function deleteSongSuccess() {
-            $(".ui-state-active").remove();
+            activeElement().remove();
             displayAlert("Sukces", "Usunąłem <b>" + songName().val() + "</b>! Super, no nie?");
             resetAllButtons();
             resetAllFields();
@@ -234,8 +236,9 @@
 
 
         function editSongSuccess() {
+            resortListWithSongs();
+            navigateToSongInList(songId().val());
             displayAlert("Sukces!", "Ale super! Udało nam się zedytować <b>" + songName().val() + "</b>!");
-            $('.ui-state-active')[0].textContent = songName().val();
             btnGooglePresentation().text("Edytuj prezentacje: " + songName().val());
             resetAllButtons();
         }
