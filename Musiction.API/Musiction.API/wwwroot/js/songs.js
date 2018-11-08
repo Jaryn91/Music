@@ -111,10 +111,7 @@ function resortListWithSongs() {
 }
 
 function compareString(a, b) {
-    if (a.name.toLowerCase() < b.name.toLowerCase())
-        return -1;
-    if (a.name.toLowerCase() > b.name.toLowerCase())
-        return 1;
-    return 0;
+    var a1 = a.name.toLowerCase();
+    var b1 = b.name.toLowerCase();
+    return a1.localeCompare(b1, 'pl', { sensitivity: 'accent' });
 }
-
