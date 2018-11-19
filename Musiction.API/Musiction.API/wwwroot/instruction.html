@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Instrukcja - Wawrzynowy Slajd!</title>
+    <link rel='shortcut icon' type='image/x-icon' href='img/favicon.ico' />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/domain.js"></script>
+
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Lato:300,400,700'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/1.5.2/css/ionicons.min.css">
+    <link href="css/gif-onclick.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+
+    <link href="css/tableOfContent.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+            loadNavBar();
+        });
+    </script>
+
+</head>
+<body>
+    <div id="nav-placeholder">
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10" col-lg-offset-1>
+                <div class="demo-content cf">
+                    <h2>Instrukcja</h2>
+                    <div id="toc_container">
+                        <p class="toc_title">Contents</p>
+                        <ul class="toc_list">
+                            <li>
+                                <ul><a href="#Wstep">Wstęp</a></ul>
+                                <a href="#Logowanie">1 Logowanie</a>
+                                <ul>
+                                    <li><a href="#Ping">1.1 Ping</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#TworzeniePrezentacji">2 Tworzenie prezentacji w JPGach</a>
+                                <ul>
+                                    <li><a href="#TworzeniePrezentacjiPPTX">2.1 Tworzenie prezentacji Pptx</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#ZarzadzaniePiesniami">3 Zarządzanie pieśniami</a>
+                                <ul>
+                                    <li><a href="#DodjPiesn">3.1 Dodaj pieśń</a></li>
+                                    <li><a href="#EdytujPiesn">3.2 Edytuj piesń</a></li>
+                                    <li><a href="#UsunPiesn">3.3 Usuń piesń</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="Wstep">
+                        <br />
+                        <h3>Wstęp</h3>
+                        <p>
+                            Strona powstała po to, aby Wam drodzy Muzyczni ułatwić tworzenie prezetnacji na Msze Święte i nie tylko.<br />
+                            Z tego co zauważyłem to strona działa poprawnie na na Chromie (u mnie Chrom jest w wersji 70). Nie dziala natomiast na Firefoxie (wersja 63), Microsot Edge oraz Internet Explorer (wersja 11).
+                            Wszystkie uwagi związane z użytkowaniem strony śmiało można zgłaszać do mnie :).<br />
+                            Jeżeli macie pomysł co można ulepszyć na stronie to śmiało do mnie piszcie na fb! Polecam sie serdecznie - Tomasz Jarzyński
+                        </p>
+                    </div>
+
+
+                    <div id="Logowanie">
+                        <br />
+                        <h3>1 Logowanie</h3>
+                        <p>
+                            Żeby się zalogować najpierw musisz mieć konto. Aby mieć konto napisz do mnie na fb :). Wejdź na stronę główna muzyczni.tomasz.jarzynski.ovh lub kliknij na Logowanie i kliknij zaloguj się.
+                            Podaj login i hasło, ktorę dostaniesz ode mnie.
+                            <figure>
+                                <img src="img/instruction/png/login.png" alt="Static Image" data-alt="img/instruction/gif/login.gif">
+                                <figcaption></figcaption>
+                            </figure>
+                        </p>
+                    </div>
+
+                    <div id="Ping">
+                        <br />
+                        <h4>1.1 Ping</h4>
+                        <p>
+                            Aby sprawdzić czy wszystko działa jak powinno kliknij Ping. Jeżeli zobaczysz 'Brawo jesteś zalogowany! Wszystko działa :)!' to znaczy że powinienś korzystać z aplikacji bez problemów.
+                            <figure>
+                                <img src="img/instruction/png/ping.png" alt="Static Image" data-alt="img/instruction/gif/ping.gif">
+                                <figcaption></figcaption>
+                            </figure>
+                        </p>
+                    </div>
+
+                    <div id="TworzeniePrezentacji">
+                        <br />
+                        <h3>2 Tworzenie prezentacji w JPGach</h3>
+                        <p>
+                            Tworzenie prezetnacji w JPGach - gotowych do wyświetlenia na projektorze :).
+                            <figure>
+                                <img src="img/instruction/png/createPresentation.png" alt="Static Image" data-alt="img/instruction/gif/createPresentation.gif">
+                                <figcaption></figcaption>
+                            </figure>
+                        </p>
+                    </div>
+
+                    <div id="TworzeniePrezentacjiPPTX">
+                        <br />
+                        <h3>2.1 Tworzenie prezentacji Pptx</h3>
+                        <p>
+                            Jeżeli chcesz mieć prezetenacje w pptxie to klikaj śmiało PPTX. Podczas otwierania prezetnacji w PowerPointcie wyskoczą dwa błędy: <br />
+                            <i>PowerPoint found a problem wuth content in 'fileName'. PowerPoint can attempt to repair the presetnation. </i> <br />
+                            <i>PowerPoint couldn't read some content in 'fileName' - repaired and removed it.</i><br />
+                            Nie przejmuj sie tym. Jest to związane z kodowanie plików :). Ale jak zobaczysz na gifie poniżej to nie ma wpływu na nic :).
+
+
+                            <figure>
+                                <img src="img/instruction/png/createPresentationPptx.png" alt="Static Image" data-alt="img/instruction/gif/createPresentationPptx.gif">
+                                <figcaption></figcaption>
+                            </figure>
+                        </p>
+                    </div>
+
+                    <div id="ZarzadzaniePiesniami">
+                        <br />
+                        <h3>3 Zarządzanie pieśniami</h3>
+                        <p>
+                        </p>
+                    </div>
+
+
+                    <div id="DodajPiesn">
+                        <br />
+                        <h3>3.1 Dodaj piesń</h3>
+                        <p>
+                            Do dodania nowej pieśni wystarczy podać tytuł.
+
+                            <figure>
+                                <img src="img/instruction/png/addSong.png" alt="Static Image" data-alt="img/instruction/gif/addSong.gif">
+                                <figcaption></figcaption>
+                            </figure>
+                        </p>
+                    </div>
+
+                    <div id="EdytujPiesn">
+                        <br />
+                        <h3>3.2 Edytuj piesń</h3>
+                        <p>
+                            W przykładzie poniżej kopiowałem tekst i wklejalem do google slides. Warto zwrocić uwage na to, że tekst może jest czarny po klejeniu go i z tego względu trzeba zmienić jego kolor.
+                            Wszystkie zmiany są od razu zapisywane przez google. Warto wpisywać link do youtuba. Podczas tworzenia prezentacji link do pieśni będzie wyświetlony od razu (<a href="img/instruction/png/youTubeLink.png">zobacz tutaj o co mi chodzi</a>).
+
+                            <figure>
+                                <img src="img/instruction/png/updateSong.png" alt="Static Image" data-alt="img/instruction/gif/updateSong.gif">
+                                <figcaption></figcaption>
+                            </figure>
+                        </p>
+                    </div>
+
+
+
+                    <div id="UsunPiesn">
+                        <br />
+                        <h3>3.3 Usuń piesń</h3>
+                        <p>
+                            Usuwanie jest prościutkie ;).
+                            <figure>
+                                <img src="img/instruction/png/deleteSong.png" alt="Static Image" data-alt="img/instruction/gif/deleteSong.gif">
+                                <figcaption></figcaption>
+                            </figure>
+                        </p>
+                    </div>
+                </div>
+                
+                <br/><br/><br/>
+                <script src="js/gif-onclick.js"></script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
