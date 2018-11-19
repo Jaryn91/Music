@@ -137,7 +137,6 @@ figcaption {
 .demo-content {
     width: 960px;
     height: 300px;
-    margin-top: 90px;
     margin-right: auto;
     margin-left: auto;
     -webkit-transition: opacity 350ms;
