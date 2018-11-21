@@ -10,5 +10,6 @@ namespace Musiction.API.Entities
             Database.Migrate();
         }
         public DbSet<Song> Songs { get; set; }
+        public DbSet<Presentation> Presentations { get; set; }
     }
 }

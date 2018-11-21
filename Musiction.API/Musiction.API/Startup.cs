@@ -80,6 +80,7 @@ namespace Musiction.API
 
         private void RegisterContainers(IServiceCollection services)
         {
+            services.AddTransient<IPresentationRepository, PresentationRepository>();
             services.AddTransient<ISongRepository, SongRepository>();
             services.AddTransient<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
             services.AddTransient<IGetValue, ValueRetrieval>();

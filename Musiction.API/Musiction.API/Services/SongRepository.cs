@@ -13,13 +13,13 @@ namespace Musiction.API.Services
             _context = context;
         }
 
-        public bool AddSong(Song song)
+        public bool Add(Song song)
         {
             _context.Songs.Add(song);
             return (_context.SaveChanges() >= 0);
         }
 
-        public Song GetSong(int songId)
+        public Song Get(int songId)
         {
             return _context.Songs.FirstOrDefault(s => s.Id == songId);
         }
@@ -31,12 +31,12 @@ namespace Musiction.API.Services
             return songs.ToList();
         }
 
-        public IEnumerable<Song> GetSongs()
+        public IEnumerable<Song> Get()
         {
             return _context.Songs.OrderBy(s => s.Name).ToList();
         }
 
-        public void RemoveSong(Song song)
+        public void Remove(Song song)
         {
             _context.Remove(song);
         }

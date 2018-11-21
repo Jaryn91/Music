@@ -16,15 +16,17 @@ namespace Musiction.API.Controllers
         private readonly IMerge _powerPointMerger;
         private readonly IConvertPresentation _pptxToZipConverter;
         private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
+        private readonly IPresentationRepository _presentationRepository;
 
         public PresentationController(ISongRepository songRepository,
             IConvertPresentation pptxToZipConverter, IMerge powerPointMerger,
-            IFileAndFolderPathsCreator fileAndFolderPath)
+            IFileAndFolderPathsCreator fileAndFolderPath, IPresentationRepository presentationRepository)
         {
             _powerPointMerger = powerPointMerger;
             _songRepository = songRepository;
             _pptxToZipConverter = pptxToZipConverter;
             _fileAndFolderPath = fileAndFolderPath;
+            _presentationRepository = presentationRepository;
         }
 
 
@@ -48,6 +50,16 @@ namespace Musiction.API.Controllers
                 {
                     var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(pathToMergedPresentation);
                     presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
+                    var presentation = new Presentation
+                    {
+                        Songs = songs.ToList(),
+                        CreateBy = "test",
+                        CreatedDate = DateTime.Now,
+                        Path = urlToMergedPresentation,
+                        Type = "pptx"
+                    };
+                    _presentationRepository.Add(presentation);
+                    var added = _presentationRepository.Save();
                     return Ok(presentationResponse);
                 }
 
