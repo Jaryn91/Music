@@ -52,13 +52,23 @@ namespace Musiction.API.Controllers
                     presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
                     var presentation = new Presentation
                     {
-                        Songs = songs.ToList(),
                         CreateBy = "test",
                         CreatedDate = DateTime.Now,
                         Path = urlToMergedPresentation,
                         Type = "pptx"
                     };
-                    _presentationRepository.Add(presentation);
+
+                    List<LinkSongToPresentation> list = new List<LinkSongToPresentation>();
+
+                    foreach (var song in songs)
+                    {
+                        var link = new LinkSongToPresentation() { Presentation = presentation, Song = song };
+                        list.Add(link);
+                        song.LinkSongToPresentation.Add(link);
+                    }
+
+                    presentation.LinkSongToPresentation.AddRange(list);
+
                     var added = _presentationRepository.Save();
                     return Ok(presentationResponse);
                 }

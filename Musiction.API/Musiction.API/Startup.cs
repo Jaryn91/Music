@@ -56,7 +56,8 @@ namespace Musiction.API
             services.AddMvc();
 
 
-            var connectionString = _valueRetrieval.Get("ConnectionString");
+            var connectionString =
+                "Server=jaryn91.linuxpl.eu; Port=3306; Database=jaryn91_tomwin; Uid=jaryn91_tomwin; Pwd=tomwin;";//_valueRetrieval.Get("ConnectionString");
 
             services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
 

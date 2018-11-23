@@ -11,9 +11,10 @@ using System;
 namespace Musiction.API.Migrations
 {
     [DbContext(typeof(SongContext))]
-    partial class SongContextModelSnapshot : ModelSnapshot
+    [Migration("20181123115904_LinkSongToPresentation")]
+    partial class LinkSongToPresentation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,10 +69,14 @@ namespace Musiction.API.Migrations
                     b.Property<string>("PresentationId")
                         .HasMaxLength(50);
 
+                    b.Property<int?>("PresentationId1");
+
                     b.Property<string>("YouTubeUrl")
                         .HasMaxLength(60);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PresentationId1");
 
                     b.ToTable("Songs");
                 });
@@ -87,6 +92,13 @@ namespace Musiction.API.Migrations
                         .WithMany("LinkSongToPresentation")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Musiction.API.Entities.Song", b =>
+                {
+                    b.HasOne("Musiction.API.Entities.Presentation")
+                        .WithMany("Songs")
+                        .HasForeignKey("PresentationId1");
                 });
 #pragma warning restore 612, 618
         }

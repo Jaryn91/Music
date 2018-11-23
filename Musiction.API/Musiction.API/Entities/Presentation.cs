@@ -12,9 +12,6 @@ namespace Musiction.API.Entities
         public int Id { get; set; }
 
         [Required]
-        public ICollection<Song> Songs { get; set; } = new List<Song>();
-
-        [Required]
         public string Type { get; set; }
 
         [Required]
@@ -25,5 +22,8 @@ namespace Musiction.API.Entities
 
         [Required]
         public string CreateBy { get; set; }
+
+        public List<LinkSongToPresentation> LinkSongToPresentation { get; set; } = new List<LinkSongToPresentation>();
+
     }
 }

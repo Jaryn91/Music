@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Musiction.API.Entities
@@ -18,6 +19,8 @@ namespace Musiction.API.Entities
 
         [MaxLength(50)]
         public string PresentationId { get; set; }
+
+        public List<LinkSongToPresentation> LinkSongToPresentation { get; set; } = new List<LinkSongToPresentation>();
 
     }
 }
