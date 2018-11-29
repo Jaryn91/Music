@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Resources;
@@ -17,20 +20,23 @@ namespace Musiction.API.Controllers
         private readonly IConvertPresentation _pptxToZipConverter;
         private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
         private readonly IPresentationRepository _presentationRepository;
+        private readonly IGetValue _valueRetrieval;
 
         public PresentationController(ISongRepository songRepository,
             IConvertPresentation pptxToZipConverter, IMerge powerPointMerger,
-            IFileAndFolderPathsCreator fileAndFolderPath, IPresentationRepository presentationRepository)
+            IFileAndFolderPathsCreator fileAndFolderPath, IPresentationRepository presentationRepository,
+            IGetValue valueRetrieval)
         {
             _powerPointMerger = powerPointMerger;
             _songRepository = songRepository;
             _pptxToZipConverter = pptxToZipConverter;
             _fileAndFolderPath = fileAndFolderPath;
             _presentationRepository = presentationRepository;
+            _valueRetrieval = valueRetrieval;
         }
 
 
-        [HttpGet("{returnLinkTo}")]
+        [HttpGet("{returnLinkTo}"), Authorize]
         public IActionResult Presentation(string returnLinkTo, [FromQuery]List<int> ids)
         {
             var presentationResponse = new PresentationResponse();
@@ -50,9 +56,11 @@ namespace Musiction.API.Controllers
                 {
                     var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(pathToMergedPresentation);
                     presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
+
+                    var user = UserInformation();
                     var presentation = new Presentation
                     {
-                        CreateBy = "test",
+                        CreateBy = user.FullName,
                         CreatedDate = DateTime.Now,
                         Path = urlToMergedPresentation,
                         Type = "pptx"
@@ -65,6 +73,7 @@ namespace Musiction.API.Controllers
                         var link = new LinkSongToPresentation() { Presentation = presentation, Song = song };
                         list.Add(link);
                         song.LinkSongToPresentation.Add(link);
+
                     }
 
                     presentation.LinkSongToPresentation.AddRange(list);
@@ -87,6 +96,22 @@ namespace Musiction.API.Controllers
                 return BadRequest(presentationResponse);
             }
             return BadRequest();
+        }
+
+        public UserInfo UserInformation()
+        {
+            // Retrieve the access_token claim which we saved in the OnTokenValidated event
+            var accessToken = User.Claims.FirstOrDefault(c => c.Type == "access_token")?.Value;
+
+            // If we have an access_token, then retrieve the user's information
+            if (string.IsNullOrEmpty(accessToken)) return null;
+
+            var apiClient = new AuthenticationApiClient(_valueRetrieval.Get("Auth0:Domain"));
+            var userInfo = apiClient.GetUserInfoAsync(accessToken);
+            userInfo.Wait();
+            var user = userInfo.Result;
+            return user;
+
         }
     }
 }

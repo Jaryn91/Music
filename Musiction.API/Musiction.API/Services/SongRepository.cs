@@ -1,4 +1,5 @@
-﻿using Musiction.API.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Musiction.API.Entities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +22,8 @@ namespace Musiction.API.Services
 
         public Song Get(int songId)
         {
-            return _context.Songs.FirstOrDefault(s => s.Id == songId);
+            //return _context.Songs.FirstOrDefault(s => s.Id == songId);
+            return _context.Songs.Include(s => s.LinkSongToPresentation).FirstOrDefault(s => s.Id == songId);
         }
 
         public IEnumerable<Song> GetSongsInOrder(List<int> songIds)

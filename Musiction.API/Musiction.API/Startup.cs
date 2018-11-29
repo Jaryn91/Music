@@ -14,7 +14,9 @@ using Musiction.API.Models;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Musiction.API
 {
@@ -56,8 +58,7 @@ namespace Musiction.API
             services.AddMvc();
 
 
-            var connectionString =
-                "Server=jaryn91.linuxpl.eu; Port=3306; Database=jaryn91_tomwin; Uid=jaryn91_tomwin; Pwd=tomwin;";//_valueRetrieval.Get("ConnectionString");
+            var connectionString = _valueRetrieval.Get("ConnectionString");
 
             services.AddDbContext<SongContext>(o => o.UseMySql(connectionString));
 
@@ -75,6 +76,21 @@ namespace Musiction.API
             {
                 options.Authority = domain;
                 options.Audience = _valueRetrieval.Get("Auth0:ApiIdentifier");
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        if (context.SecurityToken is JwtSecurityToken token)
+                        {
+                            if (context.Principal.Identity is ClaimsIdentity identity)
+                            {
+                                identity.AddClaim(new Claim("access_token", token.RawData));
+                            }
+                        }
+
+                        return Task.FromResult(0);
+                    }
+                };
             });
         }
 

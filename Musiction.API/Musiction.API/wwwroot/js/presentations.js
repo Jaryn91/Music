@@ -5,6 +5,7 @@ function createPresentation(outputFileType, songs, funcOk, funcError) {
     $.ajax({
         url: url,
         type: 'GET',
+        headers: getAuthorizationHeader(),
         success: function (result) {
             funcOk(result);
         },
