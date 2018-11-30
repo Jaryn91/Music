@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auth0.AuthenticationApi.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +16,7 @@ namespace Musiction.API.Entities
         public string Type { get; set; }
 
         [Required]
-        public string Path { get; set; }
+        public string FinalFileName { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -25,5 +26,19 @@ namespace Musiction.API.Entities
 
         public List<LinkSongToPresentation> LinkSongToPresentation { get; set; } = new List<LinkSongToPresentation>();
 
+
+        public Presentation()
+        {
+
+        }
+
+
+        public Presentation(string finalFileName, UserInfo user)
+        {
+            FinalFileName = finalFileName;
+            Type = finalFileName.Split('.')[1];
+            CreateBy = user.FullName;
+            CreatedDate = DateTime.Now;
+        }
     }
 }

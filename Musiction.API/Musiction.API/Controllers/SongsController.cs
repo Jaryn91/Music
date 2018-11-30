@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,6 +11,7 @@ using Musiction.API.Resources;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Musiction.API.Controllers
 {
@@ -19,13 +22,16 @@ namespace Musiction.API.Controllers
         private readonly ILogger<SongsController> _logger;
         private readonly ISongRepository _songRepository;
         private readonly IGoogleSlides _googleSlides;
+        private readonly IGetValue _valueRetrieval;
 
         public SongsController(ILogger<SongsController> logger,
-            ISongRepository songRepository, IGoogleSlides googleSlides)
+            ISongRepository songRepository, IGoogleSlides googleSlides,
+            IGetValue valueRetrieval)
         {
             _logger = logger;
             _songRepository = songRepository;
             _googleSlides = googleSlides;
+            _valueRetrieval = valueRetrieval;
         }
 
         [HttpGet, Authorize]
@@ -93,6 +99,14 @@ namespace Musiction.API.Controllers
                 }
 
                 var createdSong = Mapper.Map<SongDto>(song);
+
+                var historyEntity = new History()
+                {
+                    CreateDate = DateTime.Now,
+                    CreatedBy = GetUserInformation().FullName,
+                    Information = $"Dodano nową piosnkę z Id: {createdSong.Id} o tytule {createdSong.Name}"
+                };
+
 
                 return Ok(createdSong);
             }
@@ -171,6 +185,23 @@ namespace Musiction.API.Controllers
                 songResponse.AlertMessage = ex.Message;
                 return BadRequest(songResponse);
             }
+        }
+
+
+
+        private UserInfo GetUserInformation()
+        {
+            // Retrieve the access_token claim which we saved in the OnTokenValidated event
+            var accessToken = User.Claims.FirstOrDefault(c => c.Type == "access_token")?.Value;
+
+            // If we have an access_token, then retrieve the user's information
+            if (string.IsNullOrEmpty(accessToken)) return null;
+
+            var apiClient = new AuthenticationApiClient(_valueRetrieval.Get("Auth0:Domain"));
+            var userInfo = apiClient.GetUserInfoAsync(accessToken);
+            userInfo.Wait();
+            var user = userInfo.Result;
+            return user;
         }
     }
 }

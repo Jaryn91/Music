@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
+using Musiction.API.Models;
 using Musiction.API.Resources;
 using Musiction.API.Services;
 using System;
@@ -36,8 +37,8 @@ namespace Musiction.API.Controllers
         }
 
 
-        [HttpGet("{returnLinkTo}"), Authorize]
-        public IActionResult Presentation(string returnLinkTo, [FromQuery]List<int> ids)
+        [HttpGet("{presentationType}"), Authorize]
+        public IActionResult Presentation(string presentationType, [FromQuery]List<int> ids)
         {
             var presentationResponse = new PresentationResponse();
             IEnumerable<Song> songs = new List<Song>();
@@ -50,42 +51,26 @@ namespace Musiction.API.Controllers
                     return BadRequest(presentationResponse);
                 }
 
-                var pathToMergedPresentation = _powerPointMerger.Merge(songs);
+                var finalPptxFileName = _powerPointMerger.Merge(songs);
 
-                if (returnLinkTo == "pptx")
+                if (presentationType == "pptx")
                 {
-                    var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(pathToMergedPresentation);
+                    var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(finalPptxFileName);
                     presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
 
-                    var user = UserInformation();
-                    var presentation = new Presentation
-                    {
-                        CreateBy = user.FullName,
-                        CreatedDate = DateTime.Now,
-                        Path = urlToMergedPresentation,
-                        Type = "pptx"
-                    };
+                    CreatePresentationWithLinksToSongs(finalPptxFileName, songs, presentationType);
 
-                    List<LinkSongToPresentation> list = new List<LinkSongToPresentation>();
-
-                    foreach (var song in songs)
-                    {
-                        var link = new LinkSongToPresentation() { Presentation = presentation, Song = song };
-                        list.Add(link);
-                        song.LinkSongToPresentation.Add(link);
-
-                    }
-
-                    presentation.LinkSongToPresentation.AddRange(list);
-
-                    var added = _presentationRepository.Save();
                     return Ok(presentationResponse);
                 }
 
-                if (returnLinkTo == "zip")
+                if (presentationType == "zip")
                 {
-                    var pathToZip = _pptxToZipConverter.Convert(pathToMergedPresentation);
+                    var pathToFinalPptxFile = _fileAndFolderPath.GetPathToMergedFiles(finalPptxFileName);
+                    var pathToZip = _pptxToZipConverter.Convert(pathToFinalPptxFile);
                     var urlToZip = _fileAndFolderPath.GetUrlToFile(pathToZip);
+
+                    CreatePresentationWithLinksToSongs(finalPptxFileName, songs, presentationType);
+
                     presentationResponse.CreateSuccessResponse(songs, urlToZip);
                     return Ok(presentationResponse);
                 }
@@ -98,7 +83,26 @@ namespace Musiction.API.Controllers
             return BadRequest();
         }
 
-        public UserInfo UserInformation()
+        private void CreatePresentationWithLinksToSongs(string finalFileName, IEnumerable<Song> songs, string returnLinkTo)
+        {
+            if (returnLinkTo == "zip")
+                finalFileName = finalFileName.Replace("pptx", "zip");
+            var presentation = new Presentation(finalFileName, GetUserInformation());
+
+            var list = new List<LinkSongToPresentation>();
+
+            foreach (var song in songs)
+            {
+                var link = new LinkSongToPresentation() { Presentation = presentation, Song = song };
+                list.Add(link);
+                song.LinkSongToPresentation.Add(link);
+            }
+
+            presentation.LinkSongToPresentation.AddRange(list);
+            _presentationRepository.Save();
+        }
+
+        private UserInfo GetUserInformation()
         {
             // Retrieve the access_token claim which we saved in the OnTokenValidated event
             var accessToken = User.Claims.FirstOrDefault(c => c.Type == "access_token")?.Value;
@@ -111,7 +115,6 @@ namespace Musiction.API.Controllers
             userInfo.Wait();
             var user = userInfo.Result;
             return user;
-
         }
     }
 }

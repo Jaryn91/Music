@@ -30,8 +30,8 @@ namespace Musiction.API.BusinessLogic
                 paths.Add(string.Format(MagicString.UrlToPptxExport, song.PresentationId));
             }
 
-            var pathToCombinedPptx = Merge(paths);
-            return pathToCombinedPptx;
+            var finalFileName = Merge(paths);
+            return finalFileName;
         }
 
         private string Merge(List<string> files)
@@ -39,18 +39,19 @@ namespace Musiction.API.BusinessLogic
             if (files.Count < 1)
                 return "";
 
-            var finalPresentation = _fileAndFolderPath.GetPathToMergedFiles();
+            var finalFileName = MagicString.FinalFileName;
+            var finalPresentationPath = _fileAndFolderPath.GetPathToMergedFiles(finalFileName);
             using (var client = new WebClient())
             {
-                client.DownloadFile(files.First(), finalPresentation);
+                client.DownloadFile(files.First(), finalPresentationPath);
             }
 
             files.RemoveAt(0);
 
             foreach (string presentationId in files)
-                MergeSlides(presentationId, finalPresentation);
+                MergeSlides(presentationId, finalPresentationPath);
 
-            return finalPresentation;
+            return finalFileName;
         }
 
         private PresentationDocument GetPresentationDocument(string url, bool isEditable)

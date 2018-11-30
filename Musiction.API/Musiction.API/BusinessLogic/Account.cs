@@ -1,5 +1,5 @@
-﻿using Musiction.API.Entities;
-using Musiction.API.IBusinessLogic;
+﻿using Musiction.API.IBusinessLogic;
+using Musiction.API.Models;
 using Musiction.API.Resources;
 using Newtonsoft.Json;
 using System;
