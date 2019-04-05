@@ -17,17 +17,17 @@ namespace Musiction.API.Entities
         {
             modelBuilder.Entity<LinkSongToPresentation>().HasKey(sp => new { Presentations = sp.PresentationId, Songs = sp.SongId });
 
-            //modelBuilder.Entity<LinkSongToPresentation>()
-            //    .HasOne(x => x.Song)
-            //    .WithMany(x => x.LinkSongToPresentation)
-            //    .HasForeignKey(x => x.SongId);
+            modelBuilder.Entity<LinkSongToPresentation>()
+                .HasOne(x => x.Song)
+                .WithMany(x => x.LinkSongToPresentation)
+                .HasForeignKey(x => x.SongId);
 
-            //modelBuilder.Entity<LinkSongToPresentation>()
-            //    .HasOne(x => x.Presentation)
-            //    .WithMany(x => x.LinkSongToPresentation)
-            //    .HasForeignKey(x => x.PresentationId);
+            modelBuilder.Entity<LinkSongToPresentation>()
+                .HasOne(x => x.Presentation)
+                .WithMany(x => x.LinkSongToPresentation)
+                .HasForeignKey(x => x.PresentationId);
 
-            //base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

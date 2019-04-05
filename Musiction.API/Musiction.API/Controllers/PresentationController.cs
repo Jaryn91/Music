@@ -1,5 +1,6 @@
 ﻿using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Musiction.API.Entities;
@@ -83,6 +84,27 @@ namespace Musiction.API.Controllers
             return BadRequest();
         }
 
+
+
+        [HttpGet]
+        public IActionResult GetPresentations()
+        {
+            try
+            {
+                var presentations = _presentationRepository.Get();
+                var presentationDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations);
+                //var datatable = new DataTableHistoryResult() { PresentationDtos = presentationDto };
+                return Ok(presentationDto);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return BadRequest();
+        }
+
+
+
         private void CreatePresentationWithLinksToSongs(string finalFileName, IEnumerable<Song> songs, string returnLinkTo)
         {
             if (returnLinkTo == "zip")
@@ -101,6 +123,8 @@ namespace Musiction.API.Controllers
             presentation.LinkSongToPresentation.AddRange(list);
             _presentationRepository.Save();
         }
+
+
 
         private UserInfo GetUserInformation()
         {

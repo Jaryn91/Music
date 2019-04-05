@@ -1,4 +1,5 @@
-﻿using Musiction.API.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Musiction.API.Entities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,7 +27,7 @@ namespace Musiction.API.Services
 
         public IEnumerable<Presentation> Get()
         {
-            return _context.Presentations;
+            return _context.Presentations.Include(s => s.LinkSongToPresentation).ThenInclude(x => x.Song);
         }
 
         public bool Save()

@@ -1,0 +1,123 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css">
+    <link rel='shortcut icon' type='image/x-icon' href='img/favicon.ico' />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stwórz prezentacje - Wawrzynowy Slajd!</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/dt-1.10.18/datatables.min.js"></script>
+    <script type="text/javascript" src="js/domain.js"></script>
+    <script type="text/javascript" src="js/songs.js"></script>
+    <script type="text/javascript" src="js/presentations.js"></script>
+    <script type="text/javascript" src="js/account.js"></script>
+    <script type="text/javascript" src="js/filtering.js"></script>
+    <script>
+        function getSongIds() {
+            var songsIds = "";
+            $('#sortable2 li').each(function () {
+                songsIds += "ids=" + $(this).val() + "&";
+            });
+            songsIds = songsIds.slice(0, -1);
+            return songsIds;
+        };
+
+        $(document).ready(function () {
+            loadNavBar();
+            getHistoryPresentations(success, error);
+        });
+
+
+
+
+
+        //function format(d) {
+        //    // `d` is the original data object for the row
+        //    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+        //        '<tr>' +
+        //        '<td>Full name:</td>' +
+        //        '<td>' + d.name + '</td>' +
+        //        '</tr>' +
+        //        '<tr>' +
+        //        '<td>Extension number:</td>' +
+        //        '<td>' + d.extn + '</td>' +
+        //        '</tr>' +
+        //        '<tr>' +
+        //        '<td>Extra info:</td>' +
+        //        '<td>And any further details here (images etc)...</td>' +
+        //        '</tr>' +
+        //        '</table>';
+        //}
+
+        function success(obj) {
+            var table = $('#example').DataTable({
+                data: obj,
+                columns: [
+                    { data: "createdDate" },
+                    { data: "createBy" },
+                    { data: "type" },
+                    { data: "songNames" }
+                ]
+
+            });
+        };
+
+
+        function error(data) {
+            $('#textarea').val(data.responseJSON.information);
+            $('#createPresentationButtons').removeClass("hide");
+            $('#loadingButton').addClass("hide");
+            return data.responseJSON.alertMessage;
+        }
+    </script>
+</head>
+
+<body>
+    <div id="nav-placeholder">
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-lg-offset-2">
+                <div align="center">
+                    <h2>Historia</h2>
+                </div>
+                <table id="example" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>CreatedDate</th>
+                            <th>CreateBy</th>
+                            <th>Type</th>
+                            <th>SongNames</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+
+                            <th>CreatedDate</th>
+                            <th>CreateBy</th>
+                            <th>Type</th>
+                            <th>SongNames</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="col-lg-2">
+
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <br />
+
+</body>
+</html>
