@@ -1,4 +1,6 @@
-﻿namespace Musiction.API.Models
+﻿using System.Collections.Generic;
+
+namespace Musiction.API.Models
 {
     public class PresentationDto
     {
@@ -8,6 +10,6 @@
 
         public string Type { get; set; }
 
-        public string SongNames { get; set; }
+        public List<string> SongNames { get; set; }
     }
 }

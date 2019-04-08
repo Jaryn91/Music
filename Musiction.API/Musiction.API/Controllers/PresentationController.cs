@@ -92,8 +92,7 @@ namespace Musiction.API.Controllers
             try
             {
                 var presentations = _presentationRepository.Get();
-                var presentationDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations);
-                //var datatable = new DataTableHistoryResult() { PresentationDtos = presentationDto };
+                var presentationDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations.Reverse());
                 return Ok(presentationDto);
             }
             catch (Exception ex)

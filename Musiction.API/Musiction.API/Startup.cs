@@ -13,7 +13,6 @@ using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
-using System;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -138,7 +137,7 @@ namespace Musiction.API
                 cfg.CreateMap<SongForUpdateDto, Song>();
                 cfg.CreateMap<Presentation, PresentationDto>()
                     .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate.ToString("dddd, dd MMMM yyyy", CultureInfo.CreateSpecificCulture("pl-pl"))))
-                    .ForMember(dest => dest.SongNames, opt => opt.MapFrom(src => String.Join(String.Empty, src.LinkSongToPresentation.Select(song => song.Song.Name))));
+                    .ForMember(dest => dest.SongNames, opt => opt.MapFrom(src => src.LinkSongToPresentation.Select(song => song.Song.Name)));
             });
 
             DefaultFilesOptions options = new DefaultFilesOptions();
