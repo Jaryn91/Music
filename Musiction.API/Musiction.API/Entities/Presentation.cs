@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 
 namespace Musiction.API.Entities
 {
@@ -36,7 +37,7 @@ namespace Musiction.API.Entities
         public Presentation(string finalFileName, UserInfo user)
         {
             FinalFileName = finalFileName;
-            Type = finalFileName.Split('.')[1];
+            Type = Path.GetExtension(finalFileName).Split('.')[1];
             CreateBy = user.FullName;
             CreatedDate = DateTime.Now;
         }

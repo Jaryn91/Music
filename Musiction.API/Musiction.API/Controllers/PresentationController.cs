@@ -52,25 +52,25 @@ namespace Musiction.API.Controllers
                     return BadRequest(presentationResponse);
                 }
 
-                var finalPptxFileName = _powerPointMerger.Merge(songs);
+                var finalPresentationPath = _powerPointMerger.Merge(songs);
 
                 if (presentationType == "pptx")
                 {
-                    var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(finalPptxFileName);
+                    var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(finalPresentationPath);
+
+                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs, presentationType);
+
                     presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
-
-                    CreatePresentationWithLinksToSongs(finalPptxFileName, songs, presentationType);
-
                     return Ok(presentationResponse);
                 }
 
                 if (presentationType == "zip")
                 {
-                    var pathToFinalPptxFile = _fileAndFolderPath.GetPathToMergedFiles(finalPptxFileName);
+                    var pathToFinalPptxFile = _fileAndFolderPath.GetPathToMergedFiles(finalPresentationPath);
                     var pathToZip = _pptxToZipConverter.Convert(pathToFinalPptxFile);
                     var urlToZip = _fileAndFolderPath.GetUrlToFile(pathToZip);
 
-                    CreatePresentationWithLinksToSongs(finalPptxFileName, songs, presentationType);
+                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs, presentationType);
 
                     presentationResponse.CreateSuccessResponse(songs, urlToZip);
                     return Ok(presentationResponse);
@@ -91,8 +91,15 @@ namespace Musiction.API.Controllers
         {
             try
             {
-                var presentations = _presentationRepository.Get();
-                var presentationDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations.Reverse());
+                var presentations = _presentationRepository.Get().ToList();
+                var presentationDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations).ToList();
+
+                for (var i = 0; i < presentations.Count; i++)
+                {
+                    presentationDto[i].Url = _fileAndFolderPath.GetUrlToFile(presentations[i].FinalFileName);
+                }
+
+                presentationDto.Reverse();
                 return Ok(presentationDto);
             }
             catch (Exception ex)

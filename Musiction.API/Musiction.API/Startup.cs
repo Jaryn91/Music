@@ -15,6 +15,7 @@ using Musiction.API.Services;
 using NLog.Extensions.Logging;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -129,6 +130,7 @@ namespace Musiction.API
 
             app.UseStatusCodePages();
 
+
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Song, SongDto>();
@@ -136,8 +138,12 @@ namespace Musiction.API
                 cfg.CreateMap<Song, SongForUpdateDto>();
                 cfg.CreateMap<SongForUpdateDto, Song>();
                 cfg.CreateMap<Presentation, PresentationDto>()
-                    .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate.ToString("dddd, dd MMMM yyyy", CultureInfo.CreateSpecificCulture("pl-pl"))))
-                    .ForMember(dest => dest.SongNames, opt => opt.MapFrom(src => src.LinkSongToPresentation.Select(song => song.Song.Name)));
+                    .ForMember(dest => dest.CreatedDate,
+                        opt => opt.MapFrom(src =>
+                            src.CreatedDate.ToString("dddd, dd MMMM yyyy", CultureInfo.CreateSpecificCulture("pl-pl"))))
+                    .ForMember(dest => dest.SongNames,
+                        opt => opt.MapFrom(src =>
+                            src.LinkSongToPresentation.Select(song => Path.GetFileName(song.Song.Name))));
             });
 
             DefaultFilesOptions options = new DefaultFilesOptions();

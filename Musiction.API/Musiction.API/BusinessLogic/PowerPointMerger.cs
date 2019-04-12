@@ -30,8 +30,8 @@ namespace Musiction.API.BusinessLogic
                 paths.Add(string.Format(MagicString.UrlToPptxExport, song.PresentationId));
             }
 
-            var finalFileName = Merge(paths);
-            return finalFileName;
+            var finalPresentationPath = Merge(paths);
+            return finalPresentationPath;
         }
 
         private string Merge(List<string> files)
@@ -51,7 +51,7 @@ namespace Musiction.API.BusinessLogic
             foreach (string presentationId in files)
                 MergeSlides(presentationId, finalPresentationPath);
 
-            return finalFileName;
+            return finalPresentationPath;
         }
 
         private PresentationDocument GetPresentationDocument(string url, bool isEditable)

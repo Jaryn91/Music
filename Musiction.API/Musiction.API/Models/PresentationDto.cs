@@ -11,5 +11,7 @@ namespace Musiction.API.Models
         public string Type { get; set; }
 
         public List<string> SongNames { get; set; }
+
+        public string Url { get; set; }
     }
 }

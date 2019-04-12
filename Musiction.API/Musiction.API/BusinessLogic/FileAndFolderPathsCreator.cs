@@ -46,9 +46,9 @@ namespace Musiction.API.BusinessLogic
             return folderPath;
         }
 
-        public string GetUrlToFile(string finalFileName)
+        public string GetUrlToFile(string finalPresentationPath)
         {
-            return _webAddress + finalFileName;
+            return finalPresentationPath.Replace(_folder, _webAddress);
         }
     }
 }
