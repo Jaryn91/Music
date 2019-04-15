@@ -4,6 +4,7 @@ namespace Musiction.API.Models
 {
     public class PresentationDto
     {
+        public int Id { get; set; }
         public string CreatedDate { get; set; }
 
         public string CreateBy { get; set; }

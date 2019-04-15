@@ -82,9 +82,13 @@
                         "data": null,
                         "defaultContent": ''
                     },
+                    { data: "id" },
                     { data: "createdDate" },
                     { data: "createBy" },
-                    { data: "type" },
+                    { data: null, render: function ( data, type, row ) {
+                        // Combine the first and last names into a single table field
+                        return '  <a href="' + data.url + '">Pobierz ' + data.type +'</a>';
+                    } }
 
                 ]
 
@@ -133,6 +137,7 @@
                     <thead>
                         <tr>
                             <th></th>
+                            <th>Id</th>
                             <th>Data</th>
                             <th>Stworzone przez</th>
                             <th>Typ prezentacji</th>
@@ -142,6 +147,7 @@
                     <tfoot>
                         <tr>
                             <th></th>
+                            <th>Id</th>
                             <th>Data</th>
                             <th>Stworzone przez</th>
                             <th>Typ prezentacji</th>
