@@ -58,7 +58,7 @@ namespace Musiction.API.Controllers
                 {
                     var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(finalPresentationPath);
 
-                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs, presentationType);
+                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs);
 
                     presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
                     return Ok(presentationResponse);
@@ -70,7 +70,7 @@ namespace Musiction.API.Controllers
                     var pathToZip = _pptxToZipConverter.Convert(pathToFinalPptxFile);
                     var urlToZip = _fileAndFolderPath.GetUrlToFile(pathToZip);
 
-                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs, presentationType);
+                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs);
 
                     presentationResponse.CreateSuccessResponse(songs, urlToZip);
                     return Ok(presentationResponse);
@@ -111,10 +111,8 @@ namespace Musiction.API.Controllers
 
 
 
-        private void CreatePresentationWithLinksToSongs(string finalFileName, IEnumerable<Song> songs, string returnLinkTo)
+        private void CreatePresentationWithLinksToSongs(string finalFileName, IEnumerable<Song> songs)
         {
-            if (returnLinkTo == "zip")
-                finalFileName = finalFileName.Replace("pptx", "zip");
             var presentation = new Presentation(finalFileName, GetUserInformation());
 
             var list = new List<LinkSongToPresentation>();
