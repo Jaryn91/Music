@@ -70,7 +70,7 @@ namespace Musiction.API.Controllers
                     var pathToZip = _pptxToZipConverter.Convert(pathToFinalPptxFile);
                     var urlToZip = _fileAndFolderPath.GetUrlToFile(pathToZip);
 
-                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs);
+                    CreatePresentationWithLinksToSongs(pathToZip, songs);
 
                     presentationResponse.CreateSuccessResponse(songs, urlToZip);
                     return Ok(presentationResponse);
