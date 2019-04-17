@@ -11,27 +11,15 @@ using System;
 namespace Musiction.API.Migrations
 {
     [DbContext(typeof(SongContext))]
-    partial class SongContextModelSnapshot : ModelSnapshot
+    [Migration("20181121161209_AddPresentation")]
+    partial class AddPresentation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 .HasAnnotation("ProductVersion", "2.0.2-rtm-10011");
-
-            modelBuilder.Entity("Musiction.API.Entities.LinkSongToPresentation", b =>
-                {
-                    b.Property<int>("PresentationId");
-
-                    b.Property<int>("SongId");
-
-                    b.HasKey("PresentationId", "SongId");
-
-                    b.HasIndex("SongId");
-
-                    b.ToTable("LinkSongToPresentation");
-                });
 
             modelBuilder.Entity("Musiction.API.Entities.Presentation", b =>
                 {
@@ -44,7 +32,7 @@ namespace Musiction.API.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("FinalFileName")
+                    b.Property<string>("Path")
                         .IsRequired();
 
                     b.Property<string>("Type")
@@ -68,25 +56,23 @@ namespace Musiction.API.Migrations
                     b.Property<string>("PresentationId")
                         .HasMaxLength(50);
 
+                    b.Property<int?>("PresentationId1");
+
                     b.Property<string>("YouTubeUrl")
                         .HasMaxLength(60);
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PresentationId1");
+
                     b.ToTable("Songs");
                 });
 
-            modelBuilder.Entity("Musiction.API.Entities.LinkSongToPresentation", b =>
+            modelBuilder.Entity("Musiction.API.Entities.Song", b =>
                 {
-                    b.HasOne("Musiction.API.Entities.Presentation", "Presentation")
-                        .WithMany("LinkSongToPresentation")
-                        .HasForeignKey("PresentationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Musiction.API.Entities.Song", "Song")
-                        .WithMany("LinkSongToPresentation")
-                        .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("Musiction.API.Entities.Presentation")
+                        .WithMany("Songs")
+                        .HasForeignKey("PresentationId1");
                 });
 #pragma warning restore 612, 618
         }

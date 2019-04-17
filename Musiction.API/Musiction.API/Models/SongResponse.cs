@@ -1,7 +1,6 @@
-﻿using Musiction.API.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Musiction.API.Entities
+namespace Musiction.API.Models
 {
     public class SongResponse
     {

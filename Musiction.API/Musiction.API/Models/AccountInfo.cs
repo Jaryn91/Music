@@ -1,4 +1,4 @@
-﻿namespace Musiction.API.Entities
+﻿namespace Musiction.API.Models
 {
     public class AccountInfo
     {

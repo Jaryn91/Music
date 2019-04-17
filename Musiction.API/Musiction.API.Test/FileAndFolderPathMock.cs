@@ -6,7 +6,7 @@ namespace Musiction.API.Test
 {
     public class FileAndFolderPathMock : IFileAndFolderPathsCreator
     {
-        public string GetPathToMergedFiles()
+        public string GetPathToMergedFiles(string finalFileName)
         {
             string outcomeFileName = "FinaleFile_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pptx";
             string folder = Directory.GetCurrentDirectory();

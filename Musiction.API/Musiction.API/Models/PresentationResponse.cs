@@ -1,8 +1,9 @@
 ﻿using Musiction.API.BusinessLogic;
+using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using System.Collections.Generic;
 
-namespace Musiction.API.Entities
+namespace Musiction.API.Models
 {
     public class PresentationResponse
     {

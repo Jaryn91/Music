@@ -5,11 +5,11 @@ namespace Musiction.API.Services
 {
     public interface ISongRepository
     {
-        IEnumerable<Song> GetSongs();
-        Song GetSong(int songId);
-        bool AddSong(Song song);
+        IEnumerable<Song> Get();
+        Song Get(int songId);
+        bool Add(Song song);
         bool Save();
-        void RemoveSong(Song song);
+        void Remove(Song song);
         IEnumerable<Song> GetSongsInOrder(List<int> ids);
     }
 }

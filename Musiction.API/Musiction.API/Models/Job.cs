@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Musiction.API.Entities
+namespace Musiction.API.Models
 {
     public class SourceFile
     {
