@@ -61,13 +61,12 @@ namespace Musiction.API.Controllers
                 {
                     zippedPresentationOnLocalhost = _pptxToZipConverter.Convert(mergedPptxPresentationOnLocalhost);
                     zippedPresentationId = _googleSlides.AddZipFile(zippedPresentationOnLocalhost);
+                    System.IO.File.Delete(zippedPresentationOnLocalhost);
                 }
 
                 var response = CreateResponseAndHistoryLog(mergedPresentationId, zippedPresentationId, presentationType, songs);
 
                 System.IO.File.Delete(mergedPresentationId);
-                System.IO.File.Delete(zippedPresentationOnLocalhost);
-
                 return Ok(response);
             }
             catch (Exception ex)

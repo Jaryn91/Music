@@ -86,8 +86,10 @@
                     { data: "createdDate" },
                     { data: "createBy" },
                     { data: null, render: function ( data, type, row ) {
-                        // Combine the first and last names into a single table field
-                        return '  <a href="' + data.url + '">Pobierz ' + data.type +'</a>';
+                        if (data.type == 'zip')
+                            return '  <a href="' + data.urlToZip + '">Pobierz ' + data.type + '</a>';
+
+                        return '  <a href="' + data.urlToPptx + '">Pobierz ' + data.type +'</a>';
                     } }
 
                 ]
