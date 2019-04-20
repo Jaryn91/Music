@@ -5,6 +5,7 @@ function createPresentation(outputFileType, songs, funcOk, funcError) {
     $.ajax({
         url: url,
         type: 'GET',
+        headers: getAuthorizationHeader(),
         success: function (result) {
             funcOk(result);
         },
@@ -15,6 +16,41 @@ function createPresentation(outputFileType, songs, funcOk, funcError) {
         }
     });
 }
+
+function getPresentations(outputFileType, songs, funcOk, funcError) {
+    var url = presentationsApi + outputFileType + songs;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: getAuthorizationHeader(),
+        success: function (result) {
+            funcOk(result);
+        },
+        error: function (result, status) {
+            errorHandling(result, funcError);
+        },
+        complete: function (result, status) {
+        }
+    });
+}
+
+function getHistoryPresentations(funcOk, funcError) {
+    var url = presentationsApi;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: getAuthorizationHeader(),
+        success: function (result) {
+            funcOk(result);
+        },
+        error: function (result, status) {
+            errorHandling(result, funcError);
+        },
+        complete: function (result, status) {
+        }
+    });
+}
+
 
 
 
@@ -31,3 +67,4 @@ function errorHandling(result, funcError) {
     }
     displayAlert("Coś tutaj chyba nie gra", errorMassage);
 }
+

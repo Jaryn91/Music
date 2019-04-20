@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,6 +11,7 @@ using Musiction.API.Resources;
 using Musiction.API.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Musiction.API.Controllers
 {
@@ -19,13 +22,16 @@ namespace Musiction.API.Controllers
         private readonly ILogger<SongsController> _logger;
         private readonly ISongRepository _songRepository;
         private readonly IGoogleSlides _googleSlides;
+        private readonly IGetValue _valueRetrieval;
 
         public SongsController(ILogger<SongsController> logger,
-            ISongRepository songRepository, IGoogleSlides googleSlides)
+            ISongRepository songRepository, IGoogleSlides googleSlides,
+            IGetValue valueRetrieval)
         {
             _logger = logger;
             _songRepository = songRepository;
             _googleSlides = googleSlides;
+            _valueRetrieval = valueRetrieval;
         }
 
         [HttpGet, Authorize]
@@ -34,7 +40,7 @@ namespace Musiction.API.Controllers
             var songResponse = new SongResponse();
             try
             {
-                var songs = _songRepository.GetSongs();
+                var songs = _songRepository.Get();
                 var results = Mapper.Map<IEnumerable<SongDto>>(songs);
                 songResponse.Songs = results;
                 return Ok(songResponse);
@@ -46,13 +52,13 @@ namespace Musiction.API.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetSong"), Authorize]
+        [HttpGet("{id}", Name = "Get"), Authorize]
         public IActionResult GetSong(int id)
         {
             var songResponse = new SongResponse();
             try
             {
-                var songToReturn = _songRepository.GetSong(id);
+                var songToReturn = _songRepository.Get(id);
                 if (songToReturn == null)
                 {
                     songResponse.AlertMessage = string.Format(MagicString.SongWithIdDoesntExist, id);
@@ -85,7 +91,7 @@ namespace Musiction.API.Controllers
 
                 var song = new Song() { Name = songName, PresentationId = presentationId };
 
-                if (!_songRepository.AddSong(song))
+                if (!_songRepository.Add(song))
                 {
                     _googleSlides.Remove(presentationId);
                     songResponse.AlertMessage = MagicString.ProblemOucuredDuringSavingSongToDatabase;
@@ -93,6 +99,14 @@ namespace Musiction.API.Controllers
                 }
 
                 var createdSong = Mapper.Map<SongDto>(song);
+
+                var historyEntity = new History()
+                {
+                    CreateDate = DateTime.Now,
+                    CreatedBy = GetUserInformation().FullName,
+                    Information = $"Dodano nową piosnkę z Id: {createdSong.Id} o tytule {createdSong.Name}"
+                };
+
 
                 return Ok(createdSong);
             }
@@ -116,7 +130,7 @@ namespace Musiction.API.Controllers
             var songResponse = new SongResponse();
             try
             {
-                var songToUpdate = _songRepository.GetSong(id);
+                var songToUpdate = _songRepository.Get(id);
 
                 if (songToUpdate == null)
                 {
@@ -147,7 +161,7 @@ namespace Musiction.API.Controllers
             var songResponse = new SongResponse();
             try
             {
-                var songToDelete = _songRepository.GetSong(id);
+                var songToDelete = _songRepository.Get(id);
 
                 if (songToDelete == null)
                 {
@@ -155,7 +169,7 @@ namespace Musiction.API.Controllers
                     return BadRequest(songResponse);
                 }
 
-                _songRepository.RemoveSong(songToDelete);
+                _songRepository.Remove(songToDelete);
                 if (!_songRepository.Save())
                 {
                     songResponse.AlertMessage = MagicString.ProblemOucuredDuringSavingSongToDatabase;
@@ -171,6 +185,23 @@ namespace Musiction.API.Controllers
                 songResponse.AlertMessage = ex.Message;
                 return BadRequest(songResponse);
             }
+        }
+
+
+
+        private UserInfo GetUserInformation()
+        {
+            // Retrieve the access_token claim which we saved in the OnTokenValidated event
+            var accessToken = User.Claims.FirstOrDefault(c => c.Type == "access_token")?.Value;
+
+            // If we have an access_token, then retrieve the user's information
+            if (string.IsNullOrEmpty(accessToken)) return null;
+
+            var apiClient = new AuthenticationApiClient(_valueRetrieval.Get("Auth0:Domain"));
+            var userInfo = apiClient.GetUserInfoAsync(accessToken);
+            userInfo.Wait();
+            var user = userInfo.Result;
+            return user;
         }
     }
 }

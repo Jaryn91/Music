@@ -36,9 +36,6 @@
 }
 
 
-.active {
-    background: #f00;
-}
 
 #outer {
     width: 100%;
@@ -62,4 +59,21 @@
 
 .show {
     display: block;
+}
+
+td.details-control {
+    background: url('../img/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+
+tr.shown td.details-control {
+    background: url('../img/details_close.png') no-repeat center center;
+}
+
+td {
+    white-space: pre
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0em !important
 }

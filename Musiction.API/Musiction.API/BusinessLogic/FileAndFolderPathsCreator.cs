@@ -1,5 +1,4 @@
 ﻿using Musiction.API.IBusinessLogic;
-using Musiction.API.Resources;
 using System.IO;
 
 namespace Musiction.API.BusinessLogic
@@ -17,11 +16,10 @@ namespace Musiction.API.BusinessLogic
             _webAddress = _valueRetrieval.Get("WebAddress");
         }
 
-        public string GetPathToMergedFiles()
+        public string GetPathToMergedFiles(string finalFileName)
         {
             var folderPath = GetCombinedFolderPath("folderSettings:mergedPath");
-            var outcomeFileName = MagicString.FinalFileName;
-            return Path.Combine(folderPath, outcomeFileName);
+            return Path.Combine(folderPath, finalFileName);
         }
 
         public string GetPathToZipFiles(string zipName)
@@ -48,9 +46,9 @@ namespace Musiction.API.BusinessLogic
             return folderPath;
         }
 
-        public string GetUrlToFile(string path)
+        public string GetUrlToFile(string finalPresentationPath)
         {
-            return path.Replace(_folder, _webAddress);
+            return finalPresentationPath.Replace(_folder, _webAddress);
         }
     }
 }

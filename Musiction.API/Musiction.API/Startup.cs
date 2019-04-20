@@ -13,8 +13,13 @@ using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Musiction.API
 {
@@ -74,12 +79,28 @@ namespace Musiction.API
             {
                 options.Authority = domain;
                 options.Audience = _valueRetrieval.Get("Auth0:ApiIdentifier");
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        if (context.SecurityToken is JwtSecurityToken token)
+                        {
+                            if (context.Principal.Identity is ClaimsIdentity identity)
+                            {
+                                identity.AddClaim(new Claim("access_token", token.RawData));
+                            }
+                        }
+
+                        return Task.FromResult(0);
+                    }
+                };
             });
         }
 
 
         private void RegisterContainers(IServiceCollection services)
         {
+            services.AddTransient<IPresentationRepository, PresentationRepository>();
             services.AddTransient<ISongRepository, SongRepository>();
             services.AddTransient<IFileAndFolderPathsCreator, FileAndFolderPathsCreator>();
             services.AddTransient<IGetValue, ValueRetrieval>();
@@ -109,12 +130,20 @@ namespace Musiction.API
 
             app.UseStatusCodePages();
 
+
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Song, SongDto>();
                 cfg.CreateMap<SongForCreationDto, Song>();
                 cfg.CreateMap<Song, SongForUpdateDto>();
                 cfg.CreateMap<SongForUpdateDto, Song>();
+                cfg.CreateMap<Presentation, PresentationDto>()
+                    .ForMember(dest => dest.CreatedDate,
+                        opt => opt.MapFrom(src =>
+                            src.CreatedDate.ToString("dddd, dd MMMM yyyy", CultureInfo.CreateSpecificCulture("pl-pl"))))
+                    .ForMember(dest => dest.SongNames,
+                        opt => opt.MapFrom(src =>
+                            src.LinkSongToPresentation.Select(song => Path.GetFileName(song.Song.Name))));
             });
 
             DefaultFilesOptions options = new DefaultFilesOptions();
