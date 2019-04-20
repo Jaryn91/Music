@@ -290,3 +290,6 @@ __pycache__/
 /Musiction.API/Musiction.API/Files/Merged
 /Musiction.API/Musiction.API/Files/Zip
 /Token/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
+/Musiction.API/Musiction.API/wwwroot/Files/Merged
+/Musiction.API/Musiction.API/wwwroot/Files/Zip
+/Musiction.API/Musiction.API/wwwroot/Files/Presentation
