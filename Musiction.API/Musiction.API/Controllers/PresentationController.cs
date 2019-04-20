@@ -23,11 +23,13 @@ namespace Musiction.API.Controllers
         private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
         private readonly IPresentationRepository _presentationRepository;
         private readonly IGetValue _valueRetrieval;
+        private readonly IGoogleSlides _googleSlides;
+
 
         public PresentationController(ISongRepository songRepository,
             IConvertPresentation pptxToZipConverter, IMerge powerPointMerger,
             IFileAndFolderPathsCreator fileAndFolderPath, IPresentationRepository presentationRepository,
-            IGetValue valueRetrieval)
+            IGetValue valueRetrieval, IGoogleSlides googleSlides)
         {
             _powerPointMerger = powerPointMerger;
             _songRepository = songRepository;
@@ -35,56 +37,61 @@ namespace Musiction.API.Controllers
             _fileAndFolderPath = fileAndFolderPath;
             _presentationRepository = presentationRepository;
             _valueRetrieval = valueRetrieval;
+            _googleSlides = googleSlides;
         }
 
 
         [HttpGet("{presentationType}"), Authorize]
         public IActionResult Presentation(string presentationType, [FromQuery]List<int> ids)
         {
-            var presentationResponse = new PresentationResponse();
             IEnumerable<Song> songs = new List<Song>();
             try
             {
                 songs = _songRepository.GetSongsInOrder(ids);
                 if (!songs.Any())
-                {
-                    presentationResponse.CreateExceptionResponse(songs, MagicString.NoSongSelected);
-                    return BadRequest(presentationResponse);
-                }
+                    return BadRequest(NoSongResponse(songs));
 
-                var finalPresentationPath = _powerPointMerger.Merge(songs);
+                var zippedPresentationId = "";
+                var zippedPresentationOnLocalhost = "";
+                var mergedPptxPresentationOnLocalhost = _powerPointMerger.Merge(songs);
+                var mergedPresentationId = _googleSlides.AddPptxFile(mergedPptxPresentationOnLocalhost);
 
-                if (presentationType == "pptx")
-                {
-                    var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(finalPresentationPath);
-
-                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs);
-
-                    presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
-                    return Ok(presentationResponse);
-                }
 
                 if (presentationType == "zip")
                 {
-                    var pathToFinalPptxFile = _fileAndFolderPath.GetPathToMergedFiles(finalPresentationPath);
-                    var pathToZip = _pptxToZipConverter.Convert(pathToFinalPptxFile);
-                    var urlToZip = _fileAndFolderPath.GetUrlToFile(pathToZip);
-
-                    CreatePresentationWithLinksToSongs(pathToZip, songs);
-
-                    presentationResponse.CreateSuccessResponse(songs, urlToZip);
-                    return Ok(presentationResponse);
+                    zippedPresentationOnLocalhost = _pptxToZipConverter.Convert(mergedPptxPresentationOnLocalhost);
+                    zippedPresentationId = _googleSlides.AddZipFile(zippedPresentationOnLocalhost);
                 }
+
+                var response = CreateResponseAndHistoryLog(mergedPresentationId, zippedPresentationId, presentationType, songs);
+
+                System.IO.File.Delete(mergedPresentationId);
+                System.IO.File.Delete(zippedPresentationOnLocalhost);
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
+                var presentationResponse = new PresentationResponse();
                 presentationResponse.CreateExceptionResponse(songs, ex.Message);
                 return BadRequest(presentationResponse);
             }
-            return BadRequest();
         }
 
+        private PresentationResponse NoSongResponse(IEnumerable<Song> songs)
+        {
+            var presentationResponse = new PresentationResponse();
+            presentationResponse.CreateExceptionResponse(songs, MagicString.NoSongSelected);
+            return presentationResponse;
+        }
 
+        private PresentationResponse CreateResponseAndHistoryLog(string mergedPresentationId, string zippedPresentationId, string presentationType, IEnumerable<Song> songs)
+        {
+            var presentationResponse = new PresentationResponse();
+            CreatePresentationWithLinksToSongs(mergedPresentationId, zippedPresentationId, presentationType, songs);
+            presentationResponse.CreateSuccessResponse(mergedPresentationId, zippedPresentationId, presentationType, songs);
+            return presentationResponse;
+        }
 
         [HttpGet]
         public IActionResult GetPresentations()
@@ -96,7 +103,9 @@ namespace Musiction.API.Controllers
 
                 for (var i = 0; i < presentations.Count; i++)
                 {
-                    presentationDto[i].Url = _fileAndFolderPath.GetUrlToFile(presentations[i].FinalFileName);
+                    presentationDto[i].UrlToPptx = String.Format(MagicString.PathToDownloadFileFromGoogleDrive, presentations[i].GoogleDrivePptxFileId);
+                    if (presentations[i].GoogleDriveZipFileId != null)
+                        presentationDto[i].UrlToZip = String.Format(MagicString.PathToDownloadFileFromGoogleDrive, presentations[i].GoogleDriveZipFileId);
                 }
 
                 presentationDto.Reverse();
@@ -111,9 +120,9 @@ namespace Musiction.API.Controllers
 
 
 
-        private void CreatePresentationWithLinksToSongs(string finalFileName, IEnumerable<Song> songs)
+        private void CreatePresentationWithLinksToSongs(string googleDriveFileId, string zippedPresentationId, string presentationType, IEnumerable<Song> songs)
         {
-            var presentation = new Presentation(finalFileName, GetUserInformation());
+            var presentation = new Presentation(googleDriveFileId, zippedPresentationId, presentationType, GetUserInformation());
 
             var list = new List<LinkSongToPresentation>();
 

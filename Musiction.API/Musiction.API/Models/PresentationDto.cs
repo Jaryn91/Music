@@ -13,6 +13,7 @@ namespace Musiction.API.Models
 
         public List<string> SongNames { get; set; }
 
-        public string Url { get; set; }
+        public string UrlToPptx { get; set; }
+        public string UrlToZip { get; set; }
     }
 }
