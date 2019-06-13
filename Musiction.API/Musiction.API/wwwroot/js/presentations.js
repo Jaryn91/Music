@@ -1,7 +1,24 @@
 ﻿var presentationsApi = getDomain() + "api/presentation/";
 
-function createPresentation(outputFileType, songs, funcOk, funcError) {
+function createPresentationPptx(outputFileType, songs, funcOk, funcError) {
     var url = presentationsApi + outputFileType + songs;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: getAuthorizationHeader(),
+        success: function (result) {
+            funcOk(result);
+        },
+        error: function (result, status) {
+            errorHandling(result, funcError);
+        },
+        complete: function (result, status) {
+        }
+    });
+}
+
+function createPresentationZip(outputFileType, presentationFileId, funcOk, funcError) {
+    var url = presentationsApi + outputFileType + '/' + presentationFileId;
     $.ajax({
         url: url,
         type: 'GET',

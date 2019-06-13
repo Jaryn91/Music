@@ -12,16 +12,18 @@ namespace Musiction.API.Models
         public string Url { get; set; }
         public string Information { get; set; }
         public string AlertMessage { get; set; }
+        public string PptxFileId { get; set; }
 
 
-        public void CreateSuccessResponse(string mergedPresentationId, string zippedPresentationId, string presentationType, IEnumerable<Song> songs)
+        public void CreateSuccessResponse(string mergedPresentationId, string presentationType, IEnumerable<Song> songs)
         {
             IOutcomeTextCreator outcomeTextCreator = new OutcomeTextCreator();
             Information = outcomeTextCreator.CreateSciprtWithNamesOfSongsAndYouTubeLinks(songs);
+            PptxFileId = mergedPresentationId;
             if (presentationType == "pptx")
-                Url = String.Format(MagicString.PathToDownloadFileFromGoogleDrive, mergedPresentationId);
+                Url = String.Format(MagicString.PathTFileInGoogleDrive, mergedPresentationId);
             if (presentationType == "zip")
-                Url = String.Format(MagicString.PathToDownloadFileFromGoogleDrive, zippedPresentationId);
+                Url = String.Format(MagicString.PathToDownloadFileFromGoogleDrive, mergedPresentationId);
         }
 
         public void CreateExceptionResponse(IEnumerable<Song> songs, string exceptionMessage)

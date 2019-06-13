@@ -42,32 +42,43 @@
             });
 
             $('#saveInPPTX').click(function () {
-                $('#createPresentationButtons').addClass("hide");
+                $('#createPresentationPptxButtons').addClass("hide");
                 $('#loadingButton').removeClass("hide");
                 
                 var songsIds = getSongIds();
-                createPresentation("pptx?", songsIds, success, error);
+                createPresentationPptx("pptx?", songsIds, success, error);
             });
 
             $('#saveInZIP').click(function () {
-                $('#createPresentationButtons').addClass("hide");
+                $('#createPresentationPptxButtons').addClass("hide");
                 $('#loadingButton').removeClass("hide");
                 var songsIds = getSongIds();
-                createPresentation("zip?", songsIds, success, error);
+                var fileId = $('#saveInZIP').val();
+                createPresentationZip("zip", fileId, successZip, error);
             });
         });
 
 
         function success(data) {
             $('#textarea').val(data.information);
-            window.location.href = data.url;
-            $('#createPresentationButtons').removeClass("hide");
+            $('#linkPresentationInGoogle').attr("href", data.url);
+            $('#saveInZIP').prop('value', data.pptxFileId);
             $('#loadingButton').addClass("hide");
+            $('#createPresentationZipButtons').removeClass("hide");
+        }
+
+
+        function successZip(data) {
+            //$('#textarea').val(data.information);
+            window.location.href = data.url;
+            //$('#linkPresentationInGoogle').attr("href", data.url);
+            //$('#loadingButton').addClass("hide");
+            //$('#createPresentationZipButtons').removeClass("hide");
         }
 
         function error(data) {
             $('#textarea').val(data.responseJSON.information);
-            $('#createPresentationButtons').removeClass("hide");
+            $('#createPresentationPptxButtons').removeClass("hide");
             $('#loadingButton').addClass("hide");
             return data.responseJSON.alertMessage;
         }
@@ -109,15 +120,20 @@
         <div class="row">
             <div class="col-lg-5 col-lg-offset-6">
                 <br />
-                <div class="text-center" id="createPresentationButtons">
+                <div class="text-center" id="createPresentationPptxButtons">
                     <div class="btn-group pull-center-lg">
-                        <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">PPTX</button>
-                        <button type="submit" id="saveInZIP" value='ZIP' class="btn btn-primary">ZIP</button>
+                        <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">Połącz prezentacje</button>
                     </div>
                 </div>
                 <div class="text-center hide" id="loadingButton" >
                     <div class="btn-group pull-center-lg">
                         <button type="submit" id="processingButton" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Tworzę prezentację" class="btn btn-primary">Tworzę</button>
+                    </div>
+                </div>
+                <div class="text-center hide" id="createPresentationZipButtons">
+                    <div class="btn-group pull-center-lg">
+                        <a href="" class="btn btn-primary" role="button" target="_blank" id="linkPresentationInGoogle">Otwórz połączoną prezentacje</a>
+                        <button type="submit" id="saveInZIP" value='' class="btn btn-primary">Stwórz Zip</button>
                     </div>
                 </div>
             </div>

@@ -5,8 +5,10 @@ using Google.Apis.Slides.v1;
 using Google.Apis.Util.Store;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Resources;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading;
 using File = Google.Apis.Drive.v3.Data.File;
 
@@ -19,9 +21,11 @@ namespace Musiction.API.BusinessLogic
         private readonly string _folderForPptx;
         private readonly string _folderForZip;
         private readonly string _presentationTemplate;
+        private IFileAndFolderPathsCreator _fileAndFolderPathsCreator;
 
-        public GoogleSlides(IGetValue valueRetrieval)
+        public GoogleSlides(IGetValue valueRetrieval, IFileAndFolderPathsCreator fileAndFolderPathsCreator)
         {
+            _fileAndFolderPathsCreator = fileAndFolderPathsCreator;
             _folderForSongs = valueRetrieval.Get(KeyConfig.FolderForSongs);
             _folderForPptx = valueRetrieval.Get(KeyConfig.FolderForPptx);
             _folderForZip = valueRetrieval.Get(KeyConfig.FolderForZip);
@@ -126,6 +130,18 @@ namespace Musiction.API.BusinessLogic
                 return;
             if (_driveService.Files.Get(presentationId).FileId != null)
                 _driveService.Files.Delete(presentationId).Execute();
+        }
+
+        public string DownloadPptx(string googleDriveFileId)
+        {
+            var filePath = _fileAndFolderPathsCreator.GetPathToMergedFiles($"{googleDriveFileId}.pptx");
+            using (var client = new WebClient())
+            {
+
+                client.DownloadFile(String.Format(MagicString.PathTFileInGoogleDrive, googleDriveFileId), filePath);
+            }
+
+            return filePath;
         }
     }
 }

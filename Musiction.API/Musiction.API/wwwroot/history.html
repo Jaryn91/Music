@@ -117,7 +117,7 @@
 
         function error(data) {
             $('#textarea').val(data.responseJSON.information);
-            $('#createPresentationButtons').removeClass("hide");
+            $('#createPresentationPptxButtons').removeClass("hide");
             $('#loadingButton').addClass("hide");
             return data.responseJSON.alertMessage;
         }

@@ -34,10 +34,9 @@ namespace Musiction.API.Entities
         }
 
 
-        public Presentation(string googleDrivePptxFileId, string googleDriveZipFileId, string fileType, UserInfo user)
+        public Presentation(string googleDrivePptxFileId, string fileType, UserInfo user)
         {
             GoogleDrivePptxFileId = googleDrivePptxFileId;
-            GoogleDriveZipFileId = googleDriveZipFileId;
             Type = fileType;
             CreateBy = user.FullName;
             CreatedDate = DateTime.Now;
