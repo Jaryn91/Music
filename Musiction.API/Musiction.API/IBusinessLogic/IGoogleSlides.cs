@@ -1,11 +1,13 @@
-﻿namespace Musiction.API.IBusinessLogic
+﻿using Musiction.API.Models;
+
+namespace Musiction.API.IBusinessLogic
 {
     public interface IGoogleSlides
     {
         string Create(string title);
-        string AddPptxFile(string filePath);
-        string AddZipFile(string filePath);
+        PresentationOnDrive AddPptxFile(string filePath);
+        PresentationOnDrive AddZipFile(string filePath);
         void Remove(string presentationId);
-        string DownloadPptx(string googleDriveFileId);
+        string DownloadPptx(Entities.Presentation presentation, string googleDriveFileId);
     }
 }

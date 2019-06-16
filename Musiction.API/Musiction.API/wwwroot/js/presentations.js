@@ -1,7 +1,7 @@
 ﻿var presentationsApi = getDomain() + "api/presentation/";
 
-function createPresentationPptx(outputFileType, songs, funcOk, funcError) {
-    var url = presentationsApi + outputFileType + songs;
+function createPresentationPptx(songs, funcOk, funcError) {
+    var url = presentationsApi + "pptx/" + songs;
     $.ajax({
         url: url,
         type: 'GET',

@@ -13,9 +13,6 @@ namespace Musiction.API.Entities
         public int Id { get; set; }
 
         [Required]
-        public string Type { get; set; }
-
-        [Required]
         public string GoogleDrivePptxFileId { get; set; }
         public string GoogleDriveZipFileId { get; set; }
 
@@ -34,10 +31,9 @@ namespace Musiction.API.Entities
         }
 
 
-        public Presentation(string googleDrivePptxFileId, string fileType, UserInfo user)
+        public Presentation(string googleDrivePptxFileId, UserInfo user)
         {
             GoogleDrivePptxFileId = googleDrivePptxFileId;
-            Type = fileType;
             CreateBy = user.FullName;
             CreatedDate = DateTime.Now;
         }

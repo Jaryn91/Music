@@ -23,7 +23,7 @@
         });
 
         function getSongIds() {
-            var songsIds = "";
+            var songsIds = "?";
             $('#sortable2 li').each(function () {
                 songsIds += "ids=" + $(this).val() + "&";
             });
@@ -46,7 +46,7 @@
                 $('#loadingButton').removeClass("hide");
                 
                 var songsIds = getSongIds();
-                createPresentationPptx("pptx?", songsIds, success, error);
+                createPresentationPptx(songsIds, success, error);
             });
 
             $('#saveInZIP').click(function () {

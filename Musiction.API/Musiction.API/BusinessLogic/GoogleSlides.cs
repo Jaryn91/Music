@@ -4,6 +4,7 @@ using Google.Apis.Services;
 using Google.Apis.Slides.v1;
 using Google.Apis.Util.Store;
 using Musiction.API.IBusinessLogic;
+using Musiction.API.Models;
 using Musiction.API.Resources;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace Musiction.API.BusinessLogic
             });
         }
 
-        public string AddPptxFile(string filePath)
+        public PresentationOnDrive AddPptxFile(string filePath)
         {
             var fileMetadata = new File()
             {
@@ -63,8 +64,7 @@ namespace Musiction.API.BusinessLogic
                 }
             };
             FilesResource.CreateMediaUpload request;
-            using (var stream = new System.IO.FileStream(filePath,
-                System.IO.FileMode.Open))
+            using (var stream = new FileStream(filePath, FileMode.Open))
             {
                 request = _driveService.Files.Create(
                     fileMetadata, stream, "application/vnd.openxmlformats-officedocument.presentationml.presentation");
@@ -72,10 +72,12 @@ namespace Musiction.API.BusinessLogic
                 request.Upload();
             }
             var file = request.ResponseBody;
-            return file.Id;
+            var presentationOnDrive = new PresentationOnDrive()
+            { Name = Path.GetFileName(filePath), Extension = "Pptx", FileId = file.Id };
+            return presentationOnDrive;
         }
 
-        public string AddZipFile(string filePath)
+        public PresentationOnDrive AddZipFile(string filePath)
         {
             var fileMetadata = new File()
             {
@@ -95,7 +97,9 @@ namespace Musiction.API.BusinessLogic
                 request.Upload();
             }
             var file = request.ResponseBody;
-            return file.Id;
+            var presentationOnDrive = new PresentationOnDrive()
+            { Name = Path.GetFileName(filePath), Extension = "Zip", FileId = file.Id };
+            return presentationOnDrive;
         }
 
         public string Create(string title)
@@ -132,16 +136,21 @@ namespace Musiction.API.BusinessLogic
                 _driveService.Files.Delete(presentationId).Execute();
         }
 
-        public string DownloadPptx(string googleDriveFileId)
+        public string DownloadPptx(Entities.Presentation presentation, string googleDriveFileId)
         {
-            var filePath = _fileAndFolderPathsCreator.GetPathToMergedFiles($"{googleDriveFileId}.pptx");
+            var presentationName = GetFileName(googleDriveFileId);
+            var filePath = _fileAndFolderPathsCreator.GetPathToMergedFiles($"{Path.GetFileNameWithoutExtension(presentationName)}.pptx");
             using (var client = new WebClient())
             {
-
-                client.DownloadFile(String.Format(MagicString.PathTFileInGoogleDrive, googleDriveFileId), filePath);
+                client.DownloadFile(String.Format(MagicString.PathToFileInGoogleDrive, googleDriveFileId), filePath);
             }
 
             return filePath;
+        }
+
+        private string GetFileName(string googleDriveFileId)
+        {
+            return _driveService.Files.Get(googleDriveFileId).Execute().Name;
         }
     }
 }
