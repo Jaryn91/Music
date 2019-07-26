@@ -37,7 +37,10 @@ namespace Musiction.API.Services
 
         public Presentation Get(string googleDriveFileId)
         {
-            return _context.Presentations.FirstOrDefault(s => s.GoogleDrivePptxFileId.Contains(googleDriveFileId));
+            return _context.Presentations
+                .Include(s => s.LinkSongToPresentation)
+                .ThenInclude(x => x.Song)
+                .FirstOrDefault(s => s.GoogleDrivePptxFileId.Contains(googleDriveFileId));
         }
     }
 }

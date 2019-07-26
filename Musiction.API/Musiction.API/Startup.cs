@@ -60,7 +60,8 @@ namespace Musiction.API
                     });
             });
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
             var connectionString = _valueRetrieval.Get("ConnectionString");
@@ -180,7 +181,7 @@ namespace Musiction.API
         }
         private string UrlToPptxFile(Presentation presentation)
         {
-            return String.Format(MagicString.PathToFileInGoogleDrive, presentation.GoogleDriveZipFileId);
+            return String.Format(MagicString.PathToFileInGoogleDrive, presentation.GoogleDrivePptxFileId);
         }
     }
 }

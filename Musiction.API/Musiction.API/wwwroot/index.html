@@ -41,39 +41,56 @@
                 populateListBox("#songsList", songs);
             });
 
+            $('#resetuButton').click(function () {
+                resetFunction();
+            });
+
             $('#saveInPPTX').click(function () {
                 $('#createPresentationPptxButtons').addClass("hide");
                 $('#loadingButton').removeClass("hide");
-                
+                $('#divResetButton').addClass("hide");
                 var songsIds = getSongIds();
-                createPresentationPptx(songsIds, success, error);
+                createPresentationPptx(songsIds, successPptx, error);
             });
 
             $('#saveInZIP').click(function () {
+                $('#createPresentationZipButtons').addClass("hide");
                 $('#createPresentationPptxButtons').addClass("hide");
                 $('#loadingButton').removeClass("hide");
-                var songsIds = getSongIds();
+                $('#divResetButton').addClass("hide");
                 var fileId = $('#saveInZIP').val();
                 createPresentationZip("zip", fileId, successZip, error);
             });
         });
 
-
-        function success(data) {
-            $('#textarea').val(data.information);
-            $('#linkPresentationInGoogle').attr("href", data.url);
-            $('#saveInZIP').prop('value', data.pptxFileId);
+        function resetFunction() {
             $('#loadingButton').addClass("hide");
-            $('#createPresentationZipButtons').removeClass("hide");
+            $('#createPresentationZipButtons').addClass("hide");
+            $('#createPresentationPptxButtons').removeClass("hide");
+            $('#linkPresentationInGoogle').attr("href", "");
+            $('#saveInZIP').prop('value', '');
+            $('#searchTextBox').val('');
+            $("#sortable2").empty();
+            $("#songsList").empty();
+            $('#textarea').val('');
+            getAllSongs('#songsList', addOptionsToListBox);
         }
 
 
+        function successPptx(data) {
+            $('#textarea').val(data.presentationDto.information);
+            $('#linkPresentationInGoogle').attr("href", data.presentationDto.urlToPptx);
+            $('#saveInZIP').prop('value', data.presentationDto.googleDrivePptxFileId);
+            $('#loadingButton').addClass("hide");
+            $('#createPresentationZipButtons').removeClass("hide");
+            $('#divResetButton').removeClass("hide");
+        }
+
         function successZip(data) {
-            //$('#textarea').val(data.information);
-            window.location.href = data.url;
-            //$('#linkPresentationInGoogle').attr("href", data.url);
-            //$('#loadingButton').addClass("hide");
-            //$('#createPresentationZipButtons').removeClass("hide");
+            $('#createPresentationZipButtons').removeClass("hide");
+            $('#loadingButton').addClass("hide");
+            $('#divResetButton').removeClass("hide");
+            window.location.href = data.presentationDto.urlToZip;
         }
 
         function error(data) {
@@ -118,14 +135,20 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-5 col-lg-offset-6">
+            <div class="col-lg-5 col-lg-offset-1">
+                <br />
+                <div class="text-center" id="divResetButton">
+                    <button type="submit" id="resetuButton" class="btn btn-danger">Zacznij od nowa</button>
+                </div>
+            </div>
+            <div class="col-lg-5">
                 <br />
                 <div class="text-center" id="createPresentationPptxButtons">
                     <div class="btn-group pull-center-lg">
                         <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">Połącz prezentacje</button>
                     </div>
                 </div>
-                <div class="text-center hide" id="loadingButton" >
+                <div class="text-center hide" id="loadingButton">
                     <div class="btn-group pull-center-lg">
                         <button type="submit" id="processingButton" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Tworzę prezentację" class="btn btn-primary">Tworzę</button>
                     </div>

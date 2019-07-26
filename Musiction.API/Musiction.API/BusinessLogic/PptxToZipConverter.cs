@@ -58,11 +58,12 @@ namespace Musiction.API.BusinessLogic
         private async Task<string> Upload(Uri url, string sourceFile, string targetFormat)
         {
             using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(_apiKey, "") })
+            using (FileStream openSoureFile = File.OpenRead(sourceFile))
             using (HttpClient client = new HttpClient(handler))
             {
                 var request = new MultipartFormDataContent();
                 request.Add(new StringContent(targetFormat), "target_format");
-                request.Add(new StreamContent(File.OpenRead(sourceFile)), "source_file", new FileInfo(sourceFile).Name);
+                request.Add(new StreamContent(openSoureFile), "source_file", new FileInfo(sourceFile).Name);
                 using (HttpResponseMessage response = await client.PostAsync(url, request).ConfigureAwait(false))
                 using (HttpContent content = response.Content)
                 {

@@ -142,7 +142,7 @@ namespace Musiction.API.BusinessLogic
             var filePath = _fileAndFolderPathsCreator.GetPathToMergedFiles($"{Path.GetFileNameWithoutExtension(presentationName)}.pptx");
             using (var client = new WebClient())
             {
-                client.DownloadFile(String.Format(MagicString.PathToFileInGoogleDrive, googleDriveFileId), filePath);
+                client.DownloadFile(String.Format(MagicString.PathToDownloadFileFromGoogleDrive, googleDriveFileId), filePath);
             }
 
             return filePath;

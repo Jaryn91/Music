@@ -78,8 +78,9 @@ namespace Musiction.API.Controllers
                 var zippedPresentationOnLocalhost = _pptxToZipConverter.Convert(pptxMergedFileOnLocalhost);
                 var zippedPresentation = _googleSlides.AddZipFile(zippedPresentationOnLocalhost);
 
-                var response = CreateResponseAndHistoryLog(zippedPresentation, presentation);
+                var response = CreateResponseForZipAndHistoryLog(zippedPresentation, presentation);
 
+                System.IO.File.Delete(pptxMergedFileOnLocalhost);
                 System.IO.File.Delete(zippedPresentationOnLocalhost);
                 return Ok(response);
             }
@@ -91,14 +92,12 @@ namespace Musiction.API.Controllers
             }
         }
 
-        private PresentationResponse CreateResponseAndHistoryLog(PresentationOnDrive zippedPresentation, Presentation presentation)
+        private PresentationResponse CreateResponseForZipAndHistoryLog(PresentationOnDrive zippedPresentation, Presentation presentation)
         {
             var presentationResponse = new PresentationResponse();
-            if (zippedPresentation.Extension == "Zip")
-            {
-                presentation.GoogleDriveZipFileId = zippedPresentation.FileId;
-                _presentationRepository.Save();
-            }
+
+            presentation.GoogleDriveZipFileId = zippedPresentation.FileId;
+            _presentationRepository.Save();
 
             var presentationDto = Mapper.Map<PresentationDto>(presentation);
             presentationResponse.CreateSuccessResponse(presentationDto);
@@ -129,17 +128,11 @@ namespace Musiction.API.Controllers
             try
             {
                 var presentations = _presentationRepository.Get().ToList();
-                var presentationDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations).ToList();
+                var presentationsDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations).ToList();
 
-                for (var i = 0; i < presentations.Count; i++)
-                {
-                    presentationDto[i].UrlToPptx = String.Format(MagicString.PathToDownloadFileFromGoogleDrive, presentations[i].GoogleDrivePptxFileId);
-                    if (presentations[i].GoogleDriveZipFileId != null)
-                        presentationDto[i].UrlToZip = String.Format(MagicString.PathToDownloadFileFromGoogleDrive, presentations[i].GoogleDriveZipFileId);
-                }
 
-                presentationDto.Reverse();
-                return Ok(presentationDto);
+                presentationsDto.Reverse();
+                return Ok(presentationsDto);
             }
             catch (Exception ex)
             {

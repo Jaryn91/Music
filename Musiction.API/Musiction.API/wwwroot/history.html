@@ -85,11 +85,13 @@
                     { data: "id" },
                     { data: "createdDate" },
                     { data: "createBy" },
-                    { data: null, render: function ( data, type, row ) {
-                        if (data.type == 'zip')
-                            return '  <a href="' + data.urlToZip + '">Pobierz ' + data.type + '</a>';
+                    {
+                        data: null, render: function (data, type, row) {
+                            var getPresentation = ' <a href="' + data.urlToPptx + '" target="_blank">Otwórz Pptx</a>'
+                            if (data.urlToZip != "")
+                                getPresentation += '  ||  <a href="' + data.urlToZip + '" target="_blank" >Pobierz ZIPa</a>';
 
-                        return '  <a href="' + data.urlToPptx + '">Pobierz ' + data.type +'</a>';
+                            return getPresentation;
                     } }
 
                 ]
@@ -142,7 +144,7 @@
                             <th>Id</th>
                             <th>Data</th>
                             <th>Stworzone przez</th>
-                            <th>Typ prezentacji</th>
+                            <th>Prezentacje</th>
 
                         </tr>
                     </thead>
@@ -152,7 +154,7 @@
                             <th>Id</th>
                             <th>Data</th>
                             <th>Stworzone przez</th>
-                            <th>Typ prezentacji</th>
+                            <th>Prezentacje</th>
 
                         </tr>
                     </tfoot>
