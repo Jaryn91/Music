@@ -11,9 +11,10 @@ using System;
 namespace Musiction.API.Migrations
 {
     [DbContext(typeof(SongContext))]
-    partial class SongContextModelSnapshot : ModelSnapshot
+    [Migration("20190616144231_RemoveTypeFromPresentation")]
+    partial class RemoveTypeFromPresentation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

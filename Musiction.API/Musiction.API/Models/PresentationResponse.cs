@@ -7,17 +7,12 @@ namespace Musiction.API.Models
 {
     public class PresentationResponse
     {
-        public string Url { get; set; }
         public string Information { get; set; }
         public string AlertMessage { get; set; }
+        public PresentationDto PresentationDto;
 
-        public void CreateSuccessResponse(IEnumerable<Song> songs, string urlToMergedPresentations)
-        {
-            IOutcomeTextCreator outcomeTextCreator = new OutcomeTextCreator();
-            Information = outcomeTextCreator.CreateSciprtWithNamesOfSongsAndYouTubeLinks(songs);
 
-            Url = urlToMergedPresentations;
-        }
+
 
         public void CreateExceptionResponse(IEnumerable<Song> songs, string exceptionMessage)
         {
@@ -26,5 +21,12 @@ namespace Musiction.API.Models
 
             AlertMessage = exceptionMessage;
         }
+
+        public void CreateSuccessResponse(PresentationDto presentationDto)
+        {
+            PresentationDto = presentationDto;
+
+        }
+
     }
 }

@@ -23,7 +23,7 @@
         });
 
         function getSongIds() {
-            var songsIds = "";
+            var songsIds = "?";
             $('#sortable2 li').each(function () {
                 songsIds += "ids=" + $(this).val() + "&";
             });
@@ -41,33 +41,61 @@
                 populateListBox("#songsList", songs);
             });
 
+            $('#resetuButton').click(function () {
+                resetFunction();
+            });
+
             $('#saveInPPTX').click(function () {
-                $('#createPresentationButtons').addClass("hide");
+                $('#createPresentationPptxButtons').addClass("hide");
                 $('#loadingButton').removeClass("hide");
-                
+                $('#divResetButton').addClass("hide");
                 var songsIds = getSongIds();
-                createPresentation("pptx?", songsIds, success, error);
+                createPresentationPptx(songsIds, successPptx, error);
             });
 
             $('#saveInZIP').click(function () {
-                $('#createPresentationButtons').addClass("hide");
+                $('#createPresentationZipButtons').addClass("hide");
+                $('#createPresentationPptxButtons').addClass("hide");
                 $('#loadingButton').removeClass("hide");
-                var songsIds = getSongIds();
-                createPresentation("zip?", songsIds, success, error);
+                $('#divResetButton').addClass("hide");
+                var fileId = $('#saveInZIP').val();
+                createPresentationZip("zip", fileId, successZip, error);
             });
         });
 
-
-        function success(data) {
-            $('#textarea').val(data.information);
-            window.location.href = data.url;
-            $('#createPresentationButtons').removeClass("hide");
+        function resetFunction() {
             $('#loadingButton').addClass("hide");
+            $('#createPresentationZipButtons').addClass("hide");
+            $('#createPresentationPptxButtons').removeClass("hide");
+            $('#linkPresentationInGoogle').attr("href", "");
+            $('#saveInZIP').prop('value', '');
+            $('#searchTextBox').val('');
+            $("#sortable2").empty();
+            $("#songsList").empty();
+            $('#textarea').val('');
+            getAllSongs('#songsList', addOptionsToListBox);
+        }
+
+
+        function successPptx(data) {
+            $('#textarea').val(data.presentationDto.information);
+            $('#linkPresentationInGoogle').attr("href", data.presentationDto.urlToPptx);
+            $('#saveInZIP').prop('value', data.presentationDto.googleDrivePptxFileId);
+            $('#loadingButton').addClass("hide");
+            $('#createPresentationZipButtons').removeClass("hide");
+            $('#divResetButton').removeClass("hide");
+        }
+
+        function successZip(data) {
+            $('#createPresentationZipButtons').removeClass("hide");
+            $('#loadingButton').addClass("hide");
+            $('#divResetButton').removeClass("hide");
+            window.location.href = data.presentationDto.urlToZip;
         }
 
         function error(data) {
             $('#textarea').val(data.responseJSON.information);
-            $('#createPresentationButtons').removeClass("hide");
+            $('#createPresentationPptxButtons').removeClass("hide");
             $('#loadingButton').addClass("hide");
             return data.responseJSON.alertMessage;
         }
@@ -107,17 +135,28 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-5 col-lg-offset-6">
+            <div class="col-lg-5 col-lg-offset-1">
                 <br />
-                <div class="text-center" id="createPresentationButtons">
+                <div class="text-center" id="divResetButton">
+                    <button type="submit" id="resetuButton" class="btn btn-danger">Zacznij od nowa</button>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <br />
+                <div class="text-center" id="createPresentationPptxButtons">
                     <div class="btn-group pull-center-lg">
-                        <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">PPTX</button>
-                        <button type="submit" id="saveInZIP" value='ZIP' class="btn btn-primary">ZIP</button>
+                        <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">Połącz prezentacje</button>
                     </div>
                 </div>
-                <div class="text-center hide" id="loadingButton" >
+                <div class="text-center hide" id="loadingButton">
                     <div class="btn-group pull-center-lg">
                         <button type="submit" id="processingButton" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Tworzę prezentację" class="btn btn-primary">Tworzę</button>
+                    </div>
+                </div>
+                <div class="text-center hide" id="createPresentationZipButtons">
+                    <div class="btn-group pull-center-lg">
+                        <a href="" class="btn btn-primary" role="button" target="_blank" id="linkPresentationInGoogle">Otwórz połączoną prezentacje</a>
+                        <button type="submit" id="saveInZIP" value='' class="btn btn-primary">Stwórz Zip</button>
                     </div>
                 </div>
             </div>

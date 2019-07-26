@@ -23,11 +23,13 @@ namespace Musiction.API.Controllers
         private readonly IFileAndFolderPathsCreator _fileAndFolderPath;
         private readonly IPresentationRepository _presentationRepository;
         private readonly IGetValue _valueRetrieval;
+        private readonly IGoogleSlides _googleSlides;
+
 
         public PresentationController(ISongRepository songRepository,
             IConvertPresentation pptxToZipConverter, IMerge powerPointMerger,
             IFileAndFolderPathsCreator fileAndFolderPath, IPresentationRepository presentationRepository,
-            IGetValue valueRetrieval)
+            IGetValue valueRetrieval, IGoogleSlides googleSlides)
         {
             _powerPointMerger = powerPointMerger;
             _songRepository = songRepository;
@@ -35,55 +37,89 @@ namespace Musiction.API.Controllers
             _fileAndFolderPath = fileAndFolderPath;
             _presentationRepository = presentationRepository;
             _valueRetrieval = valueRetrieval;
+            _googleSlides = googleSlides;
         }
 
 
-        [HttpGet("{presentationType}"), Authorize]
-        public IActionResult Presentation(string presentationType, [FromQuery]List<int> ids)
+        [HttpGet("pptx/"), Authorize]
+        public IActionResult Presentation([FromQuery]List<int> ids)
         {
-            var presentationResponse = new PresentationResponse();
             IEnumerable<Song> songs = new List<Song>();
             try
             {
                 songs = _songRepository.GetSongsInOrder(ids);
                 if (!songs.Any())
-                {
-                    presentationResponse.CreateExceptionResponse(songs, MagicString.NoSongSelected);
-                    return BadRequest(presentationResponse);
-                }
+                    return BadRequest(NoSongResponse(songs));
 
-                var finalPresentationPath = _powerPointMerger.Merge(songs);
+                var mergedPptxPresentationOnLocalhost = _powerPointMerger.Merge(songs);
+                var mergedPresentation = _googleSlides.AddPptxFile(mergedPptxPresentationOnLocalhost);
 
-                if (presentationType == "pptx")
-                {
-                    var urlToMergedPresentation = _fileAndFolderPath.GetUrlToFile(finalPresentationPath);
+                var response = CreateResponseForPptxAndHistoryLog(mergedPresentation, songs);
 
-                    CreatePresentationWithLinksToSongs(finalPresentationPath, songs);
-
-                    presentationResponse.CreateSuccessResponse(songs, urlToMergedPresentation);
-                    return Ok(presentationResponse);
-                }
-
-                if (presentationType == "zip")
-                {
-                    var pathToFinalPptxFile = _fileAndFolderPath.GetPathToMergedFiles(finalPresentationPath);
-                    var pathToZip = _pptxToZipConverter.Convert(pathToFinalPptxFile);
-                    var urlToZip = _fileAndFolderPath.GetUrlToFile(pathToZip);
-
-                    CreatePresentationWithLinksToSongs(pathToZip, songs);
-
-                    presentationResponse.CreateSuccessResponse(songs, urlToZip);
-                    return Ok(presentationResponse);
-                }
+                System.IO.File.Delete(mergedPptxPresentationOnLocalhost);
+                return Ok(response);
             }
             catch (Exception ex)
             {
+                var presentationResponse = new PresentationResponse();
                 presentationResponse.CreateExceptionResponse(songs, ex.Message);
                 return BadRequest(presentationResponse);
             }
-            return BadRequest();
         }
 
+        [HttpGet("zip/{googleDriveFileId}"), Authorize]
+        public IActionResult Presentation(string googleDriveFileId)
+        {
+            try
+            {
+                var presentation = _presentationRepository.Get(googleDriveFileId);
+                var pptxMergedFileOnLocalhost = _googleSlides.DownloadPptx(presentation, googleDriveFileId);
+
+                var zippedPresentationOnLocalhost = _pptxToZipConverter.Convert(pptxMergedFileOnLocalhost);
+                var zippedPresentation = _googleSlides.AddZipFile(zippedPresentationOnLocalhost);
+
+                var response = CreateResponseForZipAndHistoryLog(zippedPresentation, presentation);
+
+                System.IO.File.Delete(pptxMergedFileOnLocalhost);
+                System.IO.File.Delete(zippedPresentationOnLocalhost);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var presentationResponse = new PresentationResponse();
+                presentationResponse.CreateExceptionResponse(null, ex.Message);
+                return BadRequest(presentationResponse);
+            }
+        }
+
+        private PresentationResponse CreateResponseForZipAndHistoryLog(PresentationOnDrive zippedPresentation, Presentation presentation)
+        {
+            var presentationResponse = new PresentationResponse();
+
+            presentation.GoogleDriveZipFileId = zippedPresentation.FileId;
+            _presentationRepository.Save();
+
+            var presentationDto = Mapper.Map<PresentationDto>(presentation);
+            presentationResponse.CreateSuccessResponse(presentationDto);
+            return presentationResponse;
+        }
+
+        private PresentationResponse CreateResponseForPptxAndHistoryLog(PresentationOnDrive presentationOnDrive, IEnumerable<Song> songs)
+        {
+            var presentationResponse = new PresentationResponse();
+            var presentation = CreatePresentationWithLinksToSongs(presentationOnDrive, songs);
+
+            var presentationDto = Mapper.Map<PresentationDto>(presentation);
+            presentationResponse.CreateSuccessResponse(presentationDto);
+            return presentationResponse;
+        }
+
+        private PresentationResponse NoSongResponse(IEnumerable<Song> songs)
+        {
+            var presentationResponse = new PresentationResponse();
+            presentationResponse.CreateExceptionResponse(songs, MagicString.NoSongSelected);
+            return presentationResponse;
+        }
 
 
         [HttpGet]
@@ -92,15 +128,11 @@ namespace Musiction.API.Controllers
             try
             {
                 var presentations = _presentationRepository.Get().ToList();
-                var presentationDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations).ToList();
+                var presentationsDto = Mapper.Map<IEnumerable<PresentationDto>>(presentations).ToList();
 
-                for (var i = 0; i < presentations.Count; i++)
-                {
-                    presentationDto[i].Url = _fileAndFolderPath.GetUrlToFile(presentations[i].FinalFileName);
-                }
 
-                presentationDto.Reverse();
-                return Ok(presentationDto);
+                presentationsDto.Reverse();
+                return Ok(presentationsDto);
             }
             catch (Exception ex)
             {
@@ -111,9 +143,9 @@ namespace Musiction.API.Controllers
 
 
 
-        private void CreatePresentationWithLinksToSongs(string finalFileName, IEnumerable<Song> songs)
+        private Presentation CreatePresentationWithLinksToSongs(PresentationOnDrive presentationOnDrive, IEnumerable<Song> songs)
         {
-            var presentation = new Presentation(finalFileName, GetUserInformation());
+            var presentation = new Presentation(presentationOnDrive.FileId, GetUserInformation());
 
             var list = new List<LinkSongToPresentation>();
 
@@ -126,6 +158,7 @@ namespace Musiction.API.Controllers
 
             presentation.LinkSongToPresentation.AddRange(list);
             _presentationRepository.Save();
+            return presentation;
         }
 
 

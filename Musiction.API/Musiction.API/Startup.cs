@@ -11,8 +11,10 @@ using Musiction.API.BusinessLogic;
 using Musiction.API.Entities;
 using Musiction.API.IBusinessLogic;
 using Musiction.API.Models;
+using Musiction.API.Resources;
 using Musiction.API.Services;
 using NLog.Extensions.Logging;
+using System;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -58,7 +60,8 @@ namespace Musiction.API
                     });
             });
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
             var connectionString = _valueRetrieval.Get("ConnectionString");
@@ -141,6 +144,12 @@ namespace Musiction.API
                     .ForMember(dest => dest.CreatedDate,
                         opt => opt.MapFrom(src =>
                             src.CreatedDate.ToString("dddd, dd MMMM yyyy", CultureInfo.CreateSpecificCulture("pl-pl"))))
+                    .ForMember(dest => dest.UrlToPptx,
+                        opt => opt.MapFrom(src =>
+                            UrlToPptxFile(src)))
+                    .ForMember(dest => dest.UrlToZip,
+                        opt => opt.MapFrom(src =>
+                            UrlToDownloadedFile(src)))
                     .ForMember(dest => dest.SongNames,
                         opt => opt.MapFrom(src =>
                             src.LinkSongToPresentation.Select(song => Path.GetFileName(song.Song.Name))));
@@ -162,6 +171,17 @@ namespace Musiction.API
             {
                 await context.Response.WriteAsync("No cześć! A Ty co tutaj robisz :)?");
             });
+        }
+
+        private string UrlToDownloadedFile(Presentation presentation)
+        {
+            if (presentation.GoogleDriveZipFileId == null)
+                return "";
+            return String.Format(MagicString.PathToDownloadFileFromGoogleDrive, presentation.GoogleDriveZipFileId);
+        }
+        private string UrlToPptxFile(Presentation presentation)
+        {
+            return String.Format(MagicString.PathToFileInGoogleDrive, presentation.GoogleDrivePptxFileId);
         }
     }
 }

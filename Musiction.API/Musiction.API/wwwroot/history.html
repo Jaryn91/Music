@@ -85,9 +85,13 @@
                     { data: "id" },
                     { data: "createdDate" },
                     { data: "createBy" },
-                    { data: null, render: function ( data, type, row ) {
-                        // Combine the first and last names into a single table field
-                        return '  <a href="' + data.url + '">Pobierz ' + data.type +'</a>';
+                    {
+                        data: null, render: function (data, type, row) {
+                            var getPresentation = ' <a href="' + data.urlToPptx + '" target="_blank">Otwórz Pptx</a>'
+                            if (data.urlToZip != "")
+                                getPresentation += '  ||  <a href="' + data.urlToZip + '" target="_blank" >Pobierz ZIPa</a>';
+
+                            return getPresentation;
                     } }
 
                 ]
@@ -115,7 +119,7 @@
 
         function error(data) {
             $('#textarea').val(data.responseJSON.information);
-            $('#createPresentationButtons').removeClass("hide");
+            $('#createPresentationPptxButtons').removeClass("hide");
             $('#loadingButton').addClass("hide");
             return data.responseJSON.alertMessage;
         }
@@ -140,7 +144,7 @@
                             <th>Id</th>
                             <th>Data</th>
                             <th>Stworzone przez</th>
-                            <th>Typ prezentacji</th>
+                            <th>Prezentacje</th>
 
                         </tr>
                     </thead>
@@ -150,7 +154,7 @@
                             <th>Id</th>
                             <th>Data</th>
                             <th>Stworzone przez</th>
-                            <th>Typ prezentacji</th>
+                            <th>Prezentacje</th>
 
                         </tr>
                     </tfoot>

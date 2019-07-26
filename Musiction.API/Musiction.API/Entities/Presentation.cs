@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.IO;
 
 namespace Musiction.API.Entities
 {
@@ -14,10 +13,8 @@ namespace Musiction.API.Entities
         public int Id { get; set; }
 
         [Required]
-        public string Type { get; set; }
-
-        [Required]
-        public string FinalFileName { get; set; }
+        public string GoogleDrivePptxFileId { get; set; }
+        public string GoogleDriveZipFileId { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -34,10 +31,9 @@ namespace Musiction.API.Entities
         }
 
 
-        public Presentation(string finalFileName, UserInfo user)
+        public Presentation(string googleDrivePptxFileId, UserInfo user)
         {
-            FinalFileName = finalFileName;
-            Type = Path.GetExtension(finalFileName).Split('.')[1];
+            GoogleDrivePptxFileId = googleDrivePptxFileId;
             CreateBy = user.FullName;
             CreatedDate = DateTime.Now;
         }

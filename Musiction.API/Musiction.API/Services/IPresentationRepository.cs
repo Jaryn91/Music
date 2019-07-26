@@ -9,5 +9,6 @@ namespace Musiction.API.Services
         Presentation Get(int presentationId);
         IEnumerable<Presentation> Get();
         bool Save();
+        Presentation Get(string googleDriveFileId);
     }
 }
