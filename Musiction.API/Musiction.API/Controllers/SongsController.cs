@@ -34,7 +34,7 @@ namespace Musiction.API.Controllers
             _valueRetrieval = valueRetrieval;
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]
         public IActionResult GetSongs()
         {
             var songResponse = new SongResponse();

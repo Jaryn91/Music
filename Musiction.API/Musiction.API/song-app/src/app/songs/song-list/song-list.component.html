@@ -18,13 +18,28 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-5 col-lg-offset-1">
-                <ul id="songsList" *ngFor='let song of filteredSongs'>
-                  <li class="ui-state-default" id={{song.id}} value={{song.id}}>{{song.name}}</li>
-                </ul>
+            <div class="col-lg-5 col-lg-offset-1 songsPlaceholder">
+                <div
+                cdkDropList
+                #allSongs="cdkDropList"
+                [cdkDropListData]="filteredSongs"
+                [cdkDropListConnectedTo]="[allSelectedSongs]"
+                class="example-list"
+                (cdkDropListDropped)="drop($event)">
+                <div class="example-box" *ngFor="let song of filteredSongs" cdkDrag>{{song.name}}</div>
+              </div>
             </div>
-            <div class="col-lg-5">
-                <ul id="sortable2" class="connectedSortable songsPlaceholder"></ul>
+
+            <div class="col-lg-5 songsPlaceholder">
+                <div
+                cdkDropList
+                #allSelectedSongs="cdkDropList"
+                [cdkDropListData]="selectedSongs"
+                [cdkDropListConnectedTo]="[allSongs]"
+                class="example-list"
+                (cdkDropListDropped)="drop($event)">
+                <div class="example-box" *ngFor="let selectedSong of selectedSongs"  cdkDrag>{{selectedSong.name}}</div>
+              </div>
             </div>
         </div>
 
@@ -32,22 +47,22 @@
             <div class="col-lg-5 col-lg-offset-1">
                 <br />
                 <div class="text-center" id="divResetButton">
-                    <button type="submit" id="resetuButton" class="btn btn-danger">Zacznij od nowa</button>
+                    <button type="submit" id="resetuButton" class="btn btn-danger" (click)='resetPresentation()'>Zacznij od nowa</button>
                 </div>
             </div>
             <div class="col-lg-5">
                 <br />
-                <div class="text-center" id="createPresentationPptxButtons">
+                <div class="text-center" id="createPresentationPptxButtons"  *ngIf='createPrestationPptxDiv' (click)='createPptx()'>
                     <div class="btn-group pull-center-lg">
                         <button type="submit" id="saveInPPTX" value='PPTX' class="btn btn-primary">Połącz prezentacje</button>
                     </div>
                 </div>
-                <div class="text-center hide" id="loadingButton">
+                <div class="text-center hide" id="loadingButton" *ngIf='loadingDiv'>
                     <div class="btn-group pull-center-lg">
                         <button type="submit" id="processingButton" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Tworzę prezentację" class="btn btn-primary">Tworzę</button>
                     </div>
                 </div>
-                <div class="text-center hide" id="createPresentationZipButtons">
+                <div class="text-center hide" id="createPresentationZipButtons"  *ngIf='createPrestationZipDiv' (click)='createZip()'>
                     <div class="btn-group pull-center-lg">
                         <a href="" class="btn btn-primary" role="button" target="_blank" id="linkPresentationInGoogle">Otwórz połączoną prezentacje</a>
                         <button type="submit" id="saveInZIP" value='' class="btn btn-primary">Stwórz Zip</button>
