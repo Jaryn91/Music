@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Auth0.AuthenticationApi" Version="5.10.0" />
+    <PackageReference Include="Auth0.AuthenticationApi" Version="6.5.3" />
     <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.8.1" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.36.1.1380" />
