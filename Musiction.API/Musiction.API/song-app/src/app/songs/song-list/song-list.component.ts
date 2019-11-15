@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { SongsService } from 'src/app/api/songs.service';
 import { ISong } from '../isong';
 import { CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import { PresentationService } from 'src/app/api/presentation/presentation.service';
+import { SongsService } from 'src/app/api/song/songs.service';
 
 @Component({
   selector: 'app-song-list',
@@ -17,7 +18,7 @@ export class SongListComponent implements OnInit {
   _createPrestationPptxDiv = true;
   _createPrestationZipDiv = false;
   _loadingDiv = false;
-
+  errorMessage: string;
 
   get loadingDiv(): boolean {
     return this._loadingDiv;
@@ -33,14 +34,12 @@ export class SongListComponent implements OnInit {
     this._createPrestationPptxDiv = value;
   }
 
-
   get createPrestationZipDiv(): boolean {
     return this._createPrestationZipDiv;
   }
   set createPrestationZipDiv(value: boolean) {
     this._createPrestationZipDiv = value;
   }
-
 
   get songFilter(): string {
     return this._songFilter;
@@ -50,12 +49,13 @@ export class SongListComponent implements OnInit {
     this.filteredSongs = this.songFilter ? this.performFilter(this.songFilter) : this.songs;
   }
 
-  constructor(private songService: SongsService) {
+  constructor(private songService: SongsService, private presentationService: PresentationService) {
   }
 
   ngOnInit() {
     this.resetPresentation();
   }
+
 
   performFilter(filterBy: string): ISong[] {
     filterBy = filterBy.toLocaleLowerCase();
@@ -73,9 +73,15 @@ export class SongListComponent implements OnInit {
                         event.currentIndex);
     }
   }
+
   resetPresentation(): void {
-    this.songs = this.songService.getSongs();
-    this.filteredSongs = this.songs;
+    this.songService.getSongs().subscribe({
+      next: songsResponse => {
+        this.songs = songsResponse.songs;
+        this.filteredSongs = this.songs;
+      },
+      error(err) {this.errorMessage = err; }
+    });
     this.songFilter = '';
     this.selectedSongs = [];
     this._createPrestationPptxDiv = true;
@@ -84,11 +90,12 @@ export class SongListComponent implements OnInit {
   createPptx(): void {
     this._createPrestationPptxDiv = false;
     this._loadingDiv = true;
+    var songIds = this.selectedSongs.map(x => {
+      return x.id;
+    });
+    this.presentationService.getPresentation(songIds);
   }
 
   createZip(): void {
-
-
   }
-
 }

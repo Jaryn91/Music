@@ -41,7 +41,7 @@ namespace Musiction.API.Controllers
         }
 
 
-        [HttpGet("pptx/"), Authorize]
+        [HttpGet("pptx/")]
         public IActionResult Presentation([FromQuery]List<int> ids)
         {
             IEnumerable<Song> songs = new List<Song>();
